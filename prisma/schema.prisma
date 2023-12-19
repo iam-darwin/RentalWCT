@@ -1,0 +1,165 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  adminId   String    @id @unique @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Driver {
+  driverID           String      @id @unique @default(uuid())
+  driverFirstName    String
+  driverLastName     String
+  username           String    @unique
+  password           String
+  driverAddress      String
+  status             String    @default("Active")
+  driverPhoneNumber1 String
+  driverPhoneNumber2 String
+  vehicleColor       String
+  vehicleMake        String
+  vehicleModel       String
+  vehicleLicense     String    @unique
+  driverLicense      String
+  driverSSN          String
+  payments           Payment[]
+  lastPaymentDate    DateTime  @default(now())
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+
+model Payment {
+  paymentID   Int      @id @default(autoincrement())
+  amount      Float
+  driverID    String
+  paymentDate DateTime
+
+  driver    Driver   @relation(fields: [driverID], references: [driverID])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Rides_Kaizen {
+  ID                     Int      @id @default(autoincrement())
+  RideID                 String   @unique
+  Ride_Status            String   @default("Pending_Update")
+  Ride_Date              String 
+  Customer_FirstName     String
+  Customer_LastName      String
+  Phone_Number           String
+  Transportation_Type    String
+  Cancel_Reason          String
+  Cost                   Float
+  Pick_Up_Time           String 
+  Arrival_Time           String 
+  Estimated_Arrival_Time String 
+  Scheduled_Pickup_Time  String 
+  Estimated_Distance     Float
+  Pickup_Address         String
+  Pickup_Lat             Float
+  Pickup_Lng             Float
+  Pickup_Directions      String
+  Dropoff_Address        String
+  Dropoff_Lat            Float
+  Dropoff_Lng            Float
+  Dropoff_Directions     String
+  Driver_FirstName       String
+  Driver_Phone           String
+  Vehicle_Color          String
+  Vehicle_Make           String
+  Vehicle_Model          String
+  Vehicle_License        String
+  Vehicle_Photo_Url      String
+  Provider_Name          String
+  Provider_Trip_Id       String
+  Rider_Patient_ID       String
+  Member_ID              String
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+}
+model Rides {
+  RideID                   String    @id @unique
+  Ride_Status              String    @default("PENDING")
+  Ride_Date                String
+  Customer_FirstName       String
+  Customer_LastName        String
+  Phone_Number             String
+  Transportation_Type      String
+  Cancel_Reason            String
+  Cost                     Float
+  Pick_Up_Time             String
+  Arrival_Time             String
+  Estimated_Arrival_Time   String
+  Scheduled_Pickup_Time    String
+  Estimated_Distance       Float
+  Pickup_Address           String
+  Pickup_Lat               Float
+  Pickup_Lng               Float
+  Pickup_Directions        String
+  Dropoff_Address          String
+  Dropoff_Lat              Float
+  Dropoff_Lng              Float
+  Dropoff_Directions       String
+  Driver_ID                String
+  Provider_Trip_Id         String
+  Rider_Patient_ID         String
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+}
+
+model CompletedRides {
+  RideID                   String    @id @unique
+  Ride_Status              String
+  Ride_Date                String
+  Customer_FirstName       String
+  Customer_LastName        String
+  Phone_Number             String
+  Transportation_Type      String
+  Cancel_Reason            String
+  Cost                     Float
+  Pick_Up_Time             String
+  Arrival_Time             String
+  Estimated_Arrival_Time   String
+  Scheduled_Pickup_Time    String
+  Estimated_Distance       Float
+  Pickup_Address           String
+  Pickup_Lat               Float
+  Pickup_Lng               Float
+  Pickup_Directions        String
+  Dropoff_Address          String
+  Dropoff_Lat              Float
+  Dropoff_Lng              Float
+  Dropoff_Directions       String
+  Driver_ID                String
+  Provider_Trip_Id         String
+  Rider_Patient_ID         String
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+}
+
+
+
+
+model Customer {
+  CustomerID              String    @id @unique
+  Customer_FirstName      String
+  Customer_LastName       String
+  Phone_Number            String
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+}
+
