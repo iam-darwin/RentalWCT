@@ -59,6 +59,6 @@ export default class AdminService{
     }
 
     generateToken(data:JwtPayload){
-        return jwt.sign({ adminId:data.adminId,name:data.name }, utils.JWT_SECRET, { expiresIn: '1h' });
+        return jwt.sign(data, utils.JWT_SECRET, { expiresIn: '1h' });
     }
 }

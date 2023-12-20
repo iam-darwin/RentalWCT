@@ -57,4 +57,20 @@ export default class DriverRepository {
         }
     }
   }
+
+  async getEmail(email:string){
+    try {
+      const emailUser=await prisma.driver.findUnique({
+        where:{
+          email
+        }
+      })
+
+      return emailUser;
+    } catch (error) {
+      
+    }
+
+
+  }
 }
