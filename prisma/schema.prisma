@@ -23,20 +23,20 @@ model Driver {
   driverID           String      @id @unique @default(uuid())
   driverFirstName    String
   driverLastName     String
-  username           String    @unique
+  email              String    @unique
   password           String
   driverAddress      String
   status             String    @default("Active")
   driverPhoneNumber1 String
   driverPhoneNumber2 String
   vehicleColor       String
-  vehicleMake        String
+  vehicleMake        String //brand
   vehicleModel       String
   vehicleLicense     String    @unique
-  driverLicense      String
-  driverSSN          String
+  driverLicense      String    @unique
+  driverSSN          String    @unique
   payments           Payment[]
-  lastPaymentDate    DateTime  @default(now())
+  lastPaymentDate    String  @default("null")
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 }
@@ -77,6 +77,7 @@ model Rides_Kaizen {
   Dropoff_Lng            Float
   Dropoff_Directions     String
   Driver_FirstName       String
+  Driver_Photo_Url       String
   Driver_Phone           String
   Vehicle_Color          String
   Vehicle_Make           String

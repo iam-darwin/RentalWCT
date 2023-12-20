@@ -1,10 +1,5 @@
-import { PrismaClient } from '@prisma/client'
+import { authAdmin } from "./Auth";
 
-const prisma = new PrismaClient()
-
-async function main() {
-
-
+export {
+    authAdmin
 }
-
-main()

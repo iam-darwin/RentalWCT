@@ -10,6 +10,16 @@ export default class AdminRepository {
     try {
       const hashedPassword = await bcrypt.hash(details.password, 10);
 
+      const existingUser=await prisma.admin.findUnique({
+        where:{
+          email:details.email
+        }
+      })
+
+      if(existingUser){
+        throw new Error("User_Exists")
+      }
+
       const user = await prisma.admin.create({
         data: {
           name: details.name,
@@ -27,9 +37,12 @@ export default class AdminRepository {
         throw new AppError(
           "Client Error",
           "User email already exists",
-          "Current email is already in Use",
           status.CONFLICT
         );
+      }
+      //@ts-ignore
+      if(error.message=="User_Exists"){
+        throw new AppError("Admin Exits","admin already exits with the email",status.CONFLICT);
       }
     }
   }
@@ -45,5 +58,9 @@ export default class AdminRepository {
     } catch (error) {
       
     }
+  }
+
+  async uploadToRidesKaize(){
+    
   }
 }

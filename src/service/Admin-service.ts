@@ -49,11 +49,11 @@ export default class AdminService{
             console.log("Service layer error :",error.name )
             //@ts-ignore
             if(error.message=="Password_Wrong"){
-                throw new AppError("Password_Wrong","Incorrect Pwd","Password is incoreect",status.CONFLICT)
+                throw new AppError("Password_Wrong","Incorrect Password",status.UNAUTHORIZED)
             }
             //@ts-ignore
             if(error.message=="No_Admin"){
-                throw new AppError("Email Invalid","User with email Not found","Check your email and try again",status.CONFLICT)
+                throw new AppError("Email Invalid","User with email Not found",status.NOT_FOUND)
             }
         }
     }

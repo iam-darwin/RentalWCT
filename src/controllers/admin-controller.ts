@@ -2,11 +2,16 @@ import { Request, Response } from "express";
 import { z } from "zod";
 import status from "http-status";
 
-import { AdminService } from "../service/index";
+import { AdminService, DriverService } from "../service/index";
 import { AdminInput } from "../intrefaces/index";
-import { adminSchema, loginSchema } from "../config/validations";
+import {
+  adminSchema,
+  loginSchema,
+  driverInputSchema,
+} from "../config/validations";
 
 const admin = new AdminService();
+const driver = new DriverService();
 
 export const registerAdmin = async (req: Request, res: Response) => {
   try {
@@ -60,6 +65,33 @@ export const loginAdmin = async (req: Request, res: Response) => {
         .status(status.UNAUTHORIZED)
         .json({ message: error.issues[0].message });
     }
+    //@ts-ignore
+    res.status(error.statusCode).json({
+      //@ts-ignore
+      err: error.message,
+      success: "fail",
+    });
+  }
+};
+
+export const createDriver = async (req: Request, res: Response) => {
+  try {
+    console.log("Inside driver body");
+    
+    const driverBody = driverInputSchema.parse(req.body);
+    const newDriver = await driver.createDriver(driverBody);
+
+    return res.status(status.CREATED).json({
+      message: "Driver created Successfully",
+      data: newDriver,
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res
+        .status(status.UNAUTHORIZED)
+        .json({ message: error.issues[0].message });
+    }
+
     //@ts-ignore
     res.status(error.statusCode).json({
       //@ts-ignore

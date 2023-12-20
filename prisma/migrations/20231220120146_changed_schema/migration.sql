@@ -15,7 +15,7 @@ CREATE TABLE "Driver" (
     "driverID" TEXT NOT NULL,
     "driverFirstName" TEXT NOT NULL,
     "driverLastName" TEXT NOT NULL,
-    "username" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "driverAddress" TEXT NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'Active',
@@ -27,7 +27,7 @@ CREATE TABLE "Driver" (
     "vehicleLicense" TEXT NOT NULL,
     "driverLicense" TEXT NOT NULL,
     "driverSSN" TEXT NOT NULL,
-    "lastPaymentDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "lastPaymentDate" TEXT NOT NULL DEFAULT 'null',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -72,6 +72,7 @@ CREATE TABLE "Rides_Kaizen" (
     "Dropoff_Lng" DOUBLE PRECISION NOT NULL,
     "Dropoff_Directions" TEXT NOT NULL,
     "Driver_FirstName" TEXT NOT NULL,
+    "Driver_Photo_Url" TEXT NOT NULL,
     "Driver_Phone" TEXT NOT NULL,
     "Vehicle_Color" TEXT NOT NULL,
     "Vehicle_Make" TEXT NOT NULL,
@@ -176,10 +177,16 @@ CREATE UNIQUE INDEX "Admin_email_key" ON "Admin"("email");
 CREATE UNIQUE INDEX "Driver_driverID_key" ON "Driver"("driverID");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Driver_username_key" ON "Driver"("username");
+CREATE UNIQUE INDEX "Driver_email_key" ON "Driver"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Driver_vehicleLicense_key" ON "Driver"("vehicleLicense");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Driver_driverLicense_key" ON "Driver"("driverLicense");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Driver_driverSSN_key" ON "Driver"("driverSSN");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Rides_Kaizen_RideID_key" ON "Rides_Kaizen"("RideID");

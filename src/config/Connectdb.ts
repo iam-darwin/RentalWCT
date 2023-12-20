@@ -13,7 +13,6 @@ class PrismaSingleton {
         console.log("created a new instance 0")
       PrismaSingleton.instance = new PrismaSingleton();
     }
-    console.log("sent back the old instane")
     return PrismaSingleton.instance;
   }
 
