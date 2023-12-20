@@ -63,4 +63,40 @@ export default class AdminRepository {
   async uploadToRidesKaize(){
     
   }
+
+  async getAllDriverDetails(){
+    try {
+      const drivers=await prisma.driver.findMany({
+        include:{
+          payments:true
+        }
+      });
+      return drivers;
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async getDriver(id:string){
+    try {
+      const driver=await prisma.driver.findUnique({
+        where:{
+          driverID:id
+        },
+        select:{
+          driverID:true,
+          driverFirstName:true,
+          driverAddress:true,
+          driverPhoneNumber1:true,
+          driverSSN:true,
+          payments:true,
+          driverLicense:true,
+          lastPaymentDate:true
+        },
+      })
+      return driver;
+    } catch (error) {
+      throw error
+    }
+  }
 }

@@ -68,7 +68,7 @@ export default class DriverRepository {
 
       return emailUser;
     } catch (error) {
-      
+      throw error
     }
 
 

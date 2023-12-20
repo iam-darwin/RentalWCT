@@ -100,3 +100,32 @@ export const createDriver = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getDrivers=async(req: Request, res: Response)=>{
+  try {
+    const drivers=await admin.getDrivers();
+    return res.status(status.OK).json({
+      message:"Fetched all details",
+      data:drivers,
+    })
+  } catch (error) {
+    throw error
+  }
+}
+
+export const getDriverById=async (req:Request,res:Response)=>{
+  try {
+    const id=req.params.id;
+    const driverDetails=await admin.getDriverById(id);
+
+    return res.status(status.OK).json({
+      message:"User deatils",
+      data:driverDetails
+    })
+  } catch (error) {
+    return res.status(401).json({
+      message:"User not found",
+      err:error
+    })
+  }
+}

@@ -61,4 +61,22 @@ export default class AdminService{
     generateToken(data:JwtPayload){
         return jwt.sign(data, utils.JWT_SECRET, { expiresIn: '1h' });
     }
+
+    async getDrivers(){
+        try {
+            const drivers=await this.adminService.getAllDriverDetails();
+            return drivers;
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async getDriverById(id:string){
+        try {
+            const driver=await this.adminService.getDriver(id);
+            return driver;
+        } catch (error) {
+            throw error
+        }
+    }
 }
