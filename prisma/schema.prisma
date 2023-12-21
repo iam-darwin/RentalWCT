@@ -26,7 +26,7 @@ model Driver {
   email              String    @unique
   password           String
   driverAddress      String
-  status             String    @default("Active")
+  status             String    @default("ACTIVE")
   driverPhoneNumber1 String
   driverPhoneNumber2 String
   vehicleColor       String
@@ -36,7 +36,7 @@ model Driver {
   driverLicense      String    @unique
   driverSSN          String    @unique
   payments           Payment[]
-  lastPaymentDate    String  @default("null")
+  lastPaymentDate    String  @default("NULL")
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 }
@@ -55,26 +55,26 @@ model Payment {
 model Rides_Kaizen {
   ID                     Int      @id @default(autoincrement())
   RideID                 String   @unique
-  Ride_Status            String   @default("Pending_Update")
+  Ride_Status            String   
   Ride_Date              String 
   Customer_FirstName     String
   Customer_LastName      String
   Phone_Number           String
   Transportation_Type    String
   Cancel_Reason          String
-  Cost                   Float
+  Cost                   String
   Pick_Up_Time           String 
   Arrival_Time           String 
   Estimated_Arrival_Time String 
   Scheduled_Pickup_Time  String 
-  Estimated_Distance     Float
+  Estimated_Distance     String
   Pickup_Address         String
-  Pickup_Lat             Float
-  Pickup_Lng             Float
+  Pickup_Lat             String
+  Pickup_Lng             String
   Pickup_Directions      String
   Dropoff_Address        String
-  Dropoff_Lat            Float
-  Dropoff_Lng            Float
+  Dropoff_Lat            String
+  Dropoff_Lng            String
   Dropoff_Directions     String
   Driver_FirstName       String
   Driver_Photo_Url       String
@@ -92,28 +92,29 @@ model Rides_Kaizen {
   updatedAt              DateTime @updatedAt
 
 }
-model Rides {
+
+model Rides {//temporary table
   RideID                   String    @id @unique
-  Ride_Status              String    @default("PENDING")
+  Ride_Status              String     //ASSIGNED //CANCELLED //PENDING_UPDATE
   Ride_Date                String
   Customer_FirstName       String
   Customer_LastName        String
   Phone_Number             String
   Transportation_Type      String
   Cancel_Reason            String
-  Cost                     Float
+  Cost                     String
   Pick_Up_Time             String
   Arrival_Time             String
   Estimated_Arrival_Time   String
   Scheduled_Pickup_Time    String
-  Estimated_Distance       Float
+  Estimated_Distance       String
   Pickup_Address           String
-  Pickup_Lat               Float
-  Pickup_Lng               Float
+  Pickup_Lat               String
+  Pickup_Lng               String
   Pickup_Directions        String
   Dropoff_Address          String
-  Dropoff_Lat              Float
-  Dropoff_Lng              Float
+  Dropoff_Lat              String
+  Dropoff_Lng              String
   Dropoff_Directions       String
   Driver_ID                String
   Provider_Trip_Id         String
@@ -131,19 +132,19 @@ model CompletedRides {
   Phone_Number             String
   Transportation_Type      String
   Cancel_Reason            String
-  Cost                     Float
+  Cost                     String
   Pick_Up_Time             String
   Arrival_Time             String
   Estimated_Arrival_Time   String
   Scheduled_Pickup_Time    String
-  Estimated_Distance       Float
+  Estimated_Distance       String
   Pickup_Address           String
-  Pickup_Lat               Float
-  Pickup_Lng               Float
+  Pickup_Lat               String
+  Pickup_Lng               String
   Pickup_Directions        String
   Dropoff_Address          String
-  Dropoff_Lat              Float
-  Dropoff_Lng              Float
+  Dropoff_Lat              String
+  Dropoff_Lng              String
   Dropoff_Directions       String
   Driver_ID                String
   Provider_Trip_Id         String

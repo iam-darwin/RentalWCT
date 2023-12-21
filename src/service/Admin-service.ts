@@ -8,7 +8,7 @@ import { AdminRepository } from "../repository/index"
 import { AppError } from "../utils/Errors";
 
 export default class AdminService{
-    adminService: AdminRepository;
+    private adminService: AdminRepository;
     constructor(){
         this.adminService=new AdminRepository();
     }
@@ -75,6 +75,24 @@ export default class AdminService{
         try {
             const driver=await this.adminService.getDriver(id);
             return driver;
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async getActiveDrivers(){
+        try {
+            const active=await this.adminService.getActiverDrivers();
+            return active;
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async fileUpload(filePath:string){
+        try {
+            const upload=await this.adminService.uploadCsvFile(filePath);
+            return upload;
         } catch (error) {
             throw error
         }

@@ -129,3 +129,50 @@ export const getDriverById=async (req:Request,res:Response)=>{
     })
   }
 }
+
+export const getActiveDrivers=async (req:Request,res:Response)=>{
+  try {
+    const activeDrivers=await admin.getActiveDrivers();
+
+    return res.status(status.OK).json({
+      message:"Fetched users",
+      data:activeDrivers
+    })
+
+  } catch (error) {
+    return res.status(401).json({
+      message:"Unsuccessful req",
+      err:error
+    })
+  }
+}
+
+export const fileUpload =async (req:Request,res:Response)=>{
+  try {
+    if(!req.file){
+      return res.status(status.CONFLICT).json({
+        message:"File Not Uploaded"
+      })
+    }
+    const message=await admin.fileUpload(req.file.path);
+    
+    return res.status(status.OK).json({
+      msg:message,
+      success:true
+    })
+  } catch (error) {
+    //@ts-ignore
+    return (
+      res
+        //@ts-ignore
+        .status(error.statusCode)
+        .json({
+          //@ts-ignore
+          message: error.message,
+          success: "fail",
+          //@ts-ignore
+          explanation: error.explanation,
+        })
+    );
+  }
+}
