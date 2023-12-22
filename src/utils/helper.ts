@@ -18,3 +18,9 @@ export const upload = multer({
     }
   },
 });
+
+export function hasAtLeastTenDigits(input:string) {
+  const digitRegex = /\d/g;
+  const digitCount = (input.match(digitRegex) || []).length;
+  return digitCount < 10;
+}

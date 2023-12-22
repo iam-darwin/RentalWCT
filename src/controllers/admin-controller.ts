@@ -10,7 +10,6 @@ import {
   driverInputSchema,
 } from "../config/validations";
 import { log } from "console";
-import { prisma } from "../config/Connectdb";
 
 const admin = new AdminService();
 const driver = new DriverService();

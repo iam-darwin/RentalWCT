@@ -6,6 +6,9 @@ import * as csv from "fast-csv";
 import { prisma } from "../config/Connectdb";
 import { AdminInput } from "../intrefaces/index";
 import { AppError } from "../utils/Errors/index";
+import { hasAtLeastTenDigits } from "../utils/helper";
+
+
 
 export default class AdminRepository {
   async createAdmin(details: AdminInput) {
@@ -131,75 +134,146 @@ export default class AdminRepository {
           });
 
           if (!present) {
-            await prisma.rides_Kaizen.create({
-              data: {
-                RideID: ride["Ride ID"],
-                Ride_Status: ride["Status"],
-                Ride_Date: ride["Ride Date"],
-                Customer_FirstName: ride["First Name"],
-                Customer_LastName: ride["Last Name"],
-                Phone_Number: ride["Phone"],
-                Transportation_Type: ride["Transportation Type"],
-                Cancel_Reason: ride["Cancel Reason"],
-                Cost: ride["Cost"],
-                Pick_Up_Time: ride["Pick Up Time"],
-                Arrival_Time: ride["Arrival Time"],
-                Estimated_Arrival_Time: ride["Estimated Arrival Time"],
-                Scheduled_Pickup_Time: ride["Scheduled Pickup Time"],
-                Estimated_Distance: ride["Estimated Distance"],
-                Pickup_Address: ride["Pickup Address"],
-                Pickup_Lat: ride["Pickup Lat"],
-                Pickup_Lng: ride["Pickup Lng"],
-                Pickup_Directions: ride["Pickup Directions"],
-                Dropoff_Address: ride["Dropoff Address"],
-                Dropoff_Lat: ride["Dropoff Lat"],
-                Dropoff_Lng: ride["Dropoff Lng"],
-                Dropoff_Directions: ride["Dropoff Directions"],
-                Driver_FirstName: ride["Driver First Name"],
-                Driver_Photo_Url: ride["Driver Photo Url"],
-                Driver_Phone: ride["Driver Phone"],
-                Vehicle_Color: ride["Vehicle Color"],
-                Vehicle_Make: ride["Vehicle Make"],
-                Vehicle_Model: ride["Vehicle Model"],
-                Vehicle_License: ride["Vehicle License"],
-                Vehicle_Photo_Url: ride["Vehicle Photo Url"],
-                Provider_Name: ride["Provider Name"],
-                Provider_Trip_Id: ride["Provider Trip Id"],
-                Rider_Patient_ID: ride["Rider/Patient ID"],
-                Member_ID: ride["Member ID"],
-              },
-            });
-
-            await prisma.rides.create({
-              data: {
-                RideID: ride["Ride ID"],
-                Ride_Status: ride["Status"],
-                Ride_Date: ride["Ride Date"],
-                Customer_FirstName: ride["First Name"],
-                Customer_LastName: ride["Last Name"],
-                Phone_Number: ride["Phone"],
-                Transportation_Type: ride["Transportation Type"],
-                Cancel_Reason: ride["Cancel Reason"],
-                Cost: ride["Cost"],
-                Pick_Up_Time: ride["Pick Up Time"],
-                Arrival_Time: ride["Arrival Time"],
-                Estimated_Arrival_Time: ride["Estimated Arrival Time"],
-                Scheduled_Pickup_Time: ride["Scheduled Pickup Time"],
-                Estimated_Distance: ride["Estimated Distance"],
-                Pickup_Address: ride["Pickup Address"],
-                Pickup_Lat: ride["Pickup Lat"],
-                Pickup_Lng: ride["Pickup Lng"],
-                Pickup_Directions: ride["Pickup Directions"],
-                Dropoff_Address: ride["Dropoff Address"],
-                Dropoff_Lat: ride["Dropoff Lat"],
-                Dropoff_Lng: ride["Dropoff Lng"],
-                Dropoff_Directions: ride["Dropoff Directions"],
-                Provider_Trip_Id: ride["Provider Trip Id"],
-                Rider_Patient_ID: ride["Rider/Patient ID"],
-                Driver_ID:"NULL"
-              }
-
-            });
+            if(hasAtLeastTenDigits(ride["Phone"])){
+              await prisma.rides_Kaizen.create({
+                data: {
+                  RideID: ride["Ride ID"],
+                  Ride_Status: ride["Status"],
+                  Ride_Date: ride["Ride Date"],
+                  Customer_FirstName: ride["First Name"],
+                  Customer_LastName: ride["Last Name"],
+                  Phone_Number: ride["Transportation Type"],
+                  Transportation_Type: ride["Cancel Reason"],
+                  Cancel_Reason: ride["Cost"],
+                  Cost: ride["Pick Up Time"],
+                  Pick_Up_Time: ride["Arrival Time"],
+                  Arrival_Time: ride["Estimated Arrival Time"],
+                  Estimated_Arrival_Time: ride["Scheduled Pickup Time"],
+                  Scheduled_Pickup_Time: ride["Estimated Distance"],
+                  Estimated_Distance: ride["Pickup Address"],
+                  Pickup_Address: ride["Pickup Lat"],
+                  Pickup_Lat: ride["Pickup Lng"],
+                  Pickup_Lng: ride["Pickup Directions"],
+                  Pickup_Directions: ride["Dropoff Address"],
+                  Dropoff_Address: ride["Dropoff Lat"],
+                  Dropoff_Lat: ride["Dropoff Lng"],
+                  Dropoff_Lng: ride["Dropoff Directions"],
+                  Dropoff_Directions: ride["Driver First Name"],
+                  Driver_FirstName: ride["Driver Photo Url"],
+                  Driver_Photo_Url: ride["Driver Phone"],
+                  Driver_Phone: ride["Vehicle Color"],
+                  Vehicle_Color: ride["Vehicle Make"],
+                  Vehicle_Make: ride["Vehicle Model"],
+                  Vehicle_Model: ride["Vehicle License"],
+                  Vehicle_License: ride["Vehicle Photo Url"],
+                  Vehicle_Photo_Url: ride["Provider Name"],
+                  Provider_Name: ride["Provider Trip Id"],
+                  Provider_Trip_Id: ride["Rider/Patient ID"],
+                  Rider_Patient_ID: ride["Member ID"],
+                  Member_ID: ride[""],
+                },
+              });
+              await prisma.rides.create({
+                data: {
+                  RideID: ride["Ride ID"],
+                  Ride_Status: ride["Status"],
+                  Ride_Date: ride["Ride Date"],
+                  Customer_FirstName: ride["First Name"],
+                  Customer_LastName: ride["Last Name"],
+                  Phone_Number: ride["Transportation Type"],
+                  Transportation_Type: ride["Cancel Reason"],
+                  Cancel_Reason: ride["Cost"],
+                  Cost: ride["Pick Up Time"],
+                  Pick_Up_Time: ride["Arrival Time"],
+                  Arrival_Time: ride["Estimated Arrival Time"],
+                  Estimated_Arrival_Time: ride["Scheduled Pickup Time"],
+                  Scheduled_Pickup_Time: ride["Estimated Distance"],
+                  Estimated_Distance: ride["Pickup Address"],
+                  Pickup_Address: ride["Pickup Lat"],
+                  Pickup_Lat: ride["Pickup Lng"],
+                  Pickup_Lng: ride["Pickup Directions"],
+                  Pickup_Directions: ride["Dropoff Address"],
+                  Dropoff_Address: ride["Dropoff Lat"],
+                  Dropoff_Lat: ride["Dropoff Lng"],
+                  Dropoff_Lng: ride["Dropoff Directions"],
+                  Dropoff_Directions: ride["Driver First Name"],
+                  Provider_Trip_Id: ride["Rider/Patient ID"],
+                  Rider_Patient_ID: ride["Member ID"],
+                  Driver_ID:"NULL"
+                }
+  
+              });
+            }else{
+              await prisma.rides_Kaizen.create({
+                data: {
+                  RideID: ride["Ride ID"],
+                  Ride_Status: ride["Status"],
+                  Ride_Date: ride["Ride Date"],
+                  Customer_FirstName: ride["First Name"],
+                  Customer_LastName: ride["Last Name"],
+                  Phone_Number: ride["Phone"],
+                  Transportation_Type: ride["Transportation Type"],
+                  Cancel_Reason: ride["Cancel Reason"],
+                  Cost: ride["Cost"],
+                  Pick_Up_Time: ride["Pick Up Time"],
+                  Arrival_Time: ride["Arrival Time"],
+                  Estimated_Arrival_Time: ride["Estimated Arrival Time"],
+                  Scheduled_Pickup_Time: ride["Scheduled Pickup Time"],
+                  Estimated_Distance: ride["Estimated Distance"],
+                  Pickup_Address: ride["Pickup Address"],
+                  Pickup_Lat: ride["Pickup Lat"],
+                  Pickup_Lng: ride["Pickup Lng"],
+                  Pickup_Directions: ride["Pickup Directions"],
+                  Dropoff_Address: ride["Dropoff Address"],
+                  Dropoff_Lat: ride["Dropoff Lat"],
+                  Dropoff_Lng: ride["Dropoff Lng"],
+                  Dropoff_Directions: ride["Dropoff Directions"],
+                  Driver_FirstName: ride["Driver First Name"],
+                  Driver_Photo_Url: ride["Driver Photo Url"],
+                  Driver_Phone: ride["Driver Phone"],
+                  Vehicle_Color: ride["Vehicle Color"],
+                  Vehicle_Make: ride["Vehicle Make"],
+                  Vehicle_Model: ride["Vehicle Model"],
+                  Vehicle_License: ride["Vehicle License"],
+                  Vehicle_Photo_Url: ride["Vehicle Photo Url"],
+                  Provider_Name: ride["Provider Name"],
+                  Provider_Trip_Id: ride["Provider Trip Id"],
+                  Rider_Patient_ID: ride["Rider/Patient ID"],
+                  Member_ID: ride["Member ID"],
+                },
+              });
+  
+              await prisma.rides.create({
+                data: {
+                  RideID: ride["Ride ID"],
+                  Ride_Status: ride["Status"],
+                  Ride_Date: ride["Ride Date"],
+                  Customer_FirstName: ride["First Name"],
+                  Customer_LastName: ride["Last Name"],
+                  Phone_Number: ride["Phone"],
+                  Transportation_Type: ride["Transportation Type"],
+                  Cancel_Reason: ride["Cancel Reason"],
+                  Cost: ride["Cost"],
+                  Pick_Up_Time: ride["Pick Up Time"],
+                  Arrival_Time: ride["Arrival Time"],
+                  Estimated_Arrival_Time: ride["Estimated Arrival Time"],
+                  Scheduled_Pickup_Time: ride["Scheduled Pickup Time"],
+                  Estimated_Distance: ride["Estimated Distance"],
+                  Pickup_Address: ride["Pickup Address"],
+                  Pickup_Lat: ride["Pickup Lat"],
+                  Pickup_Lng: ride["Pickup Lng"],
+                  Pickup_Directions: ride["Pickup Directions"],
+                  Dropoff_Address: ride["Dropoff Address"],
+                  Dropoff_Lat: ride["Dropoff Lat"],
+                  Dropoff_Lng: ride["Dropoff Lng"],
+                  Dropoff_Directions: ride["Dropoff Directions"],
+                  Provider_Trip_Id: ride["Provider Trip Id"],
+                  Rider_Patient_ID: ride["Rider/Patient ID"],
+                  Driver_ID:"NULL"
+                }
+  
+              });
+            }       
           } else {
             await prisma.rides_Kaizen.update({
               where: {
