@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import status from "http-status";
 
@@ -9,6 +9,8 @@ import {
   loginSchema,
   driverInputSchema,
 } from "../config/validations";
+import { log } from "console";
+import { prisma } from "../config/Connectdb";
 
 const admin = new AdminService();
 const driver = new DriverService();
@@ -174,5 +176,46 @@ export const fileUpload =async (req:Request,res:Response)=>{
           explanation: error.explanation,
         })
     );
+  }
+}
+
+export const getUnAssignedRides=async (req:Request,res:Response,next:NextFunction)=>{
+  try {
+    const rides=await admin.getUnAssiignedRides();
+    log(rides.length)
+    return res.status(status.OK).json({
+      data:rides
+    })
+  } catch (error) {
+    next(error);
+  }
+}
+
+export const assignRideToDriver=async (req:Request,res:Response,next:NextFunction)=>{
+  try {
+    console.log(typeof req.body.rideID);
+    
+    const success=await admin.assginRideToDriver(req.body.rideID,req.body.driverId);
+
+    return res.status(status.OK).json({
+      message:`ASSIGNED DRIVER`,
+      assigned:success,
+      rideId:req.body.rideID
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+
+export const getAssignedRides=async (req:Request,res:Response,next:NextFunction)=>{
+  try {
+    const rides=await admin.getAssignRides();
+    log(rides.length)
+    return res.status(status.OK).json({
+      data:rides
+    })
+  } catch (error) {
+    next(error);
   }
 }

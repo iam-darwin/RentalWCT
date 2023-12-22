@@ -240,4 +240,92 @@ export default class AdminRepository {
       }
     }
   }
+
+  async getUnAssignedRides(){
+    try {
+      const details = await prisma.rides.findMany({
+        where: {
+          Ride_Status: {
+            in: ["UPCOMING","PENDING_UPDATE"],
+          },
+        },
+        select:{
+          RideID:true,
+          Ride_Status:true,
+          Ride_Date:true,
+          Customer_FirstName:true,
+          Customer_LastName:true,
+          Phone_Number:true,
+          Transportation_Type:true,
+          Pick_Up_Time:true,
+          Arrival_Time:true,
+          Estimated_Distance:true,
+          Pickup_Address:true,
+          Dropoff_Address:true,
+          Pickup_Directions:true
+        }
+      });
+      return details;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async assignRideToDriver(rideID:string,driverId:string){
+    try {
+      
+      //update as ASSIGNED in the databse
+
+      const updated=await prisma.rides.findUnique({
+        where:{
+          RideID:rideID
+        }
+      })
+
+      if(!updated){
+        throw Error("RIDE_IS_NOT_ASSIGNED")
+      }
+
+      const ride=await prisma.rides.update({
+        where:{
+          RideID:rideID,
+        },
+        data:{
+          Ride_Status:"ASSIGNED",
+          Driver_ID:driverId
+        },
+      })
+      return ride;
+
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async getAssignedRides(){
+    try {
+      const details = await prisma.rides.findMany({
+        where: {
+          Ride_Status: {
+            in: ["ASSIGNED"],
+          },
+        },
+        select:{
+          RideID:true,
+          Ride_Date:true,
+          Customer_FirstName:true,
+          Customer_LastName:true,
+          Phone_Number:true,
+          Transportation_Type:true,
+          Pick_Up_Time:true,
+          Arrival_Time:true,
+          Estimated_Distance:true,
+          Driver_ID:true
+        }
+      });
+      return details;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

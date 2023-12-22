@@ -24,3 +24,17 @@ export interface DriverInput{
   driverSSN:string,
   driverLicense:string
 }
+
+export interface Rides{
+  RideID:string,
+  Ride_Date:string,
+  Customer_FirstName:string,
+  Customer_LastName:string,
+  Phone_Number:string,
+  Scheduled_Pickup_Time:string,
+  Estimated_Arrival_Time:string,
+  Estimated_Distance:string,
+  Dropoff_Directions:string
+  Pickup_Address:string,
+  Dropoff_Address:string
+}

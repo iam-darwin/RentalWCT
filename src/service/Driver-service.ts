@@ -8,7 +8,7 @@ import { utils } from "../utils";
 import { AppError } from "../utils/Errors";
 
 export default class DriverService{
-    driverRepo: DriverRepository;
+    private driverRepo: DriverRepository;
     constructor(){
         this.driverRepo=new DriverRepository();
     }

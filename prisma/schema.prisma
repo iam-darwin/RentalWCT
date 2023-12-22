@@ -95,7 +95,7 @@ model Rides_Kaizen {
 
 model Rides {//temporary table
   RideID                   String    @id @unique
-  Ride_Status              String     //ASSIGNED //CANCELLED //PENDING_UPDATE
+  Ride_Status              String     //ASSIGNED //CANCELLED //PENDING_UPDATE 
   Ride_Date                String
   Customer_FirstName       String
   Customer_LastName        String
@@ -125,7 +125,7 @@ model Rides {//temporary table
 
 model CompletedRides {
   RideID                   String    @id @unique
-  Ride_Status              String
+  Ride_Status              String    //only COMPLETED
   Ride_Date                String
   Customer_FirstName       String
   Customer_LastName        String
