@@ -73,4 +73,18 @@ export default class DriverRepository {
 
 
   }
+
+  async getAssignedRides(driverId:string){ //driver checking his website after getting message
+    try {
+      const rides=await prisma.rides.findMany({
+        where:{
+          Driver_ID:driverId
+        }
+      })
+
+      return rides
+    } catch (error) {
+      throw error      
+    }
+  }
 }

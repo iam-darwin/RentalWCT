@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import status from "http-status";
 
@@ -33,3 +33,15 @@ export const loginDriver = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const checkHisRides=async (req: Request, res: Response,next:NextFunction)=>{
+  try {
+    const rides=await driver.getAssignedRides(req.body.driverID);
+    return res.status(status.OK).json({
+      message:"Successfully fetched rides",
+      data:rides
+    })
+  } catch (error) {
+    next(error)
+  }
+}

@@ -60,4 +60,13 @@ export default class DriverService{
         return jwt.sign(data,utils.JWT_SECRET,{expiresIn:'2h'})
     }
 
+    async getAssignedRides(driverId:string){
+        try {
+            const rides =await this.driverRepo.getAssignedRides(driverId);
+            return rides;
+        } catch (error) {
+            throw error
+        }
+    }
+
 }

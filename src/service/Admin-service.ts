@@ -175,8 +175,8 @@ export default class AdminService {
         body: `Your ride details
             Customer Name :${data.Customer_FirstName} ${data.Customer_LastName}, PhoneNo: ${data.Phone_Number},PickUpTime:${data.Scheduled_Pickup_Time},ArrivalTime:${data.Estimated_Arrival_Time},Pick Up Address :${data.Pickup_Address},Drop Off Address:${data.Dropoff_Address},Instructions:${data.Dropoff_Directions},Distance :${data.Estimated_Distance} 
             `,
-        to: "+918639508399",
-        from: "+18166563297",
+        to: utils.toNumber,
+        from: utils.fromNumber,
       });
 
       log(message);
