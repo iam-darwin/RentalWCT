@@ -38,3 +38,18 @@ export interface Rides{
   Pickup_Address:string,
   Dropoff_Address:string
 }
+
+export interface DriverUpdateInput{
+  driverFirstName?:string,
+  driverLastName?:string,
+  email?:string,
+  driverAddress?:string,
+  driverPhoneNumber1?:string,
+  driverPhoneNumber2?:string,
+  vehicleColor?:string,
+  vehicleMake?:string,
+  vehicleModel?:string,
+  vehicleLicense?:string,
+  driverSSN?:string,
+  driverLicense?:string
+}

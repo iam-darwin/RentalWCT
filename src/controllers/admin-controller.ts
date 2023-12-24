@@ -218,3 +218,15 @@ export const getAssignedRides=async (req:Request,res:Response,next:NextFunction)
     next(error);
   }
 }
+
+export const updateDrivedetails=async (req:Request,res:Response,next:NextFunction)=>{
+try {
+  const user=await admin.updateDriverDetails(req.body.id,req.body);
+  return res.status(status.NO_CONTENT).json({
+    message:"Sucessfully Updated",
+    status:user
+  })
+} catch (error) {
+  next(error);
+}
+}

@@ -4,7 +4,7 @@ import fs from "fs";
 import * as csv from "fast-csv";
 
 import { prisma } from "../config/Connectdb";
-import { AdminInput } from "../intrefaces/index";
+import { AdminInput,DriverUpdateInput } from "../intrefaces/index";
 import { AppError } from "../utils/Errors/index";
 import { hasAtLeastTenDigits } from "../utils/helper";
 
@@ -401,5 +401,45 @@ export default class AdminRepository {
     } catch (error) {
       throw error;
     }
+  }
+
+  async updateDriverDetails(id:string,updateFields:DriverUpdateInput){
+    try {
+      const user=await prisma.driver.findUnique({
+        where:{
+          driverID:id
+        }
+      })
+
+      if(!user){
+        throw new Error("USER_NOT_FOUND")
+      }
+
+      const fields={}
+
+      for(const field in updateFields){
+        //@ts-ignore
+        if(user[field]!=undefined){
+          //@ts-ignore
+          fields[field] = user[field];
+        }
+      }
+
+      const updateDetails=await prisma.driver.update({
+        where:{
+          driverID:id
+        },
+        data:fields
+      })
+
+      if(!updateDetails){
+        throw new Error("USER_NOT_UPDATED")
+      }
+
+      return true;
+    } catch (error) {
+      
+    }
+   
   }
 }

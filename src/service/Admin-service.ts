@@ -3,7 +3,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import status from "http-status";
 import * as TwilioSDK from "twilio";
 
-import { AdminInput, LoginInput, Rides } from "../intrefaces";
+import { AdminInput, DriverUpdateInput, LoginInput, Rides } from "../intrefaces";
 import { utils } from "../utils";
 import { AdminRepository } from "../repository/index";
 import { AppError } from "../utils/Errors";
@@ -151,8 +151,9 @@ export default class AdminService {
         Pickup_Address,
         Dropoff_Address,
       };
-      const messageData = this.sendSms(data).then((messagedata) => messagedata); //this task
-      return messageData;
+      // const messageData = this.sendSms(data).then((messagedata) => messagedata); //this will send SMS
+      // return messageData;
+      return true;
     } catch (error) {
       throw error;
     }
@@ -165,7 +166,17 @@ export default class AdminService {
     } catch (error) {
       throw error;
     }
-  } 
+  }
+
+  async updateDriverDetails(id:string,updateFields:DriverUpdateInput){
+    try {
+      const user=await this.adminService.updateDriverDetails(id,updateFields);
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
 
   private async sendSms(data: Rides) {
     const client = new TwilioSDK.Twilio(utils.accountSid, utils.authToken);
