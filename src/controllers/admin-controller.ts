@@ -221,7 +221,7 @@ export const getAssignedRides=async (req:Request,res:Response,next:NextFunction)
 
 export const updateDrivedetails=async (req:Request,res:Response,next:NextFunction)=>{
 try {
-  const user=await admin.updateDriverDetails(req.body.driverId,req.body);
+  const user=await admin.updateDriverDetails(req.params.driverId,req.body);
   return res.status(status.NO_CONTENT).json({
     message:"Sucessfully Updated",
     status:user
@@ -229,4 +229,17 @@ try {
 } catch (error) {
   next(error);
 }
+}
+
+export const updateRideAsCompleted=async (req:Request,res:Response,next:NextFunction)=>{
+  try {
+    const data=await admin.updateRideAsCompleted(req.body.rideID);
+    return res.status(status.OK).json({
+      message:"Data Succesfully Updated",
+      details:data,
+      err:{}
+    })
+  } catch (error) {
+    next(error)
+  }
 }

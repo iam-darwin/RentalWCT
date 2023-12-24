@@ -206,4 +206,13 @@ export default class AdminService {
       throw error;
     }
   }
+
+  async updateRideAsCompleted(rideId:string){
+    try {
+      const details=await this.adminService.updateRideAsCompleted(rideId);
+      return details;
+    } catch (error) {
+      throw error
+    }
+  }
 }

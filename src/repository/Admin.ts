@@ -6,7 +6,7 @@ import * as csv from "fast-csv";
 import { prisma } from "../config/Connectdb";
 import { AdminInput,DriverUpdateInput } from "../intrefaces/index";
 import { AppError } from "../utils/Errors/index";
-import { hasAtLeastTenDigits } from "../utils/helper";
+import { excludeFields, hasAtLeastTenDigits } from "../utils/helper";
 
 
 
@@ -339,6 +339,7 @@ export default class AdminRepository {
           Pickup_Directions:true
         }
       });
+
       return details;
     } catch (error) {
       throw error;
@@ -441,5 +442,29 @@ export default class AdminRepository {
       
     }
    
+  }
+
+  async updateRideAsCompleted(rideId:string){
+    try {
+      const findRide=await prisma.rides.update({
+        where:{
+          RideID:rideId
+        },
+        data:{
+          Ride_Status:"COMPLETED"
+        }
+      })
+      if(!findRide) throw new Error("No_Ride_FInd");
+      
+      const updateDetails=excludeFields(findRide,['createdAt','updatedAt'])
+
+      const completedRides=await prisma.completedRides.create({
+        //@ts-ignore
+        data:updateDetails
+      })
+      return completedRides;
+    } catch (error) {
+     throw error 
+    }
   }
 }

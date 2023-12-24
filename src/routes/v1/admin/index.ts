@@ -1,21 +1,22 @@
 import express from "express";
-import { assignRideToDriver, createDriver, fileUpload, getActiveDrivers, getAssignedRides, getDriverById, getDrivers, getUnAssignedRides, loginAdmin, registerAdmin,updateDrivedetails } from "../../../controllers/admin-controller";
+import * as adminControllers from "../../../controllers/admin-controller";
 import { authAdmin } from "../../../middlewares";
 import { upload } from "../../../utils/helper";
 
+
 const router = express.Router();
 
-router.post("/signUp",registerAdmin)
-router.post("/signIn",loginAdmin)
-router.post("/addDriver",createDriver);
-router.get("/drivers",getDrivers)
-router.get("/driver/:id",authAdmin,getDriverById)
-router.get("/activeDrivers",authAdmin,getActiveDrivers)
-router.post("/fileUpload",upload.single('csvFile'),fileUpload)
-router.get("/unAssignedRides",getUnAssignedRides)
-router.post("/assignRide",assignRideToDriver)
-router.get("/assignedRides",getAssignedRides)
-router.post("/updateDriverDetails",updateDrivedetails)
-
+router.post("/signUp",adminControllers.registerAdmin)
+router.post("/signIn",adminControllers.loginAdmin)
+router.post("/addDriver",adminControllers.createDriver);
+router.get("/drivers",adminControllers.getDrivers)
+router.get("/driver/:id",authAdmin,adminControllers.getDriverById)
+router.get("/activeDrivers",authAdmin,adminControllers.getActiveDrivers)
+router.post("/fileUpload",upload.single('csvFile'),adminControllers.fileUpload)
+router.get("/unAssignedRides",adminControllers.getUnAssignedRides)
+router.post("/assignRide",adminControllers.assignRideToDriver)
+router.get("/assignedRides",adminControllers.getAssignedRides)
+router.post("/updateDriverDetails",adminControllers.updateDrivedetails)
+router.post("/updateRideAsCompleted",adminControllers.updateRideAsCompleted)
 
 export default router;

@@ -24,3 +24,10 @@ export function hasAtLeastTenDigits(input:string) {
   const digitCount = (input.match(digitRegex) || []).length;
   return digitCount < 10;
 }
+
+export function excludeFields<T>(obj: T, keys: (keyof T)[]): Partial<T> {
+  return Object.fromEntries(
+    //@ts-ignore
+    Object.entries(obj).filter(([key]) => !keys.includes(key as keyof T))
+  ) as Partial<T>;
+}

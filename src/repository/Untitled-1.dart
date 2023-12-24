@@ -109,3 +109,19 @@ RideID: ride["Ride ID"],
                   Provider_Trip_Id: ride["Rider/Patient ID"],
                   Rider_Patient_ID: ride["Member ID"],
                   Member_ID: ride[""],
+
+                  select:{
+          RideID:true,
+          Ride_Status:true,
+          Ride_Date:true,
+          Customer_FirstName:true,
+          Customer_LastName:true,
+          Phone_Number:true,
+          Transportation_Type:true,
+          Pick_Up_Time:true,
+          Arrival_Time:true,
+          Estimated_Distance:true,
+          Pickup_Address:true,
+          Dropoff_Address:true,
+          Pickup_Directions:true
+        }
