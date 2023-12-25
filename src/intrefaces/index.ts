@@ -39,6 +39,11 @@ export interface Rides{
   Dropoff_Address:string
 }
 
+export interface RidesAssignedUpdate{
+  Ride_Status?:string,
+  Driver_ID?:string
+}
+
 export interface DriverUpdateInput{
   driverFirstName?:string,
   driverLastName?:string,

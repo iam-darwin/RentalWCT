@@ -3,7 +3,7 @@ import status from "http-status";
 
 import { prisma } from "../config/Connectdb";
 import { DriverInput } from "../intrefaces";
-import { AppError } from "../utils/Errors";
+import { AppError, ServiceError } from "../utils/Errors";
 
 export default class DriverRepository {
   async createDriver(details: DriverInput) {
@@ -20,7 +20,7 @@ export default class DriverRepository {
       });
 
       if(existingDriver){
-        throw new Error("User_Exits")
+        throw new ServiceError("User Exists","Driver with these details already exists",status.CONFLICT);
       }
 
       const hashedPassword = await bcrypt.hash(details.password, 10);
@@ -49,12 +49,13 @@ export default class DriverRepository {
         },
       });
 
+      if(!driver){
+        throw new ServiceError("Failed to create","Not able to create Driver",status.INTERNAL_SERVER_ERROR);
+      }
+
       return driver;
     } catch (error) {
-        //@ts-ignore
-        if(error.message=="User_Exits"){
-            throw new AppError("User_exist","User with similar details already exists",status.CONFLICT)
-        }
+       throw error;
     }
   }
 
@@ -85,6 +86,36 @@ export default class DriverRepository {
       return rides
     } catch (error) {
       throw error      
+    }
+  }
+
+  async getCompletedRides(driverId:string){
+    try {
+      const rides=await prisma.completedRides.findMany({
+        where:{
+            Driver_ID:driverId,
+            Ride_Status:'COMPLETED'
+        },
+        select:{
+          RideID:true,
+          Ride_Status:true,
+          Ride_Date:true,
+          Customer_FirstName:true,
+          Customer_LastName:true,
+          Phone_Number:true,
+          Transportation_Type:true,
+          Pick_Up_Time:true,
+          Arrival_Time:true,
+          Estimated_Distance:true,
+          Pickup_Address:true,
+          Dropoff_Address:true,
+          Pickup_Directions:true,
+          Cost:true
+        }
+      })
+      return rides;
+    } catch (error) {
+      
     }
   }
 }

@@ -31,3 +31,13 @@ export function excludeFields<T>(obj: T, keys: (keyof T)[]): Partial<T> {
     Object.entries(obj).filter(([key]) => !keys.includes(key as keyof T))
   ) as Partial<T>;
 }
+
+export function calculateCost(amountString: string): string {
+  const amount = parseFloat(amountString);
+  if (!isNaN(amount)) {
+    const result = (amount * 1.2).toFixed(2);
+    return result;
+  } else {
+    return "Invalid input, please provide a valid number.";
+  }
+}

@@ -18,5 +18,6 @@ router.post("/assignRide",adminControllers.assignRideToDriver)
 router.get("/assignedRides",adminControllers.getAssignedRides)
 router.post("/updateDriverDetails",adminControllers.updateDrivedetails)
 router.post("/updateRideAsCompleted",adminControllers.updateRideAsCompleted)
+router.post("/updateAssignRides",adminControllers.updateAssignedRides);
 
 export default router;

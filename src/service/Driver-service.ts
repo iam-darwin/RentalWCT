@@ -4,7 +4,7 @@ import status from "http-status";
 
 import { DriverInput, LoginInput } from "../intrefaces";
 import { DriverRepository } from "../repository";
-import { utils } from "../utils";
+import { utils } from "../utils/utilities";
 import { AppError } from "../utils/Errors";
 
 export default class DriverService{
@@ -18,8 +18,6 @@ export default class DriverService{
             const driver=await this.driverRepo.createDriver(data);
             return driver
         } catch (error) {
-            //@ts-ignore
-            console.log("error in service layer: ", error.message);
             throw error
             
         }
@@ -66,6 +64,15 @@ export default class DriverService{
             return rides;
         } catch (error) {
             throw error
+        }
+    }
+
+    async getCompletedRidesDriver(driverId:string){
+        try {
+            const rides=await this.driverRepo.getCompletedRides(driverId);
+            return rides;
+        } catch (error) {
+            throw error;
         }
     }
 

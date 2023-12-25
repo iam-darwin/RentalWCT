@@ -3,11 +3,12 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import status from "http-status";
 import * as TwilioSDK from "twilio";
 
-import { AdminInput, DriverUpdateInput, LoginInput, Rides } from "../intrefaces";
-import { utils } from "../utils";
+import { AdminInput, DriverUpdateInput, LoginInput, Rides, RidesAssignedUpdate } from "../intrefaces";
+import { utils} from "../utils/utilities";
 import { AdminRepository } from "../repository/index";
-import { AppError } from "../utils/Errors";
-import { log } from "console";
+import { AppError, ServiceError } from "../utils/Errors";
+import httpStatus from "http-status";
+
 
 export default class AdminService {
   private adminService: AdminRepository;
@@ -30,7 +31,7 @@ export default class AdminService {
       const findAdmin = await this.adminService.getAdminByEmail(data.email);
 
       if (!findAdmin) {
-        throw Error("No_Admin");
+        throw new ServiceError("NOT_FOUND","User with email didnt found",httpStatus.NOT_FOUND)
       }
 
       const passwordMatch = await bcrypt.compare(
@@ -39,33 +40,14 @@ export default class AdminService {
       );
 
       if (!passwordMatch) {
-        throw new Error("Password_Wrong");
+        throw new AppError("Password Incorrect","Invalid Password",httpStatus.UNAUTHORIZED);
       }
       const { adminId, name } = findAdmin;
       const token = this.generateToken({ adminId, name });
 
       return token;
     } catch (error) {
-      //@ts-ignore
-      console.log(error.message);
-      //@ts-ignore
-      console.log("Service layer error :", error.name);
-      //@ts-ignore
-      if (error.message == "Password_Wrong") {
-        throw new AppError(
-          "Password_Wrong",
-          "Incorrect Password",
-          status.UNAUTHORIZED
-        );
-      }
-      //@ts-ignore
-      if (error.message == "No_Admin") {
-        throw new AppError(
-          "Email Invalid",
-          "User with email Not found",
-          status.NOT_FOUND
-        );
-      }
+      throw error
     }
   }
 
@@ -151,9 +133,8 @@ export default class AdminService {
         Pickup_Address,
         Dropoff_Address,
       };
-      // const messageData = this.sendSms(data).then((messagedata) => messagedata); //this will send SMS
-      // return messageData;
-      return true;
+      const messageData =await this.sendSms(data) //this will send SMS
+      return messageData;
     } catch (error) {
       throw error;
     }
@@ -189,16 +170,14 @@ export default class AdminService {
         to: utils.toNumber,
         from: utils.fromNumber,
       });
-
-      log(message);
-
+      console.log(message)
       //@ts-ignore
       if (message.code) {
-        throw new Error("Message_NOT_SENT");
+        throw new ServiceError("SMS NOT SENT","Not able to send sms to driver",status.INTERNAL_SERVER_ERROR);
       }
 
       if (!message.body) {
-        throw new Error("Message_not_sent");
+        throw new ServiceError("SMS NOT SENT","Not able to send sms to driver",status.INTERNAL_SERVER_ERROR);
       }
 
       return message.body ? true : false;
@@ -211,6 +190,19 @@ export default class AdminService {
     try {
       const details=await this.adminService.updateRideAsCompleted(rideId);
       return details;
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async updateAssignRides(rideId:string,data:RidesAssignedUpdate){
+    try {
+      const updated=await this.adminService.updateAssignedRides(rideId,data);
+      if(data.Driver_ID){
+        const sendSms=await this.sendSms(updated);
+        return sendSms;
+      }
+      return updated?true:false;
     } catch (error) {
       throw error
     }

@@ -4,9 +4,10 @@ import fs from "fs";
 import * as csv from "fast-csv";
 
 import { prisma } from "../config/Connectdb";
-import { AdminInput,DriverUpdateInput } from "../intrefaces/index";
-import { AppError } from "../utils/Errors/index";
-import { excludeFields, hasAtLeastTenDigits } from "../utils/helper";
+import { AdminInput,DriverUpdateInput, RidesAssignedUpdate } from "../intrefaces/index";
+import { AppError, ServiceError } from "../utils/Errors/index";
+import { calculateCost, excludeFields, hasAtLeastTenDigits } from "../utils/helper";
+import httpStatus from "http-status";
 
 
 
@@ -32,8 +33,6 @@ export default class AdminRepository {
           password: hashedPassword,
         },
       });
-
-      console.log("Admin user created:", user);
 
       return user;
     } catch (error) {
@@ -63,8 +62,13 @@ export default class AdminRepository {
           email,
         },
       });
+      if(!user){
+        throw new ServiceError("NOT_FOUND","User with email didnt found",httpStatus.NOT_FOUND)
+      }
       return user;
-    } catch (error) {}
+    } catch (error) {
+      throw error
+    }
   }
 
   async getActiverDrivers() {
@@ -78,7 +82,9 @@ export default class AdminRepository {
           driverLastName: true,
         },
       });
-
+      if(!active){
+        throw new ServiceError("Something went wrong","Not able to fetch details",status.INTERNAL_SERVER_ERROR);
+      }
       return active;
     } catch (error) {
       throw error;
@@ -92,6 +98,9 @@ export default class AdminRepository {
           payments: true,
         },
       });
+      if(!drivers){
+        throw new ServiceError("Something went wrong","Not able to fetch details",status.INTERNAL_SERVER_ERROR);
+      }
       return drivers;
     } catch (error) {
       throw error;
@@ -115,6 +124,10 @@ export default class AdminRepository {
           lastPaymentDate: true,
         },
       });
+
+      if(!driver){
+        throw new ServiceError("Something went wrong","Not able to fetch details",status.INTERNAL_SERVER_ERROR);
+      }
       return driver;
     } catch (error) {
       throw error;
@@ -300,18 +313,11 @@ export default class AdminRepository {
         });
       stream.on("error", (error) => {
         console.error(error);
-        throw new Error("File_Upload");
+        throw new ServiceError("Something went wrong","Not able to upload file to database",status.INTERNAL_SERVER_ERROR);
       });
       return "successFully Uploaded";
     } catch (error) {
-      //@ts-ignore
-      if (error.message == "File_Upload") {
-        throw new AppError(
-          "FILE_NOT_UPLOADED",
-          "File upload unsucessfull",
-          status.INTERNAL_SERVER_ERROR
-        );
-      }
+      throw error
     }
   }
 
@@ -339,7 +345,9 @@ export default class AdminRepository {
           Pickup_Directions:true
         }
       });
-
+      if(!details){
+        throw new ServiceError("Something went wrong","Not able to fetch details",status.INTERNAL_SERVER_ERROR);
+      }
       return details;
     } catch (error) {
       throw error;
@@ -358,18 +366,24 @@ export default class AdminRepository {
       })
 
       if(!updated){
-        throw Error("RIDE_IS_NOT_ASSIGNED")
+        throw new ServiceError("Ride Not Available","Not able to assign unavailable ride",status.INTERNAL_SERVER_ERROR);
       }
-
+      
+      const rideCost=calculateCost(updated.Estimated_Distance);
+  
       const ride=await prisma.rides.update({
         where:{
           RideID:rideID,
         },
         data:{
           Ride_Status:"ASSIGNED",
-          Driver_ID:driverId
+          Driver_ID:driverId,
+          Cost:rideCost
         },
       })
+      if(!ride){
+        throw new ServiceError("Something went wrong","Not able to update ride",status.INTERNAL_SERVER_ERROR);
+      }
       return ride;
 
     } catch (error) {
@@ -388,6 +402,7 @@ export default class AdminRepository {
         select:{
           RideID:true,
           Ride_Date:true,
+          Ride_Status:true,
           Customer_FirstName:true,
           Customer_LastName:true,
           Phone_Number:true,
@@ -395,9 +410,13 @@ export default class AdminRepository {
           Pick_Up_Time:true,
           Arrival_Time:true,
           Estimated_Distance:true,
-          Driver_ID:true
+          Driver_ID:true,
+          Cost:true,
         }
       });
+      if(!details){
+        throw new ServiceError("Something went wrong","Not able to fetch details",status.INTERNAL_SERVER_ERROR);
+      }
       return details;
     } catch (error) {
       throw error;
@@ -413,7 +432,7 @@ export default class AdminRepository {
       })
 
       if(!user){
-        throw new Error("USER_NOT_FOUND")
+        throw new ServiceError("User Not Found","Not able to update driver details",status.INTERNAL_SERVER_ERROR)
       }
 
       const fields={}
@@ -434,7 +453,7 @@ export default class AdminRepository {
       })
 
       if(!updateDetails){
-        throw new Error("USER_NOT_UPDATED")
+        throw new ServiceError("Driver Not updated","Details not updated",status.INTERNAL_SERVER_ERROR);
       }
 
       return true;
@@ -454,7 +473,7 @@ export default class AdminRepository {
           Ride_Status:"COMPLETED"
         }
       })
-      if(!findRide) throw new Error("No_Ride_FInd");
+      if(!findRide) throw new ServiceError('RideId INVALID',"RideID Not Found",status.BAD_REQUEST)
       
       const updateDetails=excludeFields(findRide,['createdAt','updatedAt'])
 
@@ -462,9 +481,44 @@ export default class AdminRepository {
         //@ts-ignore
         data:updateDetails
       })
+
+      if(!completedRides) throw new ServiceError('RideId INVALID',"RideID Not Found",status.BAD_REQUEST)
       return completedRides;
     } catch (error) {
      throw error 
+    }
+  }
+
+  async updateAssignedRides(rideId:string,rideData:RidesAssignedUpdate){ 
+    try {
+      if(rideData.Driver_ID){
+        const driver=await prisma.driver.findUnique({
+          where:{
+            driverID:rideData.Driver_ID
+          }
+        })
+        
+  
+        if(!driver){
+          throw new ServiceError("DriverId Error","Driver not found to update",status.BAD_REQUEST);
+        }
+      }
+
+      const rideUpdate=await prisma.rides.update({
+        where:{
+          RideID:rideId
+        },
+        data:rideData
+      })
+      console.log(rideUpdate);
+
+      if(!rideUpdate){
+        throw  new ServiceError('Not able to update',"Update failed",status.BAD_REQUEST)
+      }
+
+      return rideUpdate;
+    } catch (error) {
+      throw error;
     }
   }
 }

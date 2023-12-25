@@ -10,11 +10,12 @@ import {
   driverInputSchema,
 } from "../config/validations";
 import { log } from "console";
+import { AppError, ServiceError } from "../utils/Errors";
 
 const admin = new AdminService();
 const driver = new DriverService();
 
-export const registerAdmin = async (req: Request, res: Response) => {
+export const registerAdmin = async (req: Request, res: Response,next:NextFunction) => {
   try {
     const adminBody: AdminInput = adminSchema.parse(req.body);
 
@@ -27,12 +28,7 @@ export const registerAdmin = async (req: Request, res: Response) => {
       err: {},
     });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res
-        .status(status.UNAUTHORIZED)
-        .json({ message: error.issues[0].message });
-    }
-    console.log(error);
+    next(error)
 
     //@ts-ignore
     return (
@@ -51,7 +47,7 @@ export const registerAdmin = async (req: Request, res: Response) => {
   }
 };
 
-export const loginAdmin = async (req: Request, res: Response) => {
+export const loginAdmin = async (req: Request, res: Response,next:NextFunction) => {
   try {
     const adminLoginBody = loginSchema.parse(req.body);
 
@@ -61,23 +57,12 @@ export const loginAdmin = async (req: Request, res: Response) => {
       token: adminToken,
     });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res
-        .status(status.UNAUTHORIZED)
-        .json({ message: error.issues[0].message });
-    }
-    //@ts-ignore
-    res.status(error.statusCode).json({
-      //@ts-ignore
-      err: error.message,
-      success: "fail",
-    });
+    next(error)
   }
 };
 
-export const createDriver = async (req: Request, res: Response) => {
+export const createDriver = async (req: Request, res: Response,next:NextFunction) => {
   try {
-    console.log("Inside driver body");
     
     const driverBody = driverInputSchema.parse(req.body);
     const newDriver = await driver.createDriver(driverBody);
@@ -87,22 +72,11 @@ export const createDriver = async (req: Request, res: Response) => {
       data: newDriver,
     });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res
-        .status(status.UNAUTHORIZED)
-        .json({ message: error.issues[0].message });
-    }
-
-    //@ts-ignore
-    res.status(error.statusCode).json({
-      //@ts-ignore
-      err: error.message,
-      success: "fail",
-    });
+    next(error)
   }
 };
 
-export const getDrivers=async(req: Request, res: Response)=>{
+export const getDrivers=async(req: Request, res: Response,next:NextFunction)=>{
   try {
     const drivers=await admin.getDrivers();
     return res.status(status.OK).json({
@@ -110,13 +84,16 @@ export const getDrivers=async(req: Request, res: Response)=>{
       data:drivers,
     })
   } catch (error) {
-    throw error
+    next(error)
   }
 }
 
-export const getDriverById=async (req:Request,res:Response)=>{
+export const getDriverById=async (req:Request,res:Response,next:NextFunction)=>{
   try {
     const id=req.params.id;
+    if(!id){
+      throw new AppError("Bad Request","Invalid request parameters",status.BAD_REQUEST)
+    }
     const driverDetails=await admin.getDriverById(id);
 
     return res.status(status.OK).json({
@@ -124,14 +101,11 @@ export const getDriverById=async (req:Request,res:Response)=>{
       data:driverDetails
     })
   } catch (error) {
-    return res.status(401).json({
-      message:"User not found",
-      err:error
-    })
+    next(error)
   }
 }
 
-export const getActiveDrivers=async (req:Request,res:Response)=>{
+export const getActiveDrivers=async (req:Request,res:Response,next:NextFunction)=>{
   try {
     const activeDrivers=await admin.getActiveDrivers();
 
@@ -141,19 +115,14 @@ export const getActiveDrivers=async (req:Request,res:Response)=>{
     })
 
   } catch (error) {
-    return res.status(401).json({
-      message:"Unsuccessful req",
-      err:error
-    })
+    next(error)
   }
 }
 
-export const fileUpload =async (req:Request,res:Response)=>{
+export const fileUpload =async (req:Request,res:Response,next:NextFunction)=>{
   try {
     if(!req.file){
-      return res.status(status.CONFLICT).json({
-        message:"File Not Uploaded"
-      })
+      throw new ServiceError("File missing","File Not Uploaded",status.BAD_REQUEST);
     }
     const message=await admin.fileUpload(req.file.path);
     
@@ -162,26 +131,13 @@ export const fileUpload =async (req:Request,res:Response)=>{
       success:true
     })
   } catch (error) {
-    //@ts-ignore
-    return (
-      res
-        //@ts-ignore
-        .status(error.statusCode)
-        .json({
-          //@ts-ignore
-          message: error.message,
-          success: "fail",
-          //@ts-ignore
-          explanation: error.explanation,
-        })
-    );
+    next(error)
   }
 }
 
 export const getUnAssignedRides=async (req:Request,res:Response,next:NextFunction)=>{
   try {
     const rides=await admin.getUnAssiignedRides();
-    log(rides.length)
     return res.status(status.OK).json({
       data:rides
     })
@@ -192,8 +148,7 @@ export const getUnAssignedRides=async (req:Request,res:Response,next:NextFunctio
 
 export const assignRideToDriver=async (req:Request,res:Response,next:NextFunction)=>{
   try {
-    console.log(typeof req.body.rideID);
-    
+  
     const success=await admin.assginRideToDriver(req.body.rideID,req.body.driverId);
 
     return res.status(status.OK).json({
@@ -210,7 +165,6 @@ export const assignRideToDriver=async (req:Request,res:Response,next:NextFunctio
 export const getAssignedRides=async (req:Request,res:Response,next:NextFunction)=>{
   try {
     const rides=await admin.getAssignRides();
-    log(rides.length)
     return res.status(status.OK).json({
       data:rides
     })
@@ -242,4 +196,17 @@ export const updateRideAsCompleted=async (req:Request,res:Response,next:NextFunc
   } catch (error) {
     next(error)
   }
+}
+
+export const updateAssignedRides=async (req:Request,res:Response,next:NextFunction)=>{
+    try {
+     //@ts-ignore
+      const updateData=await admin.updateAssignRides(req.query.rideId,req.body);
+      return res.status(status.OK).json({
+        message:"Successfully updated",
+        data:updateData
+      })
+    } catch (error) {
+      next(error)
+    }
 }

@@ -2,7 +2,7 @@ import express from "express"
 import cors from 'cors';
 
 
-import { utils } from "./utils/index"
+import { utils } from "./utils/utilities"
 import apiRoutes from "./routes/index"
 import { errorHandler } from "./middlewares";
 

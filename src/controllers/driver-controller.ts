@@ -4,9 +4,7 @@ import status from "http-status";
 
 import { DriverService } from "../service/index";
 import { LoginInput } from "../intrefaces/index";
-import {
-  loginSchema,
-} from "../config/validations";
+import { loginSchema } from "../config/validations";
 
 const driver = new DriverService();
 
@@ -34,14 +32,36 @@ export const loginDriver = async (req: Request, res: Response) => {
   }
 };
 
-export const checkHisRides=async (req: Request, res: Response,next:NextFunction)=>{
+export const checkHisRides = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const rides=await driver.getAssignedRides(req.body.driverID);
+    const rides = await driver.getAssignedRides(req.body.driverID);
     return res.status(status.OK).json({
-      message:"Successfully fetched rides",
+      message: "Successfully fetched rides",
+      data: rides,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getCompletedRides = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    console.log(req.body.driverId)
+    const rides=await driver.getCompletedRidesDriver(req.body.driverId);
+    console.log(typeof req.body.driverId)
+    return res.status(status.OK).json({
+      message:"Succesffuly Fetced",
       data:rides
     })
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};

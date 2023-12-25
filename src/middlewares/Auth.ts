@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import JWT from "jsonwebtoken";
-import { utils } from "../utils";
+import { utils } from "../utils/utilities";
 import httpStatus from "http-status";
 
 const jwtKey = utils.JWT_SECRET;
