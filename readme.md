@@ -1,7 +1,23 @@
 # WCT API Documentation
 This documentation provides information on the API endpoints.    
 
+## Starting the Application
 
+To start the application :
+
+1. Clone the repo and Navigate to the folder
+
+2. Install the necessary dependencies using npm :
+
+   ```bash
+   npm i
+   ```
+
+3. Run the application in development mode :
+   ```bash
+   npm run dev
+   ```
+----
 ## Admin End Points
 
 Below are the details for the Admin end points 
@@ -29,7 +45,6 @@ Below are the details for the Admin end points
     "driverSSN"               :"ASASLP0909090"
   }
   ```
-
   ### Get All Drivers
 
   **METHOD** : `GET`
@@ -99,6 +114,41 @@ Below are the details for the Admin end points
  **Request Body**
 
     > No need to send anything 
+
+### Update Ride As Completed
+
+**METHOD** : `POST`
+     **URL**    : `http://localhost:PORT/api/v1/admin/updateRideAsCompleted`
+  
+**Request Body**
+```
+{
+  rideID:"asdasd"
+}
+
+```
+
+### Update Assigned Rides
+
+**METHOD** : `POST`
+     **URL**    : `http://localhost:PORT/api/v1/admin/updateAssignRides`
+
+**Request Query**
+```
+{
+  rideId:"asdasd"
+}
+```
+
+**Request Body**
+
+```
+{
+  //Send fields you want to update either Ride_status or Driver Reassign
+  driverId:"asdasasd", 
+  Ride_status:"CANCELL"
+}
+```
 
 ### Update Driver Details
 

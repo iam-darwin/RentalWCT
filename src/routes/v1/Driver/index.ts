@@ -1,10 +1,10 @@
 import express from "express";
-import { checkHisRides, loginDriver,getCompletedRides } from "../../../controllers/driver-controller";
+import * as DriverRoutes from "../../../controllers/driver-controller";
 
 const router = express.Router();
 
-router.post("/signInDriver",loginDriver);
-router.get("/rides",checkHisRides)
-router.get('/completedRides',getCompletedRides);
+router.post("/signInDriver",DriverRoutes.loginDriver);
+router.get("/assignedRides",DriverRoutes.checkHisRides)
+router.get('/completedRides',DriverRoutes.getCompletedRides);
 
 export default router;

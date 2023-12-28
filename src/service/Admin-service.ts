@@ -133,8 +133,9 @@ export default class AdminService {
         Pickup_Address,
         Dropoff_Address,
       };
-      const messageData =await this.sendSms(data) //this will send SMS
-      return messageData;
+      // const messageData =await this.sendSms(data) //this will send SMS
+      // return messageData;
+      return false;
     } catch (error) {
       throw error;
     }

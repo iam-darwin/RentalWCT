@@ -79,7 +79,8 @@ export default class DriverRepository {
     try {
       const rides=await prisma.rides.findMany({
         where:{
-          Driver_ID:driverId
+          Driver_ID:driverId,
+          Ride_Status:'ASSIGNED'
         }
       })
 
