@@ -5,7 +5,6 @@ export const upload = multer({
   dest: path.join(__dirname, "uploads/"),
   fileFilter: (req, file, cb) => {
     const allowedFileTypes = ["csv"];
-
     const fileExtension = path
       .extname(file.originalname)
       .toLowerCase()
