@@ -9,5 +9,11 @@ export const utils = {
     accountSid: process.env.accountSid as string,
     authToken: process.env.authToken as string,
     fromNumber:process.env.fromNumber as string,
-    toNumber:process.env.toNumber as string
+    toNumber:process.env.toNumber as string,
+    smtpUsername:process.env.SMTP_USERNAME ,
+    smtpPwd:process.env.SMTP_PWD ,
+    smtpHost:process.env.SMTP_HOST ,
+    forgotPwd:process.env.FORGOT_PWD as string,
+    fromEmail:process.env.FROM_EMAIL as string
+
 }

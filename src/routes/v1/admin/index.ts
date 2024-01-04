@@ -19,5 +19,6 @@ router.get("/assignedRides",adminControllers.getAssignedRides)
 router.post("/updateDriverDetails",adminControllers.updateDrivedetails)
 router.post("/updateRideAsCompleted",adminControllers.updateRideAsCompleted)
 router.post("/updateAssignRides",adminControllers.updateAssignedRides);
+router.post("/forgotPassword",adminControllers.forgotPassword);
 
 export default router;

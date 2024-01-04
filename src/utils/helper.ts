@@ -40,3 +40,60 @@ export function calculateCost(amountString: string): string {
     return "Invalid input, please provide a valid number.";
   }
 }
+
+export function htmlTemplate(resetLink: string, userName: string): string {
+  const htmlTemplate = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333333;
+        }
+        p {
+            color: #555555;
+        }
+        .cta-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Forgot Password?</h1>
+        <p>Hi ${userName},</p>
+        <p>We received a request to reset your password. If you didn't make this request, please ignore this email.</p>
+        <p>To reset your password, click the button below:</p>
+        <a href="${resetLink}" class="cta-button">Reset Password</a>
+        <p>If the button above doesn't work, you can also copy and paste the following link into your browser:</p>
+        <p>${resetLink}</p>
+        <p>If you have any questions or need further assistance, please contact our support team.</p>
+        <p>Thanks,<br>Your Company Name</p>
+    </div>
+</body>
+</html>`;
+
+  return htmlTemplate;
+}

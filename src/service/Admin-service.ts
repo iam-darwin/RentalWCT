@@ -2,12 +2,14 @@ import bcrypt from "bcryptjs";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import status from "http-status";
 import * as TwilioSDK from "twilio";
-
 import { AdminInput, DriverUpdateInput, LoginInput, Rides, RidesAssignedUpdate } from "../intrefaces";
 import { utils} from "../utils/utilities";
 import { AdminRepository } from "../repository/index";
 import { AppError, ServiceError } from "../utils/Errors";
 import httpStatus from "http-status";
+import { htmlTemplate } from "../utils/helper";
+import { Admin } from "@prisma/client";
+import { transporter } from "../config/email";
 
 
 export default class AdminService {
@@ -51,8 +53,12 @@ export default class AdminService {
     }
   }
 
-  generateToken(data: JwtPayload) {
+  private generateToken(data: JwtPayload) {
     return jwt.sign(data, utils.JWT_SECRET, { expiresIn: "1h" });
+  }
+
+  private generateToken5mins(data: JwtPayload) {
+    return jwt.sign(data, utils.JWT_SECRET, { expiresIn: "5m" });
   }
 
   async getDrivers() {
@@ -206,6 +212,43 @@ export default class AdminService {
       return updated?true:false;
     } catch (error) {
       throw error
+    }
+  }
+
+  async forgotPwd(email:string){
+    try {
+      console.log("inside service")
+      const user=await this.adminService.getAdminByEmail(email);
+
+      const token=this.generateToken5mins({id:user.adminId,emailId:user.email})
+      console.log(token)
+      if(!token){
+        throw new AppError("Something went wrong","Internal Server Error",httpStatus.INTERNAL_SERVER_ERROR)
+      }
+
+      const info=await this.sendEmail(user.email,user);
+      return info;
+    } catch (error) {
+      
+    }
+  }
+
+  private async sendEmail(email:string,user:Admin){
+    try { 
+      console.log("inside email")
+      const mailOptions={
+        from: utils.fromEmail,
+        to: email,
+        subject: 'Test HTML Email',
+        text: 'Hello, this is a test email!',
+        html: htmlTemplate(utils.forgotPwd,user.name),
+      }
+
+      const info = await transporter.sendMail(mailOptions);
+      return info;
+    } catch (error) {
+      console.error("email error :" ,error)
+      throw error;
     }
   }
 }

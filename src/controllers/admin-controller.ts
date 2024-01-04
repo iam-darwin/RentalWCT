@@ -210,3 +210,16 @@ export const updateAssignedRides=async (req:Request,res:Response,next:NextFuncti
       next(error)
     }
 }
+
+export const forgotPassword=async (req:Request,res:Response,next:NextFunction)=>{
+  try {
+    console.log(req.body.email)
+    const response=await admin.forgotPwd(req.body.email);
+
+    return res.status(status.OK).json({
+      msg:response,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
