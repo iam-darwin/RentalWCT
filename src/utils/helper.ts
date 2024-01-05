@@ -9,6 +9,7 @@ export const upload = multer({
       .extname(file.originalname)
       .toLowerCase()
       .substring(1);
+      console.log(fileExtension)
     if (allowedFileTypes.includes(fileExtension)) {
       return cb(null, true);
     } else {
@@ -18,7 +19,9 @@ export const upload = multer({
   },
 });
 
-export function hasAtLeastTenDigits(input:string) {
+
+
+export function hasAtLeastTenDigits(input: string) {
   const digitRegex = /\d/g;
   const digitCount = (input.match(digitRegex) || []).length;
   return digitCount < 10;
@@ -41,7 +44,11 @@ export function calculateCost(amountString: string): string {
   }
 }
 
-export function htmlTemplate(resetLink: string, userName: string): string {
+export function htmlTemplate(
+  resetLink: string,
+  userName: string,
+  token: string
+): string {
   const htmlTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>

@@ -1,4 +1,6 @@
 import bcrypt from "bcryptjs";
+import fs from "fs";
+import aws from "aws-sdk"
 import jwt, { JwtPayload } from "jsonwebtoken";
 import status from "http-status";
 import * as TwilioSDK from "twilio";
@@ -10,6 +12,7 @@ import httpStatus from "http-status";
 import { htmlTemplate } from "../utils/helper";
 import { Admin } from "@prisma/client";
 import { transporter } from "../config/email";
+import { s3 } from "../config/aws";
 
 
 export default class AdminService {
@@ -44,8 +47,9 @@ export default class AdminService {
       if (!passwordMatch) {
         throw new AppError("Password Incorrect","Invalid Password",httpStatus.UNAUTHORIZED);
       }
-      const { adminId, name } = findAdmin;
-      const token = this.generateToken({ adminId, name });
+      //@ts-ignore
+      const { adminId, name,role } = findAdmin;
+      const token = this.generateToken({ adminId, name,role });
 
       return token;
     } catch (error) {
@@ -91,9 +95,31 @@ export default class AdminService {
   async fileUpload(filePath: string) {
     try {
       const upload = await this.adminService.uploadCsvFile(filePath);
+      await this.storeInS3(filePath);
       return upload;
     } catch (error) {
       throw error;
+    }
+  }
+
+  private async storeInS3(filePath:string){
+    try {
+      const fileContent = fs.createReadStream(filePath);
+
+      const uniqueId = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      const fileName = `uploads/${uniqueId}.csv`;
+
+      const params: aws.S3.PutObjectRequest = {
+        Bucket: 'iamdsvs-bucket',
+        Key: fileName,
+        Body: fileContent,
+        ACL: 'public-read', // Set the appropriate ACL for your use case
+      };
+
+      await s3.upload(params).promise();
+
+    } catch (error) {
+      console.error(error)
     }
   }
 
@@ -225,15 +251,14 @@ export default class AdminService {
       if(!token){
         throw new AppError("Something went wrong","Internal Server Error",httpStatus.INTERNAL_SERVER_ERROR)
       }
-
-      const info=await this.sendEmail(user.email,user);
+      const info=await this.sendEmail(user.email,user,token);
       return info;
     } catch (error) {
-      
+      throw error
     }
   }
 
-  private async sendEmail(email:string,user:Admin){
+  private async sendEmail(email:string,user:Admin,token:string){
     try { 
       console.log("inside email")
       const mailOptions={
@@ -241,7 +266,7 @@ export default class AdminService {
         to: email,
         subject: 'Test HTML Email',
         text: 'Hello, this is a test email!',
-        html: htmlTemplate(utils.forgotPwd,user.name),
+        html: htmlTemplate(utils.forgotPwd,user.name,token),
       }
 
       const info = await transporter.sendMail(mailOptions);
@@ -249,6 +274,25 @@ export default class AdminService {
     } catch (error) {
       console.error("email error :" ,error)
       throw error;
+    }
+  }
+
+  async resetPassword(payload:JwtPayload){
+    try {
+      const {email}=payload
+      const user=await this.adminService.getAdminByEmail(email);
+
+    } catch (error) {
+      
+    }
+  }
+
+  async getAllAdmins(){
+    try {
+      const admins=await this.adminService.getAllAdmins();
+      return admins;
+    } catch (error) {
+      throw error
     }
   }
 }

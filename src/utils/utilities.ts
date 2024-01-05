@@ -14,6 +14,9 @@ export const utils = {
     smtpPwd:process.env.SMTP_PWD ,
     smtpHost:process.env.SMTP_HOST ,
     forgotPwd:process.env.FORGOT_PWD as string,
-    fromEmail:process.env.FROM_EMAIL as string
+    fromEmail:process.env.FROM_EMAIL as string,
+    accessKey:process.env.ACCESS_KEY as string,
+    secretKey:process.env.SECRET_KEY as string,
+    awsRegion:process.env.AWS_SES_REGION as string
 
 }

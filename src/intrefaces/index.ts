@@ -2,6 +2,7 @@ export interface AdminInput {
     name: string;
     email: string;
     password: string;
+    role?: string;
   }
 
 export interface LoginInput{

@@ -15,7 +15,7 @@ export default class AdminRepository {
   async createAdmin(details: AdminInput) {
     try {
       const hashedPassword = await bcrypt.hash(details.password, 10);
-
+      console.log(details)
       const existingUser = await prisma.admin.findUnique({
         where: {
           email: details.email,
@@ -23,15 +23,11 @@ export default class AdminRepository {
       });
 
       if (existingUser) {
-        throw new Error("User_Exists");
+        throw new AppError("Admin Exits","Email already registered",httpStatus.INTERNAL_SERVER_ERROR);
       }
 
       const user = await prisma.admin.create({
-        data: {
-          name: details.name,
-          email: details.email,
-          password: hashedPassword,
-        },
+        data:{...details,password:hashedPassword}
       });
 
       return user;
@@ -41,17 +37,11 @@ export default class AdminRepository {
         throw new AppError(
           "Client Error",
           "User email already exists",
-          status.CONFLICT
+          httpStatus.CONFLICT
         );
       }
       //@ts-ignore
-      if (error.message == "User_Exists") {
-        throw new AppError(
-          "Admin Exits",
-          "admin already exits with the email",
-          status.CONFLICT
-        );
-      }
+      throw error
     }
   }
 
@@ -517,6 +507,26 @@ export default class AdminRepository {
       }
 
       return rideUpdate;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updatePassword(){
+    try {
+      
+    } catch (error) {
+      
+    }
+  }
+
+  async getAllAdmins(){
+    try {
+      const admins=await prisma.admin.findMany();
+      if(!admins){
+        throw new AppError("Fetching failed","Database error",httpStatus.BAD_REQUEST);
+      }
+      return admins;
     } catch (error) {
       throw error;
     }
