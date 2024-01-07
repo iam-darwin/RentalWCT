@@ -11,12 +11,14 @@ export const utils = {
     fromNumber:process.env.fromNumber as string,
     toNumber:process.env.toNumber as string,
     smtpUsername:process.env.SMTP_USERNAME ,
-    smtpPwd:process.env.SMTP_PWD ,
-    smtpHost:process.env.SMTP_HOST ,
+    smtpPwd:process.env.SMTP_PWD as string,
+    smtpHost:process.env.SMTP_HOST as string,
     forgotPwd:process.env.FORGOT_PWD as string,
     fromEmail:process.env.FROM_EMAIL as string,
     accessKey:process.env.ACCESS_KEY as string,
     secretKey:process.env.SECRET_KEY as string,
-    awsRegion:process.env.AWS_SES_REGION as string
-
+    awsRegion:process.env.AWS_SES_REGION as string,
+    bucket:process.env.S3_BUCKET as string,
+    adminURL:process.env.ADMIN_FORGOT_PWD as string,
+    driverURL:process.env.DRIVER_FORGOT_PWD as string
 }

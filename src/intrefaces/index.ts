@@ -59,3 +59,5 @@ export interface DriverUpdateInput{
   driverSSN?:string,
   driverLicense?:string
 }
+
+

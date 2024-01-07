@@ -1,6 +1,6 @@
-import { authAdmin,addAdminAuth } from "./Auth";
+import { authAdmin,addAdminAuth,resetPwdAuthGet,resetPwdAuthPOST } from "./Auth";
 import { errorHandler } from "./ErrorHandler";
 export {
     authAdmin,
-    errorHandler,addAdminAuth
+    errorHandler,addAdminAuth,resetPwdAuthGet,resetPwdAuthPOST
 }

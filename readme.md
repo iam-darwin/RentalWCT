@@ -94,7 +94,7 @@ Below are the details for the Admin end points
 
 ### Assign ride to driver
 
-**METHOD** : `GET`
+**METHOD** : `POST`
      **URL**    : `http://localhost:PORT/api/v1/admin/assignRide`
 
 **Request Body**
@@ -146,7 +146,7 @@ Below are the details for the Admin end points
 {
   //Send fields you want to update either Ride_status or Driver Reassign
   driverId:"asdasasd", 
-  Ride_status:"CANCELL"
+  Ride_status:"CANCELLED"
 }
 ```
 

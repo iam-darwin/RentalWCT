@@ -11,10 +11,8 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  console.error(err)
   let statusCode = 500;
   let errorMessage = "Internal  server error";
-
   if (err.message === "CSV_file") {
     statusCode = 400;
     errorMessage = "Invalid file type. Only CSV files are allowed.";

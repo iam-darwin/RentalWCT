@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import fs from "fs";
-import aws from "aws-sdk"
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import status from "http-status";
 import * as TwilioSDK from "twilio";
@@ -12,11 +12,13 @@ import httpStatus from "http-status";
 import { htmlTemplate } from "../utils/helper";
 import { Admin } from "@prisma/client";
 import { transporter } from "../config/email";
-import { s3 } from "../config/aws";
+import { client } from "../config/aws";
+
 
 
 export default class AdminService {
   private adminService: AdminRepository;
+
   constructor() {
     this.adminService = new AdminRepository();
   }
@@ -34,10 +36,6 @@ export default class AdminService {
   async loginAdmin(data: LoginInput) {
     try {
       const findAdmin = await this.adminService.getAdminByEmail(data.email);
-
-      if (!findAdmin) {
-        throw new ServiceError("NOT_FOUND","User with email didnt found",httpStatus.NOT_FOUND)
-      }
 
       const passwordMatch = await bcrypt.compare(
         data.password,
@@ -62,7 +60,7 @@ export default class AdminService {
   }
 
   private generateToken5mins(data: JwtPayload) {
-    return jwt.sign(data, utils.JWT_SECRET, { expiresIn: "5m" });
+    return jwt.sign(data, utils.JWT_SECRET, { expiresIn: "1m" });
   }
 
   async getDrivers() {
@@ -109,17 +107,16 @@ export default class AdminService {
       const uniqueId = Date.now() + '-' + Math.round(Math.random() * 1E9);
       const fileName = `uploads/${uniqueId}.csv`;
 
-      const params: aws.S3.PutObjectRequest = {
-        Bucket: 'iamdsvs-bucket',
-        Key: fileName,
+      const command = new PutObjectCommand({
+        Bucket: utils.bucket,
+        Key:fileName,
         Body: fileContent,
-        ACL: 'public-read', // Set the appropriate ACL for your use case
-      };
+      })
 
-      await s3.upload(params).promise();
-
+      await client.send(command);
     } catch (error) {
-      console.error(error)
+      console.error(error);
+      throw error;
     }
   }
 
@@ -243,11 +240,9 @@ export default class AdminService {
 
   async forgotPwd(email:string){
     try {
-      console.log("inside service")
       const user=await this.adminService.getAdminByEmail(email);
 
-      const token=this.generateToken5mins({id:user.adminId,emailId:user.email})
-      console.log(token)
+      const token=this.generateToken5mins({emailId:user.email})
       if(!token){
         throw new AppError("Something went wrong","Internal Server Error",httpStatus.INTERNAL_SERVER_ERROR)
       }
@@ -260,13 +255,12 @@ export default class AdminService {
 
   private async sendEmail(email:string,user:Admin,token:string){
     try { 
-      console.log("inside email")
       const mailOptions={
         from: utils.fromEmail,
         to: email,
         subject: 'Test HTML Email',
         text: 'Hello, this is a test email!',
-        html: htmlTemplate(utils.forgotPwd,user.name,token),
+        html: htmlTemplate(user.name,token),
       }
 
       const info = await transporter.sendMail(mailOptions);
@@ -277,20 +271,19 @@ export default class AdminService {
     }
   }
 
-  async resetPassword(payload:JwtPayload){
-    try {
-      const {email}=payload
-      const user=await this.adminService.getAdminByEmail(email);
-
-    } catch (error) {
-      
-    }
-  }
-
   async getAllAdmins(){
     try {
       const admins=await this.adminService.getAllAdmins();
       return admins;
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async updateForgotPassword(emailId:string,confirmPassword:string){
+    try {
+      const user =await this.adminService.updatePassword(emailId,confirmPassword);
+      return user;
     } catch (error) {
       throw error
     }

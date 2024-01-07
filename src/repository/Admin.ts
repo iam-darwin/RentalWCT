@@ -2,7 +2,6 @@ import bcrypt from "bcryptjs";
 import status from "http-status";
 import fs from "fs";
 import * as csv from "fast-csv";
-
 import { prisma } from "../config/Connectdb";
 import { AdminInput,DriverUpdateInput, RidesAssignedUpdate } from "../intrefaces/index";
 import { AppError, ServiceError } from "../utils/Errors/index";
@@ -15,7 +14,6 @@ export default class AdminRepository {
   async createAdmin(details: AdminInput) {
     try {
       const hashedPassword = await bcrypt.hash(details.password, 10);
-      console.log(details)
       const existingUser = await prisma.admin.findUnique({
         where: {
           email: details.email,
@@ -57,7 +55,8 @@ export default class AdminRepository {
       }
       return user;
     } catch (error) {
-      throw error
+      //@ts-ignore
+      throw error;
     }
   }
 
@@ -512,11 +511,26 @@ export default class AdminRepository {
     }
   }
 
-  async updatePassword(){
-    try {
-      
+  async updatePassword(emailId:string,password:string){
+    try { 
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const existingUser = await prisma.admin.update({
+        where: {
+          email: emailId,
+        },
+        data:{
+          password:hashedPassword,
+        }
+      });
+      if(!existingUser){
+        throw new AppError("Admin Not Exits","User with EmailId do not exits",httpStatus.INTERNAL_SERVER_ERROR);
+      }
+
+      return true;
+
     } catch (error) {
-      
+      throw error;
     }
   }
 

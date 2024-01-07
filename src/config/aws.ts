@@ -1,12 +1,11 @@
-import aws, { Credentials } from 'aws-sdk';
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { utils } from '../utils/utilities';
 
-const credentials: Credentials = new aws.Credentials({
-  accessKeyId: utils.accessKey,
-  secretAccessKey: utils.secretKey,
-});
 
-export const s3 = new aws.S3({
-  region: utils.awsRegion,
-  credentials,
+export const client = new S3Client({
+  credentials: {
+    accessKeyId: utils.accessKey,
+    secretAccessKey: utils.secretKey,
+  },
+  region: utils.awsRegion, 
 });

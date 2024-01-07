@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { z } from "zod";
 import status from "http-status";
 
 import { AdminService, DriverService } from "../service/index";
@@ -270,6 +269,41 @@ export const forgotPassword = async (
     next(error);
   }
 };
+
+
+export const resetPasswordGET =async(req:Request,res:Response,next:NextFunction)=>{
+  try {
+    //@ts-ignore
+    const {emailId}=req.user;
+    const url=req.originalUrl
+    const tokenMatch=url.match(/\/resetPwd\/([^\/]+)/);
+    let token
+    if (tokenMatch && tokenMatch[1]) {
+      token = tokenMatch[1];
+    } else {
+     return res.render("req-newLink");
+    }
+
+    return res.render("reset-password",{email:emailId,token});
+  } catch (error) {
+    next(error);
+  }
+}
+
+export const resetPasswordPOST=async (req:Request,res:Response,next:NextFunction)=>{
+  try {
+    //@ts-ignore
+    console.log("2",req.user)
+    //@ts-ignore
+    const response=await admin.updateForgotPassword(req.user.emailId,req.body.confirmPassword);
+    if(response){
+      return res.status(status.OK).render('pwd-Update-Success')
+    }
+    return res.status(status.UNAUTHORIZED).render('req-newLink')
+  } catch (error) {
+    next(error);
+  }
+}
 
 export const getAllAdmins = async (
   req: Request,

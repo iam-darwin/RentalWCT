@@ -1,5 +1,7 @@
 import multer from "multer";
 import path from "path";
+import { utils } from "./utilities";
+
 
 export const upload = multer({
   dest: path.join(__dirname, "uploads/"),
@@ -45,7 +47,6 @@ export function calculateCost(amountString: string): string {
 }
 
 export function htmlTemplate(
-  resetLink: string,
   userName: string,
   token: string
 ): string {
@@ -93,9 +94,9 @@ export function htmlTemplate(
         <p>Hi ${userName},</p>
         <p>We received a request to reset your password. If you didn't make this request, please ignore this email.</p>
         <p>To reset your password, click the button below:</p>
-        <a href="${resetLink}" class="cta-button">Reset Password</a>
+        <a href="${utils.adminURL}/${token}" class="cta-button">Reset Password</a>
         <p>If the button above doesn't work, you can also copy and paste the following link into your browser:</p>
-        <p>${resetLink}</p>
+        <p>${utils.adminURL}/${token}</p>
         <p>If you have any questions or need further assistance, please contact our support team.</p>
         <p>Thanks,<br>Your Company Name</p>
     </div>
