@@ -27,4 +27,5 @@ router.get("/resetPwd/:token",resetPwdAuthGet,adminControllers.resetPasswordGET)
 router.post("/updatePwd",resetPwdAuthPOST,adminControllers.resetPasswordPOST); //SSR
 
 
+
 export default router;

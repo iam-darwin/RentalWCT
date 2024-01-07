@@ -545,4 +545,24 @@ export default class AdminRepository {
       throw error;
     }
   }
+
+  async deleteAdminWithID(id:string){
+    try { 
+      const value=await prisma.admin.delete({
+        where:{
+          adminId:id
+        },
+      })
+      if(!value){
+        throw new AppError("Admin Not Found","Admin with the id not found",httpStatus.NOT_FOUND);
+      }
+      return value;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateAdmins(){
+
+  }
 }

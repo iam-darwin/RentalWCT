@@ -132,10 +132,7 @@ export default class AdminService {
   async assginRideToDriver(rideID: string, driverId: string) {
     try {
       const done = await this.adminService.assignRideToDriver(rideID, driverId); //this tas
-      if (!done) {
-        throw new Error("Ride_not_Assigned");
-      }
-
+      const driver=await this.adminService.getDriver(driverId);
       const {
         RideID,
         Ride_Date,
@@ -162,9 +159,8 @@ export default class AdminService {
         Pickup_Address,
         Dropoff_Address,
       };
-      // const messageData =await this.sendSms(data) //this will send SMS
-      // return messageData;
-      return false;
+      const messageData =await this.sendSms(data,driver.driverPhoneNumber1) //this will send SMS
+      return messageData;
     } catch (error) {
       throw error;
     }
@@ -189,7 +185,7 @@ export default class AdminService {
   }
 
 
-  private async sendSms(data: Rides) {
+  private async sendSms(data: Rides,driverNumber:string) {
     const client = new TwilioSDK.Twilio(utils.accountSid, utils.authToken);
 
     try {
@@ -197,7 +193,7 @@ export default class AdminService {
         body: `Your ride details
             Customer Name :${data.Customer_FirstName} ${data.Customer_LastName}, PhoneNo: ${data.Phone_Number},PickUpTime:${data.Scheduled_Pickup_Time},ArrivalTime:${data.Estimated_Arrival_Time},Pick Up Address :${data.Pickup_Address},Drop Off Address:${data.Dropoff_Address},Instructions:${data.Dropoff_Directions},Distance :${data.Estimated_Distance} 
             `,
-        to: utils.toNumber,
+        to: driverNumber,
         from: utils.fromNumber,
       });
       console.log(message)
@@ -229,7 +225,8 @@ export default class AdminService {
     try {
       const updated=await this.adminService.updateAssignedRides(rideId,data);
       if(data.Driver_ID){
-        const sendSms=await this.sendSms(updated);
+        const driver =await this.adminService.getDriver(data.Driver_ID);
+        const sendSms=await this.sendSms(updated,driver.driverPhoneNumber1);
         return sendSms;
       }
       return updated?true:false;
@@ -286,6 +283,15 @@ export default class AdminService {
       return user;
     } catch (error) {
       throw error
+    }
+  }
+
+  async deleteAdminWithID(id:string){
+    try {
+      const value=await this.adminService.deleteAdminWithID(id);
+      return value;
+    } catch (error) {
+      throw error;
     }
   }
 }
