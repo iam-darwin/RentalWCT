@@ -60,4 +60,10 @@ export interface DriverUpdateInput{
   driverLicense?:string
 }
 
+export interface AdminUpdateInput{
+  name?:string,
+  email?:string,
+  role?:string
+}
+
 

@@ -3,7 +3,7 @@ import status from "http-status";
 import fs from "fs";
 import * as csv from "fast-csv";
 import { prisma } from "../config/Connectdb";
-import { AdminInput,DriverUpdateInput, RidesAssignedUpdate } from "../intrefaces/index";
+import { AdminInput,AdminUpdateInput,DriverUpdateInput, RidesAssignedUpdate } from "../intrefaces/index";
 import { AppError, ServiceError } from "../utils/Errors/index";
 import { calculateCost, excludeFields, hasAtLeastTenDigits } from "../utils/helper";
 import httpStatus from "http-status";
@@ -454,7 +454,14 @@ export default class AdminRepository {
 
   async updateRideAsCompleted(rideId:string){
     try {
-      const findRide=await prisma.rides.update({
+
+      const findRide=await prisma.rides.findUnique({
+        where:{
+          RideID:rideId
+        }
+      })
+      if(!findRide) throw new ServiceError('RideId INVALID',"RideID Not Found",status.BAD_REQUEST)
+      const updateRide=await prisma.rides.update({
         where:{
           RideID:rideId
         },
@@ -462,16 +469,14 @@ export default class AdminRepository {
           Ride_Status:"COMPLETED"
         }
       })
-      if(!findRide) throw new ServiceError('RideId INVALID',"RideID Not Found",status.BAD_REQUEST)
+      if(!updateRide) throw new AppError("asdasd","asdasd",httpStatus.NOT_FOUND)
       
-      const updateDetails=excludeFields(findRide,['createdAt','updatedAt'])
+      const updateDetails=excludeFields(updateRide,['createdAt','updatedAt'])
 
       const completedRides=await prisma.completedRides.create({
         //@ts-ignore
         data:updateDetails
       })
-
-      if(!completedRides) throw new ServiceError('RideId INVALID',"RideID Not Found",status.BAD_REQUEST)
       return completedRides;
     } catch (error) {
      throw error 
@@ -562,7 +567,27 @@ export default class AdminRepository {
     }
   }
 
-  async updateAdmins(){
+  async updateAdmin(id:string,adminData:AdminUpdateInput){
+    try {
 
+      const findAdmin=await prisma.admin.findFirst({
+        where:{
+          adminId:id
+        }
+      })
+
+      if(!findAdmin) throw new AppError("Admin not found","Admin is not present in DB",httpStatus.NOT_FOUND)
+      
+      const admins=await prisma.admin.update({
+        where:{
+          adminId:id
+        },
+        data:adminData
+      })
+      
+      return admins
+    } catch (error) {
+      throw error;
+    }
   }
 }

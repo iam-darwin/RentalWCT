@@ -11,6 +11,8 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
+  console.error(err.name)
+  console.error(err.message)
   let statusCode = 500;
   let errorMessage = "Internal  server error";
   if (err.message === "CSV_file") {

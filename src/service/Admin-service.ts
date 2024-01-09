@@ -4,7 +4,7 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import status from "http-status";
 import * as TwilioSDK from "twilio";
-import { AdminInput, DriverUpdateInput, LoginInput, Rides, RidesAssignedUpdate } from "../intrefaces";
+import { AdminInput, AdminUpdateInput, DriverUpdateInput, LoginInput, Rides, RidesAssignedUpdate } from "../intrefaces";
 import { utils} from "../utils/utilities";
 import { AdminRepository } from "../repository/index";
 import { AppError, ServiceError } from "../utils/Errors";
@@ -193,7 +193,7 @@ export default class AdminService {
         body: `Your ride details
             Customer Name :${data.Customer_FirstName} ${data.Customer_LastName}, PhoneNo: ${data.Phone_Number},PickUpTime:${data.Scheduled_Pickup_Time},ArrivalTime:${data.Estimated_Arrival_Time},Pick Up Address :${data.Pickup_Address},Drop Off Address:${data.Dropoff_Address},Instructions:${data.Dropoff_Directions},Distance :${data.Estimated_Distance} 
             `,
-        to: driverNumber,
+        to: `+91${driverNumber}`,
         from: utils.fromNumber,
       });
       console.log(message)
@@ -263,7 +263,6 @@ export default class AdminService {
       const info = await transporter.sendMail(mailOptions);
       return info;
     } catch (error) {
-      console.error("email error :" ,error)
       throw error;
     }
   }
@@ -290,6 +289,15 @@ export default class AdminService {
     try {
       const value=await this.adminService.deleteAdminWithID(id);
       return value;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateAdmin(id:string,adminData:AdminUpdateInput){
+    try {
+      const admin=await this.adminService.updateAdmin(id,adminData);
+      return admin
     } catch (error) {
       throw error;
     }

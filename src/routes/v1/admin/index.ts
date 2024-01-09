@@ -1,6 +1,6 @@
 import express from "express";
 import * as adminControllers from "../../../controllers/admin-controller";
-import { addAdminAuth, authAdmin,errorHandler,resetPwdAuthGet, resetPwdAuthPOST } from "../../../middlewares";
+import { addAdminAuth, authAdmin,resetPwdAuthGet, resetPwdAuthPOST } from "../../../middlewares";
 import { upload } from "../../../utils/helper";
 
 
@@ -23,6 +23,7 @@ router.post("/updateRideAsCompleted",adminControllers.updateRideAsCompleted)
 router.post("/updateAssignRides",adminControllers.updateAssignedRides);
 router.post("/forgotPassword",adminControllers.forgotPassword);
 router.get("/admins",adminControllers.getAllAdmins);
+router.post("/updateAdmin",adminControllers.updateAdmin);
 router.get("/resetPwd/:token",resetPwdAuthGet,adminControllers.resetPasswordGET); //SSR
 router.post("/updatePwd",resetPwdAuthPOST,adminControllers.resetPasswordPOST); //SSR
 

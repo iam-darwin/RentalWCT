@@ -7,6 +7,8 @@ import {
   adminSchema,
   loginSchema,
   driverInputSchema,
+  AdminUpdateInputValidation,
+  adminIdValidation,
 } from "../config/validations";
 import { AppError, ServiceError } from "../utils/Errors";
 
@@ -90,7 +92,7 @@ export const getDriverById = async (
   next: NextFunction
 ) => {
   try {
-    const id = req.params.id;
+    const id = req.params.driverId;
     if (!id) {
       throw new AppError(
         "Bad Request",
@@ -139,7 +141,7 @@ export const fileUpload = async (
         status.BAD_REQUEST
       );
     }
-    console.log(req.file.path)
+
     const message = await admin.fileUpload(req.file.path);
 
     return res.status(status.OK).json({
@@ -173,7 +175,7 @@ export const assignRideToDriver = async (
 ) => {
   try {
     const success = await admin.assginRideToDriver(
-      req.body.rideID,
+      req.body.rideId,
       req.body.driverId
     );
 
@@ -224,7 +226,7 @@ export const updateRideAsCompleted = async (
   next: NextFunction
 ) => {
   try {
-    const data = await admin.updateRideAsCompleted(req.body.rideID);
+    const data = await admin.updateRideAsCompleted(req.body.rideId);
     return res.status(status.OK).json({
       message: "Data Succesfully Updated",
       details: data,
@@ -321,3 +323,19 @@ export const getAllAdmins = async (
     next(error)
   }
 };
+
+export const updateAdmin=async(req:Request,res:Response,next:NextFunction)=>{
+  try {
+    const adminID=adminIdValidation.parse(req.query)
+    const adminUpateBody=AdminUpdateInputValidation.parse(req.body)
+    //@ts-ignore
+    const response=await admin.updateAdmin(adminID.adminId,adminUpateBody);
+
+    return res.status(status.OK).json({
+      msg:"Successfull updated",
+      data:response
+    })
+  } catch (error) {
+    next(error);
+  }
+}

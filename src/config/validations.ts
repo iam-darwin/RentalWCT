@@ -43,4 +43,23 @@ export const driverInputSchema = z.object({
   driverLicense: z.string(),
 });
 
+export const AdminUpdateInputValidation = z.object({
+  name: z.string().optional(),
+  email: z.string().email().optional(),
+  role: z.string().optional(),
+}).refine((data) => {
+  const { name, email, role } = data;
+  return name !== undefined || email !== undefined || role !== undefined;
+}, {
+  message: "At least one of 'name', 'email', or 'role' must be provided.",
+});
+
+export const adminIdValidation = z.object({
+  adminId: z.string(),
+}).refine((data) => {
+  const { adminId } = data;
+  return adminId !== undefined && adminId.trim() !== '';
+}, {
+  message: "Provide AdminID.",
+});
 

@@ -63,7 +63,7 @@ Below are the details for the Admin end points
   **Request Params**
   ```
     {
-        id:"JHAKJGSJAHSGAHSGAJHSGJ" //Access using **req.params.id** 
+        driverID:"JHAKJGSJAHSGAHSGAJHSGJ" //Access using **req.params.id** 
     }
   ```
 ### Get Active Drivers
@@ -101,7 +101,7 @@ Below are the details for the Admin end points
 
 ```
 {
-    "rideID":"123123123",
+    "rideId":"123123123",
     "driverId":"asdasdsdad"
 }
 ```
@@ -152,7 +152,7 @@ Below are the details for the Admin end points
 
 ### Update Driver Details
 
-**METHOD** : `GET`
+**METHOD** : `POST`
      **URL**    : `http://localhost:PORT/api/v1/admin/updateDriverDetails`
 
 **Request Params**
