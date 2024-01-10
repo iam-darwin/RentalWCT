@@ -10,6 +10,7 @@ import {
   AdminUpdateInputValidation,
   adminIdValidation,
   assgnRideValidation,
+  paymentRequestValidation,
 } from "../config/validations";
 import { AppError, ServiceError } from "../utils/Errors";
 
@@ -361,7 +362,7 @@ try {
   const response=await admin.deleteAdminWithID(req.body.adminId);
 
   return res.status(status.OK).json({
-    msg:"Successfull updated",
+    msg:"Successfull deleted",
     data:response
   })
 } catch (error) {
@@ -375,12 +376,50 @@ export const createPayment = async (
   next: NextFunction
 ) => {
   try {
-    const {driverId,amount,date}=req.body;
-    
-    const response=await admin.createPayment(driverId,Number(amount),date);
+    const paymentBody=paymentRequestValidation.parse(req.body)
+    const response=await admin.createPayment(paymentBody.driverId,Number(paymentBody.amount),paymentBody.date);
 
     return res.status(status.OK).json({
       msg:"Successfull Created",
+      data:response
+    })
+  } catch (error) {
+    next(error);
+  }
+}
+
+
+export const getAllPayments = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+try {
+
+    const response=await admin.getAllPayments();
+
+    return res.status(status.OK).json({
+      msg:"Successfull Fetched",
+      data:response
+    })
+} catch (error) {
+  next(error)
+}
+}
+
+export const getPaymentByDriverId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const {driverId}=req.params;
+
+    if(!driverId) throw new AppError("Id null","Can't access without driverId",status.FORBIDDEN)
+    const response=await admin.getPaymentByDriverId(driverId);
+
+    return res.status(status.OK).json({
+      msg:"Successfull Fetched",
       data:response
     })
   } catch (error) {

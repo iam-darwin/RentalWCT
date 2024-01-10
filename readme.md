@@ -18,9 +18,42 @@ To start the application :
    npm run dev
    ```
 ----
+
+
 ## Admin End Points
 
 Below are the details for the Admin end points 
+
+
+### Admin Signup
+
+**METHOD** : `POST`
+**URL**    : `http://localhost:8000/api/v1/admin/signUp`
+
+**Request Body**
+```
+{
+  name:"asdasd",
+  email:"asdasd@dsa.com",
+  password:"sdaasd"
+  role:"SUPER ADMIN" //if you're testing application make sure you're a super admin (By default it will be admin)
+}
+```
+
+
+### Admin SignIn
+
+**METHOD** : `POST`
+**URL**    : `http://localhost:8000/api/v1/admin/signIn`
+
+**Request Body**
+```
+{
+  email:"asdasd@dsa.com",
+  password:"sdaasd"
+}
+```
+after this make sure to token in the header **Authorization:TOKEN**
 
 ### Add driver
 Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
@@ -249,3 +282,44 @@ Before proceeding to this route, make sure to sign in first. Once signed in, the
     driverId:"asdasdadsasd"
   }
   ```
+
+### Get ALL ADMINS
+
+Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
+
+**METHOD** :`GET`
+    **URL** :`http://localhost:PORT/api/v1/admin/admins`
+
+### Add Payment Info
+
+Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
+
+**METHOD** :`POST`
+    **URL** :`http://localhost:PORT/api/v1/admin/createPayment`
+
+ **Request Body**
+
+ {
+  driverId:"asdasdasd",
+  amount:"1320",
+  date?: "2024-01-10T12:53:38.729Z" //format
+ }
+
+ ### Get All Payments
+ Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
+
+ **METHOD** :`GET`
+    **URL** :`http://localhost:PORT/api/v1/admin/getAllPayments`
+
+### Get Payments By DriverID
+Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
+
+**METHOD** :`GET`
+    **URL** :`http://localhost:PORT/api/v1/admin/payment/:driverId`
+
+**Request Parasm**
+    ```
+    {
+      driverId:"asdasdasd"
+    }
+    ```

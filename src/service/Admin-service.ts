@@ -318,4 +318,24 @@ export default class AdminService {
       throw error;
     }
   }
+
+
+  async getAllPayments(){
+    try {
+      const payments=await this.adminService.getAllPayments();
+      return payments;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getPaymentByDriverId(driverId:string){
+    try {
+      const payment=await this.adminService.getPaymentByDriverId(driverId);
+      return payment;
+    } catch (error) {
+      throw error;
+    }
+  }
+
 }

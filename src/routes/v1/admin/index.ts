@@ -37,7 +37,10 @@ router.post("/updateAdmin",authAdmin,superAdminAuth,adminControllers.updateAdmin
 router.post("/removeAdmin",authAdmin,superAdminAuth,adminControllers.deleteAdmin);
 
 
-router.post("/createPayment",authAdmin,adminControllers.createPayment);
+router.post("/createPayment",authAdmin,superAdminAuth,adminControllers.createPayment);
+router.get("/getAllPayments",authAdmin,superAdminAuth,adminControllers.getAllPayments);
+router.get("/payment/:driverId",authAdmin,superAdminAuth,adminControllers.getPaymentByDriverId);
+
 
 
 export default router;

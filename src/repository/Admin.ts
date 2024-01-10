@@ -590,6 +590,7 @@ export default class AdminRepository {
           driverID:driverId
         }
       })
+      
       let payment;
       if (date) {
         payment = await prisma.payment.create({
@@ -609,6 +610,29 @@ export default class AdminRepository {
         });
       }
   
+      return payment;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getAllPayments(){
+    try {
+      const payments=await prisma.payment.findMany();
+      return payments;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getPaymentByDriverId(driverId:string){
+    try {
+      const payment=await prisma.payment.findMany({
+        where:{
+          driverID:driverId
+        }
+      })
+
       return payment;
     } catch (error) {
       throw error;

@@ -69,11 +69,20 @@ export const assgnRideValidation = z.object({
 }).refine(data => {
   const { rideId, driverId } = data;
 
-  // Add your custom conditions here
-  const isRideIdValid = rideId.trim() !== ''; // For example, rideId should not be empty
-  const isDriverIdValid = driverId.trim() !== ''; // For example, driverId should not be empty
+  const isRideIdValid = rideId.trim() !== ''; 
+  const isDriverIdValid = driverId.trim() !== ''; 
 
   return isRideIdValid && isDriverIdValid;
 }, {
   message: "Invalid values for rideId or driverId. They should not be empty."
 });
+
+
+export const paymentRequestValidation = z.object({
+  driverId: z.string(),
+  amount: z.string(),
+  date: z.string().optional(), 
+}).refine(data => data.driverId !== '' && data.amount !== undefined, {
+  message: "driverId and amount are required fields.",
+});
+
