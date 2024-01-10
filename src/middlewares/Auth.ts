@@ -7,10 +7,8 @@ import httpStatus from "http-status";
 const jwtKey = utils.JWT_SECRET;
 
 export const authAdmin = async (req: Request, res: Response, next: NextFunction) => {
-  console.log("inside middleware");
   try {
     const token = req.header("Authorization");
-
     if (!token) {
       return res.status(httpStatus.UNAUTHORIZED).json({ error: "Unauthorized", message: "Token missing" });
     }
@@ -23,7 +21,7 @@ export const authAdmin = async (req: Request, res: Response, next: NextFunction)
   }
 };
 
-export const addAdminAuth = (req: Request, res: Response, next: NextFunction) => {
+export const superAdminAuth = (req: Request, res: Response, next: NextFunction) => {
   try {
     //@ts-ignore
     if(req.user.role!=='SUPER ADMIN'){

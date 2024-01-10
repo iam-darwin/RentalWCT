@@ -23,6 +23,8 @@ To start the application :
 Below are the details for the Admin end points 
 
 ### Add driver
+Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
+
 
 **METHOD** : `POST`
 **URL**    : `http://localhost:PORT/api/v1/admin/addDriver`
@@ -46,6 +48,8 @@ Below are the details for the Admin end points
   }
   ```
   ### Get All Drivers
+  Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
+
 
   **METHOD** : `GET`
   **URL**    : `http://localhost:PORT/api/v1/admin/drivers`
@@ -56,6 +60,8 @@ Below are the details for the Admin end points
 
 
 ### Get Driver By ID
+Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
+
 
 **METHOD** : `GET`
  **URL**    : `http://localhost:PORT/api/v1/admin/driver/:id`
@@ -67,6 +73,8 @@ Below are the details for the Admin end points
     }
   ```
 ### Get Active Drivers
+Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
+
   **METHOD** : `GET`
      **URL**    : `http://localhost:PORT/api/v1/admin/activeDrivers`
 
@@ -75,6 +83,8 @@ Below are the details for the Admin end points
     > No need to send anything
 
 ### Uploading CSV FIles
+Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
+
 
 
  **METHOD** : `POST`
@@ -83,6 +93,8 @@ Below are the details for the Admin end points
     >Just upload the file with key : csvFile
 
 ### Get Unassigned Rides
+Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
+
 
 
  **METHOD** : `GET`
@@ -93,6 +105,8 @@ Below are the details for the Admin end points
     > No need to send anything assignRide
 
 ### Assign ride to driver
+Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
+
 
 **METHOD** : `POST`
      **URL**    : `http://localhost:PORT/api/v1/admin/assignRide`
@@ -107,6 +121,8 @@ Below are the details for the Admin end points
 ```
 
 ### Get Assigned Rides
+Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
+
 
  **METHOD** : `GET`
      **URL**    : `http://localhost:PORT/api/v1/admin/assignedRides`
@@ -116,6 +132,8 @@ Below are the details for the Admin end points
     > No need to send anything 
 
 ### Update Ride As Completed
+Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
+
 
 **METHOD** : `POST`
      **URL**    : `http://localhost:PORT/api/v1/admin/updateRideAsCompleted`
@@ -123,12 +141,14 @@ Below are the details for the Admin end points
 **Request Body**
 ```
 {
-  rideID:"asdasd"
+  rideId:"asdasd"
 }
 
 ```
 
 ### Update Assigned Rides
+Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
+
 
 **METHOD** : `POST`
      **URL**    : `http://localhost:PORT/api/v1/admin/updateAssignRides`
@@ -144,13 +164,15 @@ Below are the details for the Admin end points
 
 ```
 {
-  //Send fields you want to update either Ride_status or Driver Reassign
-  driverId:"asdasasd", 
-  Ride_status:"CANCELLED"
+  //Send fields you want to update either Ride_status or Driver Reassign. you'll be sending only one of them
+  Driver_ID:"asdasasd", 
+  Ride_Status:"CANCELLED"
 }
 ```
 
 ### Update Driver Details
+Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
+
 
 **METHOD** : `POST`
      **URL**    : `http://localhost:PORT/api/v1/admin/updateDriverDetails`
@@ -170,3 +192,60 @@ Below are the details for the Admin end points
     name:"Chandler",
 }
 ```
+
+### UPDATE ADMIN DETAILS
+Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
+
+**METHOD** :`POST`
+    **URL** :`http://localhost:PORT/api/v1/admin/updateAdmin`
+  
+  **Request Query params**
+```
+{
+  adminId:"asdasdasd
+}
+```
+
+  **Request Body**
+```
+{
+  //send what ever fields you want to update among them 
+
+  //one of them must be sent
+name?:"JOey",
+role?:"SUPER ADMIN",
+email?:"asdasd@lamdsv.com"
+}
+```
+
+### ADD NEW ADMIN
+
+Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
+
+**METHOD** :`POST`
+    **URL** :`http://localhost:PORT/api/v1/admin/addAdmin`
+
+  **Request Body**
+  ```
+  {
+    name:"JOEY",
+    email:"iamojey@lamdsv.com",
+    password:"88888888",
+    role?:"SUPER ADMIN" //if you dont provide by default it will create "ADMIN"
+  }
+  ```
+
+### Remove ADMIN
+
+Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
+
+**METHOD** :`POST`
+    **URL** :`http://localhost:PORT/api/v1/admin/removeAdmin`
+
+  **Request Body**
+
+  ```
+  {
+    driverId:"asdasdadsasd"
+  }
+  ```

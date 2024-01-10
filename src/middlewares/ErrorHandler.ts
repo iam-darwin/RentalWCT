@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import httpStatus from "http-status";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 
 
 import {AppError,ServiceError} from "../utils/Errors/index"
@@ -11,8 +12,7 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  console.error(err.name)
-  console.error(err.message)
+  console.error(err)
   let statusCode = 500;
   let errorMessage = "Internal  server error";
   if (err.message === "CSV_file") {
@@ -34,6 +34,14 @@ export const errorHandler = (
     return res.status(err.statusCode).json({
         name:err.name,
         message:err.message
+    })
+  }else if(err instanceof Prisma.PrismaClientValidationError){
+    return res.status(400).json({
+      msg:"Invalid input"
+    })
+  }else if(err instanceof Prisma.PrismaClientKnownRequestError){
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      msg:"Invalid data input"
     })
   }
 

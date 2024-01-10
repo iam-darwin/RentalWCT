@@ -56,7 +56,7 @@ export default class AdminService {
   }
 
   private generateToken(data: JwtPayload) {
-    return jwt.sign(data, utils.JWT_SECRET, { expiresIn: "1h" });
+    return jwt.sign(data, utils.JWT_SECRET, { expiresIn: "10h" });
   }
 
   private generateToken5mins(data: JwtPayload) {
@@ -196,7 +196,6 @@ export default class AdminService {
         to: `+91${driverNumber}`,
         from: utils.fromNumber,
       });
-      console.log(message)
       //@ts-ignore
       if (message.code) {
         throw new ServiceError("SMS NOT SENT","Not able to send sms to driver",status.INTERNAL_SERVER_ERROR);
@@ -230,6 +229,14 @@ export default class AdminService {
         return sendSms;
       }
       return updated?true:false;
+    } catch (error) {
+      throw error
+    }
+  }
+  async getCancelledRides(){
+    try {
+      const data=await this.adminService.getCancelledRides();
+      return data;
     } catch (error) {
       throw error
     }
@@ -298,6 +305,15 @@ export default class AdminService {
     try {
       const admin=await this.adminService.updateAdmin(id,adminData);
       return admin
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async createPayment(driverId:string,paid:number,date?:string){
+    try {
+      const payment=await this.adminService.createPayment(driverId,paid,date);
+      return payment;
     } catch (error) {
       throw error;
     }

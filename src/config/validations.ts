@@ -63,3 +63,17 @@ export const adminIdValidation = z.object({
   message: "Provide AdminID.",
 });
 
+export const assgnRideValidation = z.object({
+  rideId: z.string(),
+  driverId: z.string(),
+}).refine(data => {
+  const { rideId, driverId } = data;
+
+  // Add your custom conditions here
+  const isRideIdValid = rideId.trim() !== ''; // For example, rideId should not be empty
+  const isDriverIdValid = driverId.trim() !== ''; // For example, driverId should not be empty
+
+  return isRideIdValid && isDriverIdValid;
+}, {
+  message: "Invalid values for rideId or driverId. They should not be empty."
+});

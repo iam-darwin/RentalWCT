@@ -9,6 +9,7 @@ import {
   driverInputSchema,
   AdminUpdateInputValidation,
   adminIdValidation,
+  assgnRideValidation,
 } from "../config/validations";
 import { AppError, ServiceError } from "../utils/Errors";
 
@@ -174,15 +175,12 @@ export const assignRideToDriver = async (
   next: NextFunction
 ) => {
   try {
-    const success = await admin.assginRideToDriver(
-      req.body.rideId,
-      req.body.driverId
-    );
-
+    const assignBody=assgnRideValidation.parse(req.body)
+    const success = await admin.assginRideToDriver(assignBody.rideId,assignBody.driverId);
     return res.status(status.OK).json({
       message: `ASSIGNED DRIVER`,
       assigned: success,
-      rideId: req.body.rideID,
+      rideId: assignBody.rideId,
     });
   } catch (error) {
     next(error);
@@ -247,6 +245,23 @@ export const updateAssignedRides = async (
     const updateData = await admin.updateAssignRides(req.query.rideId,
       req.body
     );
+    return res.status(status.OK).json({
+      message: "Successfully updated",
+      data: updateData,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getCancelledRides = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    //@ts-ignore
+    const updateData = await admin.getCancelledRides();
     return res.status(status.OK).json({
       message: "Successfully updated",
       data: updateData,
@@ -339,3 +354,38 @@ export const updateAdmin=async(req:Request,res:Response,next:NextFunction)=>{
     next(error);
   }
 }
+
+export const deleteAdmin=async(req:Request,res:Response,next:NextFunction)=>{
+try {
+  console.log(req.body.adminId)
+  const response=await admin.deleteAdminWithID(req.body.adminId);
+
+  return res.status(status.OK).json({
+    msg:"Successfull updated",
+    data:response
+  })
+} catch (error) {
+  next(error)
+}
+}
+
+export const createPayment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const {driverId,amount,date}=req.body;
+    
+    const response=await admin.createPayment(driverId,Number(amount),date);
+
+    return res.status(status.OK).json({
+      msg:"Successfull Created",
+      data:response
+    })
+  } catch (error) {
+    next(error);
+  }
+}
+
+

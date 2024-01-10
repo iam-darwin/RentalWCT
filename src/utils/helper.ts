@@ -11,7 +11,6 @@ export const upload = multer({
       .extname(file.originalname)
       .toLowerCase()
       .substring(1);
-      console.log(fileExtension)
     if (allowedFileTypes.includes(fileExtension)) {
       return cb(null, true);
     } else {

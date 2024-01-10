@@ -37,10 +37,10 @@ CREATE TABLE "Driver" (
 
 -- CreateTable
 CREATE TABLE "Payment" (
-    "paymentID" SERIAL NOT NULL,
+    "paymentID" TEXT NOT NULL,
     "amount" DOUBLE PRECISION NOT NULL,
     "driverID" TEXT NOT NULL,
-    "paymentDate" TIMESTAMP(3) NOT NULL,
+    "paymentDate" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -188,6 +188,9 @@ CREATE UNIQUE INDEX "Driver_driverLicense_key" ON "Driver"("driverLicense");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Driver_driverSSN_key" ON "Driver"("driverSSN");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Payment_paymentID_key" ON "Payment"("paymentID");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Rides_Kaizen_RideID_key" ON "Rides_Kaizen"("RideID");
