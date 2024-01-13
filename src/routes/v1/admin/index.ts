@@ -16,7 +16,7 @@ router.get("/driver/:driverId",authAdmin,adminControllers.getDriverById)
 router.get("/activeDrivers",authAdmin,adminControllers.getActiveDrivers)
 router.post("/updateDriverDetails",authAdmin,adminControllers.updateDrivedetails)
 
-router.post("/fileUpload",upload.single('csvFile'),adminControllers.fileUpload)
+router.post("/fileUpload",authAdmin,upload.single('csvFile'),adminControllers.fileUpload)
 
 router.get("/unAssignedRides",authAdmin,adminControllers.getUnAssignedRides)
 
@@ -31,7 +31,7 @@ router.post("/forgotPassword",adminControllers.forgotPassword);
 router.get("/resetPwd/:token",resetPwdAuthGet,adminControllers.resetPasswordGET); //SSR
 router.post("/updatePwd",resetPwdAuthPOST,adminControllers.resetPasswordPOST); //SSR
 
-router.post("/addAdmin",superAdminAuth,adminControllers.registerAdmin)
+router.post("/addAdmin",authAdmin,superAdminAuth,adminControllers.registerAdmin)
 router.get("/admins",authAdmin,adminControllers.getAllAdmins);
 router.post("/updateAdmin",authAdmin,superAdminAuth,adminControllers.updateAdmin);
 router.post("/removeAdmin",authAdmin,superAdminAuth,adminControllers.deleteAdmin);
