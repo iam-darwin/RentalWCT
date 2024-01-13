@@ -51,6 +51,7 @@ typings/
 # Output of 'npm pack'
 *.tgz
 
+prisma/migrations
 # Yarn Integrity file
 .yarn-integrity
 
