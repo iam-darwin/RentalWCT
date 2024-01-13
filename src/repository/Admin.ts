@@ -476,11 +476,11 @@ export default class AdminRepository {
     }
   }
 
-  async updateAssignedRides(rideId:string,rideData:RidesAssignedUpdate){ 
+  async updateAssignedRides(rideData:RidesAssignedUpdate){ 
     try {
       const rideUpdate=await prisma.rides.update({
         where:{
-          RideID:rideId
+          RideID:rideData.rideId
         },
         data:rideData
       })
@@ -490,6 +490,15 @@ export default class AdminRepository {
       }
 
       return rideUpdate;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getCompletedRides(){
+    try {
+      const rides=await prisma.completedRides.findMany();
+      return rides;
     } catch (error) {
       throw error;
     }
@@ -583,13 +592,15 @@ export default class AdminRepository {
     }
   }
 
-  async createPayment(driverId:string,paid:number,date?:string){
+  async createPayment(driverId:string,paid:number,date?:string,feedBack?:string){
     try {
+      console.log("repo 1")
       const findDriver =await prisma.driver.findUnique({
         where:{
           driverID:driverId
         }
       })
+      console.log("repo 2")
       
       let payment;
       if (date) {
@@ -597,7 +608,8 @@ export default class AdminRepository {
           data: {
             driverID: driverId,
             amount: paid,
-            paymentDate: new Date(date).toISOString() 
+            paymentDate: new Date(date).toISOString(),
+            remarks: feedBack?feedBack:"null" 
           }
         });
       } else {
@@ -605,7 +617,8 @@ export default class AdminRepository {
           data: {
             driverID: driverId,
             amount: paid,
-            paymentDate: new Date().toISOString()
+            paymentDate: new Date().toISOString(),
+            remarks: feedBack?feedBack:"null" 
           }
         });
       }

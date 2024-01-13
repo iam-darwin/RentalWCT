@@ -220,9 +220,9 @@ export default class AdminService {
     }
   }
 
-  async updateAssignRides(rideId:string,data:RidesAssignedUpdate){
+  async updateAssignRides(data:RidesAssignedUpdate){
     try {
-      const updated=await this.adminService.updateAssignedRides(rideId,data);
+      const updated=await this.adminService.updateAssignedRides(data);
       if(data.Driver_ID){
         const driver =await this.adminService.getDriver(data.Driver_ID);
         const sendSms=await this.sendSms(updated,driver.driverPhoneNumber1);
@@ -231,6 +231,15 @@ export default class AdminService {
       return updated?true:false;
     } catch (error) {
       throw error
+    }
+  }
+
+  async getCompletedRides(){
+    try {
+      const rides=await this.adminService.getCompletedRides();
+      return rides;
+    } catch (error) {
+      throw error;
     }
   }
   async getCancelledRides(){
@@ -310,9 +319,9 @@ export default class AdminService {
     }
   }
 
-  async createPayment(driverId:string,paid:number,date?:string){
+  async createPayment(driverId:string,paid:number,date?:string,feedBack?:string){
     try {
-      const payment=await this.adminService.createPayment(driverId,paid,date);
+      const payment=await this.adminService.createPayment(driverId,paid,date,feedBack);
       return payment;
     } catch (error) {
       throw error;

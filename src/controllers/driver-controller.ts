@@ -5,6 +5,7 @@ import status from "http-status";
 import { DriverService } from "../service/index";
 import { LoginInput } from "../intrefaces/index";
 import { loginSchema } from "../config/validations";
+import { ServiceError } from "../utils/Errors";
 
 const driver = new DriverService();
 
@@ -38,7 +39,11 @@ export const checkHisRides = async (
   next: NextFunction
 ) => {
   try {
-    const rides = await driver.getAssignedRides(req.body.driverID);
+    const {driverId}=req.params;
+    if(!driverId){
+      throw new ServiceError("Id not found","Send Driver Id",status.UNAUTHORIZED)
+    }
+    const rides = await driver.getAssignedRides(driverId);
     return res.status(status.OK).json({
       message: "Successfully fetched rides",
       data: rides,
@@ -54,9 +59,11 @@ export const getCompletedRides = async (
   next: NextFunction
 ) => {
   try {
-    console.log(req.body.driverId)
-    const rides=await driver.getCompletedRidesDriver(req.body.driverId);
-    console.log(typeof req.body.driverId)
+    const {driverId}=req.params;
+    if(!driverId){
+      throw new ServiceError("Id not found","Send Driver Id",status.UNAUTHORIZED)
+    }
+    const rides=await driver.getCompletedRidesDriver(driverId);
     return res.status(status.OK).json({
       message:"Succesffuly Fetced",
       data:rides
@@ -83,3 +90,21 @@ export const checkPayments = async (
     next(error);
   }
 };
+
+export const getDriverDetails=async(req:Request,res:Response,next:NextFunction)=>{
+  try {
+    const {driverId}=req.params;
+    if(!driverId){
+      throw new ServiceError("Id not found","Send Driver Id",status.UNAUTHORIZED)
+    }
+
+    const response=await driver.getDetails(driverId);
+
+    return res.status(status.OK).json({
+      message:"Succesffuly Fetced",
+      data:response
+    })
+  } catch (error) {
+    next(error)
+  }
+}

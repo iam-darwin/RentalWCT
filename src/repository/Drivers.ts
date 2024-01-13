@@ -133,4 +133,18 @@ export default class DriverRepository {
       throw error
     }
   }
+
+  async getDetails(driverId:string){
+    try { 
+      const driver =await prisma.driver.findUnique({
+        where:{
+          driverID:driverId
+        },
+      })
+
+      return driver;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

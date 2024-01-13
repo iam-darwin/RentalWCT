@@ -44,6 +44,7 @@ export const driverInputSchema = z.object({
 });
 
 export const AdminUpdateInputValidation = z.object({
+  adminId: z.string(),
   name: z.string().optional(),
   email: z.string().email().optional(),
   role: z.string().optional(),
@@ -81,6 +82,7 @@ export const assgnRideValidation = z.object({
 export const paymentRequestValidation = z.object({
   driverId: z.string(),
   amount: z.string(),
+  remarks:z.string().optional(),
   date: z.string().optional(), 
 }).refine(data => data.driverId !== '' && data.amount !== undefined, {
   message: "driverId and amount are required fields.",

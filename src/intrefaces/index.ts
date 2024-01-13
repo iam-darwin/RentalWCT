@@ -41,6 +41,7 @@ export interface Rides{
 }
 
 export interface RidesAssignedUpdate{
+  rideId:string
   Ride_Status?:string,
   Driver_ID?:string
 }

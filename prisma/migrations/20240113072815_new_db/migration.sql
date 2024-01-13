@@ -41,6 +41,7 @@ CREATE TABLE "Payment" (
     "amount" DOUBLE PRECISION NOT NULL,
     "driverID" TEXT NOT NULL,
     "paymentDate" TEXT NOT NULL,
+    "remarks" TEXT NOT NULL DEFAULT 'NULL',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 

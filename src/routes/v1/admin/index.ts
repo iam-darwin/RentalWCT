@@ -19,13 +19,13 @@ router.post("/updateDriverDetails",authAdmin,adminControllers.updateDrivedetails
 router.post("/fileUpload",authAdmin,upload.single('csvFile'),adminControllers.fileUpload)
 
 router.get("/unAssignedRides",authAdmin,adminControllers.getUnAssignedRides)
-
 router.post("/assignRide",authAdmin,adminControllers.assignRideToDriver)
 router.get("/assignedRides",authAdmin,adminControllers.getAssignedRides)
 router.post("/updateAssignRides",authAdmin,adminControllers.updateAssignedRides);
 router.post("/updateRideAsCompleted",authAdmin,adminControllers.updateRideAsCompleted)
+router.get("/completedRides",authAdmin,adminControllers.getCompletedRides);
+router.get("/cancelledRides",authAdmin,adminControllers.getCancelledRides);
 
-router.get("/cancelledRides",adminControllers.getCancelledRides);
 router.post("/forgotPassword",adminControllers.forgotPassword);
 
 router.get("/resetPwd/:token",resetPwdAuthGet,adminControllers.resetPasswordGET); //SSR

@@ -47,6 +47,7 @@ model Payment {
   amount        Float
   driverID      String
   paymentDate   String   
+  remarks       String  @default("NULL")
   driver        Driver   @relation(fields: [driverID], references: [driverID])
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

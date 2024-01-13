@@ -105,7 +105,7 @@ export const getDriverById = async (
     const driverDetails = await admin.getDriverById(id);
 
     return res.status(status.OK).json({
-      message: "User deatils",
+      message: "Successfull fetched",
       data: driverDetails,
     });
   } catch (error) {
@@ -243,11 +243,28 @@ export const updateAssignedRides = async (
 ) => {
   try {
     //@ts-ignore
-    const updateData = await admin.updateAssignRides(req.query.rideId,
+    const updateData = await admin.updateAssignRides(
       req.body
     );
     return res.status(status.OK).json({
       message: "Successfully updated",
+      data: updateData,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getCompletedRides = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    //@ts-ignore
+    const updateData = await admin.getCompletedRides();
+    return res.status(status.OK).json({
+      message: "Successfully fetched",
       data: updateData,
     });
   } catch (error) {
@@ -264,7 +281,7 @@ export const getCancelledRides = async (
     //@ts-ignore
     const updateData = await admin.getCancelledRides();
     return res.status(status.OK).json({
-      message: "Successfully updated",
+      message: "Successfully fetched",
       data: updateData,
     });
   } catch (error) {
@@ -342,10 +359,9 @@ export const getAllAdmins = async (
 
 export const updateAdmin=async(req:Request,res:Response,next:NextFunction)=>{
   try {
-    const adminID=adminIdValidation.parse(req.query)
     const adminUpateBody=AdminUpdateInputValidation.parse(req.body)
     //@ts-ignore
-    const response=await admin.updateAdmin(adminID.adminId,adminUpateBody);
+    const response=await admin.updateAdmin(adminUpateBody.adminId,adminUpateBody);
 
     return res.status(status.OK).json({
       msg:"Successfull updated",
@@ -377,7 +393,7 @@ export const createPayment = async (
 ) => {
   try {
     const paymentBody=paymentRequestValidation.parse(req.body)
-    const response=await admin.createPayment(paymentBody.driverId,Number(paymentBody.amount),paymentBody.date);
+    const response=await admin.createPayment(paymentBody.driverId,Number(paymentBody.amount),paymentBody.date,paymentBody.remarks);
 
     return res.status(status.OK).json({
       msg:"Successfull Created",
