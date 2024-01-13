@@ -76,4 +76,13 @@ export default class DriverService{
         }
     }
 
+    async checkPayments(driverId:string){
+        try {
+          const payments=await this.driverRepo.checkPayments(driverId);
+          return payments
+        } catch (error) {
+          throw error
+        }
+      }
+
 }

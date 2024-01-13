@@ -10,8 +10,8 @@ const router = express.Router();
 router.post("/signUp",adminControllers.registerAdmin)
 router.post("/signIn",adminControllers.loginAdmin)
 
-router.post("/addDriver",superAdminAuth,adminControllers.createDriver);
-router.get("/drivers",adminControllers.getDrivers)
+router.post("/addDriver",authAdmin,adminControllers.createDriver);
+router.get("/drivers",authAdmin,adminControllers.getDrivers)
 router.get("/driver/:driverId",authAdmin,adminControllers.getDriverById)
 router.get("/activeDrivers",authAdmin,adminControllers.getActiveDrivers)
 router.post("/updateDriverDetails",authAdmin,adminControllers.updateDrivedetails)

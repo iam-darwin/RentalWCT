@@ -119,4 +119,18 @@ export default class DriverRepository {
       
     }
   }
+
+  async checkPayments(driverId:string){
+    try {
+      const payments=await prisma.payment.findMany({
+        where:{
+          driverID:driverId
+        }
+      })
+
+      return payments
+    } catch (error) {
+      throw error
+    }
+  }
 }

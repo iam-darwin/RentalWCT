@@ -65,3 +65,21 @@ export const getCompletedRides = async (
     next(error);
   }
 };
+
+export const checkPayments = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+
+    const response=await driver.checkPayments(req.params.driverId);
+   
+    return res.status(status.OK).json({
+      message:"Succesffuly Fetced",
+      data:response
+    })
+  } catch (error) {
+    next(error);
+  }
+};
