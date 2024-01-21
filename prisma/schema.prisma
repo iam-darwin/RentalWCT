@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Admin {
-  adminId   String    @id @unique @default(uuid())
+  adminId   String   @id @unique @default(uuid())
   name      String
   email     String   @unique
   password  String
@@ -21,7 +21,7 @@ model Admin {
 }
 
 model Driver {
-  driverID           String      @id @unique @default(uuid())
+  driverID           String    @id @unique
   driverFirstName    String
   driverLastName     String
   email              String    @unique
@@ -37,37 +37,37 @@ model Driver {
   driverLicense      String    @unique
   driverSSN          String    @unique
   payments           Payment[]
-  lastPaymentDate    String  @default("NULL")
+  lastPaymentDate    String    @default("NULL")
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 }
 
 model Payment {
-  paymentID     String      @id @unique @default(uuid())
-  amount        Float
-  driverID      String
-  paymentDate   String   
-  remarks       String  @default("NULL")
-  driver        Driver   @relation(fields: [driverID], references: [driverID])
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  paymentID   String   @id @unique @default(uuid())
+  amount      Float
+  driverID    String
+  paymentDate String
+  remarks     String   @default("NULL")
+  driver      Driver   @relation(fields: [driverID], references: [driverID])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Rides_Kaizen {
   ID                     Int      @id @default(autoincrement())
   RideID                 String   @unique
-  Ride_Status            String   
-  Ride_Date              String 
+  Ride_Status            String
+  Ride_Date              String
   Customer_FirstName     String
   Customer_LastName      String
   Phone_Number           String
   Transportation_Type    String
   Cancel_Reason          String
   Cost                   String
-  Pick_Up_Time           String 
-  Arrival_Time           String 
-  Estimated_Arrival_Time String 
-  Scheduled_Pickup_Time  String 
+  Pick_Up_Time           String
+  Arrival_Time           String
+  Estimated_Arrival_Time String
+  Scheduled_Pickup_Time  String
   Estimated_Distance     String
   Pickup_Address         String
   Pickup_Lat             String
@@ -91,77 +91,73 @@ model Rides_Kaizen {
   Member_ID              String
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
-
 }
 
-model Rides {//temporary table
-  RideID                   String    @id @unique
-  Ride_Status              String     //ASSIGNED //CANCELLED //PENDING_UPDATE 
-  Ride_Date                String
-  Customer_FirstName       String
-  Customer_LastName        String
-  Phone_Number             String
-  Transportation_Type      String
-  Cancel_Reason            String
-  Cost                     String
-  Pick_Up_Time             String
-  Arrival_Time             String
-  Estimated_Arrival_Time   String
-  Scheduled_Pickup_Time    String
-  Estimated_Distance       String
-  Pickup_Address           String
-  Pickup_Lat               String
-  Pickup_Lng               String
-  Pickup_Directions        String
-  Dropoff_Address          String
-  Dropoff_Lat              String
-  Dropoff_Lng              String
-  Dropoff_Directions       String
-  Driver_ID                String
-  Provider_Trip_Id         String
-  Rider_Patient_ID         String
-  createdAt                DateTime  @default(now())
-  updatedAt                DateTime  @updatedAt
+model Rides {
+  RideID                 String   @id @unique
+  Ride_Status            String //ASSIGNED //CANCELLED //PENDING_UPDATE 
+  Ride_Date              String
+  Customer_FirstName     String
+  Customer_LastName      String
+  Phone_Number           String
+  Transportation_Type    String
+  Cancel_Reason          String
+  Cost                   String
+  Pick_Up_Time           String
+  Arrival_Time           String
+  Estimated_Arrival_Time String
+  Scheduled_Pickup_Time  String
+  Estimated_Distance     String
+  Pickup_Address         String
+  Pickup_Lat             String
+  Pickup_Lng             String
+  Pickup_Directions      String
+  Dropoff_Address        String
+  Dropoff_Lat            String
+  Dropoff_Lng            String
+  Dropoff_Directions     String
+  Driver_ID              String
+  Provider_Trip_Id       String
+  Rider_Patient_ID       String
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 }
 
 model CompletedRides {
-  RideID                   String    @id @unique
-  Ride_Status              String    //only COMPLETED
-  Ride_Date                String
-  Customer_FirstName       String
-  Customer_LastName        String
-  Phone_Number             String
-  Transportation_Type      String
-  Cancel_Reason            String
-  Cost                     String
-  Pick_Up_Time             String
-  Arrival_Time             String
-  Estimated_Arrival_Time   String
-  Scheduled_Pickup_Time    String
-  Estimated_Distance       String
-  Pickup_Address           String
-  Pickup_Lat               String
-  Pickup_Lng               String
-  Pickup_Directions        String
-  Dropoff_Address          String
-  Dropoff_Lat              String
-  Dropoff_Lng              String
-  Dropoff_Directions       String
-  Driver_ID                String
-  Provider_Trip_Id         String
-  Rider_Patient_ID         String
-  createdAt                DateTime  @default(now())
-  updatedAt                DateTime  @updatedAt
+  RideID                 String   @id @unique
+  Ride_Status            String //only COMPLETED
+  Ride_Date              String
+  Customer_FirstName     String
+  Customer_LastName      String
+  Phone_Number           String
+  Transportation_Type    String
+  Cancel_Reason          String
+  Cost                   String
+  Pick_Up_Time           String
+  Arrival_Time           String
+  Estimated_Arrival_Time String
+  Scheduled_Pickup_Time  String
+  Estimated_Distance     String
+  Pickup_Address         String
+  Pickup_Lat             String
+  Pickup_Lng             String
+  Pickup_Directions      String
+  Dropoff_Address        String
+  Dropoff_Lat            String
+  Dropoff_Lng            String
+  Dropoff_Directions     String
+  Driver_ID              String
+  Provider_Trip_Id       String
+  Rider_Patient_ID       String
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 }
-
 
 model Customer {
-  CustomerID              String    @id @unique
-  Customer_FirstName      String
-  Customer_LastName       String
-  Phone_Number            String
-  createdAt               DateTime  @default(now())
-  updatedAt               DateTime  @updatedAt
+  CustomerID         String   @id @unique
+  Customer_FirstName String
+  Customer_LastName  String
+  Phone_Number       String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 }
-
-

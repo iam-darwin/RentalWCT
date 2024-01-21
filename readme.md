@@ -312,6 +312,7 @@ Before proceeding to this route, make sure to sign in first. Once signed in, the
 {
 driverId:"asdasdasd",
 amount:"1320",
+remarks:"Enjoy with this"
 date?: "2024-01-10T12:53:38.729Z" //format
 }
 
@@ -330,7 +331,7 @@ Before proceeding to this route, make sure to sign in first. Once signed in, the
 **URL** :`http://localhost:PORT/api/v1/admin/payment/:driverId`
 
 **Request Parasm**
-`    {
+`   {
       driverId:"asdasdasd"
     }
-   `
+  `

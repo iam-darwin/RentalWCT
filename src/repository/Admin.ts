@@ -3,12 +3,19 @@ import status from "http-status";
 import fs from "fs";
 import * as csv from "fast-csv";
 import { prisma } from "../config/Connectdb";
-import { AdminInput,AdminUpdateInput,DriverUpdateInput, RidesAssignedUpdate } from "../intrefaces/index";
+import {
+  AdminInput,
+  AdminUpdateInput,
+  DriverUpdateInput,
+  RidesAssignedUpdate,
+} from "../intrefaces/index";
 import { AppError, ServiceError } from "../utils/Errors/index";
-import { calculateCost, excludeFields, hasAtLeastTenDigits } from "../utils/helper";
+import {
+  calculateCost,
+  excludeFields,
+  hasAtLeastTenDigits,
+} from "../utils/helper";
 import httpStatus from "http-status";
-
-
 
 export default class AdminRepository {
   async createAdmin(details: AdminInput) {
@@ -21,7 +28,7 @@ export default class AdminRepository {
       });
 
       const user = await prisma.admin.create({
-        data:{...details,password:hashedPassword}
+        data: { ...details, password: hashedPassword },
       });
 
       return user;
@@ -35,7 +42,7 @@ export default class AdminRepository {
         );
       }
       //@ts-ignore
-      throw error
+      throw error;
     }
   }
 
@@ -46,8 +53,12 @@ export default class AdminRepository {
           email,
         },
       });
-      if(!user){
-        throw new ServiceError("NOT_FOUND","User with email didnt found",httpStatus.NOT_FOUND)
+      if (!user) {
+        throw new ServiceError(
+          "NOT_FOUND",
+          "User with email didnt found",
+          httpStatus.NOT_FOUND
+        );
       }
       return user;
     } catch (error) {
@@ -67,8 +78,12 @@ export default class AdminRepository {
           driverFirstName: true,
         },
       });
-      if(!active){
-        throw new ServiceError("Something went wrong","Not able to fetch details",status.INTERNAL_SERVER_ERROR);
+      if (!active) {
+        throw new ServiceError(
+          "Something went wrong",
+          "Not able to fetch details",
+          status.INTERNAL_SERVER_ERROR
+        );
       }
       return active;
     } catch (error) {
@@ -82,13 +97,17 @@ export default class AdminRepository {
         include: {
           payments: {
             select: {
-              paymentID: true
-            }
-          }
-        }
+              paymentID: true,
+            },
+          },
+        },
       });
-      if(!drivers){
-        throw new ServiceError("Something went wrong","Not able to fetch details",status.INTERNAL_SERVER_ERROR);
+      if (!drivers) {
+        throw new ServiceError(
+          "Something went wrong",
+          "Not able to fetch details",
+          status.INTERNAL_SERVER_ERROR
+        );
       }
       return drivers;
     } catch (error) {
@@ -114,8 +133,12 @@ export default class AdminRepository {
         },
       });
 
-      if(!driver){
-        throw new ServiceError("Something went wrong","Not able to fetch details",status.INTERNAL_SERVER_ERROR);
+      if (!driver) {
+        throw new ServiceError(
+          "Something went wrong",
+          "Not able to fetch details",
+          status.INTERNAL_SERVER_ERROR
+        );
       }
       return driver;
     } catch (error) {
@@ -136,7 +159,7 @@ export default class AdminRepository {
           });
 
           if (!present) {
-            if(hasAtLeastTenDigits(ride["Phone"])){
+            if (hasAtLeastTenDigits(ride["Phone"])) {
               await prisma.rides_Kaizen.create({
                 data: {
                   RideID: ride["Ride ID"],
@@ -201,11 +224,10 @@ export default class AdminRepository {
                   Dropoff_Directions: ride["Driver First Name"],
                   Provider_Trip_Id: ride["Rider/Patient ID"],
                   Rider_Patient_ID: ride["Member ID"],
-                  Driver_ID:"NULL"
-                }
-  
+                  Driver_ID: "NULL",
+                },
               });
-            }else{
+            } else {
               await prisma.rides_Kaizen.create({
                 data: {
                   RideID: ride["Ride ID"],
@@ -244,7 +266,7 @@ export default class AdminRepository {
                   Member_ID: ride["Member ID"],
                 },
               });
-  
+
               await prisma.rides.create({
                 data: {
                   RideID: ride["Ride ID"],
@@ -271,11 +293,10 @@ export default class AdminRepository {
                   Dropoff_Directions: ride["Dropoff Directions"],
                   Provider_Trip_Id: ride["Provider Trip Id"],
                   Rider_Patient_ID: ride["Rider/Patient ID"],
-                  Driver_ID:"NULL"
-                }
-  
+                  Driver_ID: "NULL",
+                },
               });
-            }       
+            }
           } else {
             await prisma.rides_Kaizen.update({
               where: {
@@ -294,7 +315,6 @@ export default class AdminRepository {
                 Ride_Status: ride["Status"],
               },
             });
-
           }
         })
         .on("end", async () => {
@@ -302,40 +322,48 @@ export default class AdminRepository {
         });
       stream.on("error", (error) => {
         console.error(error);
-        throw new ServiceError("Something went wrong","Not able to upload file to database",status.INTERNAL_SERVER_ERROR);
+        throw new ServiceError(
+          "Something went wrong",
+          "Not able to upload file to database",
+          status.INTERNAL_SERVER_ERROR
+        );
       });
       return "successFully Uploaded";
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 
-  async getUnAssignedRides(){
+  async getUnAssignedRides() {
     try {
       const details = await prisma.rides.findMany({
         where: {
           Ride_Status: {
-            in: ["UPCOMING","PENDING_UPDATE"],
+            in: ["UPCOMING", "PENDING_UPDATE"],
           },
         },
-        select:{
-          RideID:true,
-          Ride_Status:true,
-          Ride_Date:true,
-          Customer_FirstName:true,
-          Customer_LastName:true,
-          Phone_Number:true,
-          Transportation_Type:true,
-          Pick_Up_Time:true,
-          Arrival_Time:true,
-          Estimated_Distance:true,
-          Pickup_Address:true,
-          Dropoff_Address:true,
-          Pickup_Directions:true
-        }
+        select: {
+          RideID: true,
+          Ride_Status: true,
+          Ride_Date: true,
+          Customer_FirstName: true,
+          Customer_LastName: true,
+          Phone_Number: true,
+          Transportation_Type: true,
+          Pick_Up_Time: true,
+          Arrival_Time: true,
+          Estimated_Distance: true,
+          Pickup_Address: true,
+          Dropoff_Address: true,
+          Pickup_Directions: true,
+        },
       });
-      if(!details){
-        throw new ServiceError("Something went wrong","Not able to fetch details",status.INTERNAL_SERVER_ERROR);
+      if (!details) {
+        throw new ServiceError(
+          "Something went wrong",
+          "Not able to fetch details",
+          status.INTERNAL_SERVER_ERROR
+        );
       }
       return details;
     } catch (error) {
@@ -343,44 +371,50 @@ export default class AdminRepository {
     }
   }
 
-  async assignRideToDriver(rideID:string,driverId:string){
+  async assignRideToDriver(rideID: string, driverId: string) {
     try {
-      
       //update as ASSIGNED in the databse
 
-      const updated=await prisma.rides.findUnique({
-        where:{
-          RideID:rideID
-        }
-      })
+      const updated = await prisma.rides.findUnique({
+        where: {
+          RideID: rideID,
+        },
+      });
 
-      if(!updated){
-        throw new ServiceError("Ride Not Available","Not able to assign unavailable ride",status.INTERNAL_SERVER_ERROR);
+      if (!updated) {
+        throw new ServiceError(
+          "Ride Not Available",
+          "Not able to assign unavailable ride",
+          status.INTERNAL_SERVER_ERROR
+        );
       }
-      
-      const rideCost=calculateCost(updated.Estimated_Distance);
-  
-      const ride=await prisma.rides.update({
-        where:{
-          RideID:rideID,
+
+      const rideCost = calculateCost(updated.Estimated_Distance);
+
+      const ride = await prisma.rides.update({
+        where: {
+          RideID: rideID,
         },
-        data:{
-          Ride_Status:"ASSIGNED",
-          Driver_ID:driverId,
-          Cost:rideCost
+        data: {
+          Ride_Status: "ASSIGNED",
+          Driver_ID: driverId,
+          Cost: rideCost,
         },
-      })
-      if(!ride){
-        throw new ServiceError("Something went wrong","Not able to update ride",status.INTERNAL_SERVER_ERROR);
+      });
+      if (!ride) {
+        throw new ServiceError(
+          "Something went wrong",
+          "Not able to update ride",
+          status.INTERNAL_SERVER_ERROR
+        );
       }
       return ride;
-
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 
-  async getAssignedRides(){
+  async getAssignedRides() {
     try {
       const details = await prisma.rides.findMany({
         where: {
@@ -388,23 +422,27 @@ export default class AdminRepository {
             in: ["ASSIGNED"],
           },
         },
-        select:{
-          RideID:true,
-          Ride_Date:true,
-          Ride_Status:true,
-          Customer_FirstName:true,
-          Customer_LastName:true,
-          Phone_Number:true,
-          Transportation_Type:true,
-          Pick_Up_Time:true,
-          Arrival_Time:true,
-          Estimated_Distance:true,
-          Driver_ID:true,
-          Cost:true,
-        }
+        select: {
+          RideID: true,
+          Ride_Date: true,
+          Ride_Status: true,
+          Customer_FirstName: true,
+          Customer_LastName: true,
+          Phone_Number: true,
+          Transportation_Type: true,
+          Pick_Up_Time: true,
+          Arrival_Time: true,
+          Estimated_Distance: true,
+          Driver_ID: true,
+          Cost: true,
+        },
       });
-      if(!details){
-        throw new ServiceError("Something went wrong","Not able to fetch details",status.INTERNAL_SERVER_ERROR);
+      if (!details) {
+        throw new ServiceError(
+          "Something went wrong",
+          "Not able to fetch details",
+          status.INTERNAL_SERVER_ERROR
+        );
       }
       return details;
     } catch (error) {
@@ -412,81 +450,92 @@ export default class AdminRepository {
     }
   }
 
-  async updateDriverDetails(id:string,updateFields:DriverUpdateInput){
+  async updateDriverDetails(id: string, updateFields: DriverUpdateInput) {
     try {
-      const user=await prisma.driver.findUnique({
-        where:{
-          driverID:id
-        }
-      })
+      const user = await prisma.driver.findUnique({
+        where: {
+          driverID: id,
+        },
+      });
 
-      if(!user){
-        throw new ServiceError("User Not Found","Not able to update driver details",status.INTERNAL_SERVER_ERROR)
+      if (!user) {
+        throw new ServiceError(
+          "User Not Found",
+          "Not able to update driver details",
+          status.INTERNAL_SERVER_ERROR
+        );
       }
 
-      const fields={}
+      const fields = {};
 
-      for(const field in updateFields){
+      for (const field in updateFields) {
         //@ts-ignore
-        if(user[field]!=undefined){
+        if (user[field] != undefined) {
           //@ts-ignore
           fields[field] = user[field];
         }
       }
 
-      const updateDetails=await prisma.driver.update({
-        where:{
-          driverID:id
+      const updateDetails = await prisma.driver.update({
+        where: {
+          driverID: id,
         },
-        data:fields
-      })
+        data: fields,
+      });
 
-      if(!updateDetails){
-        throw new ServiceError("Driver Not updated","Details not updated",status.INTERNAL_SERVER_ERROR);
+      if (!updateDetails) {
+        throw new ServiceError(
+          "Driver Not updated",
+          "Details not updated",
+          status.INTERNAL_SERVER_ERROR
+        );
       }
 
       return true;
-    } catch (error) {
-      
-    }
-   
+    } catch (error) {}
   }
 
-  async updateRideAsCompleted(rideId:string){
+  async updateRideAsCompleted(rideId: string) {
     try {
-
-      const updateRide=await prisma.rides.update({
-        where:{
-          RideID:rideId
+      const updateRide = await prisma.rides.update({
+        where: {
+          RideID: rideId,
         },
-        data:{
-          Ride_Status:"COMPLETED"
-        }
-      })
-      
-      const updateDetails=excludeFields(updateRide,['createdAt','updatedAt'])
+        data: {
+          Ride_Status: "COMPLETED",
+        },
+      });
 
-      const completedRides=await prisma.completedRides.create({
+      const updateDetails = excludeFields(updateRide, [
+        "createdAt",
+        "updatedAt",
+      ]);
+
+      const completedRides = await prisma.completedRides.create({
         //@ts-ignore
-        data:updateDetails
-      })
+        data: updateDetails,
+      });
       return completedRides;
     } catch (error) {
-     throw error 
+      throw error;
     }
   }
 
-  async updateAssignedRides(rideData:RidesAssignedUpdate){ 
+  async updateAssignedRides(rideData: RidesAssignedUpdate) {
     try {
-      const rideUpdate=await prisma.rides.update({
-        where:{
-          RideID:rideData.rideId
+      const rideUpdate = await prisma.rides.update({
+        where: {
+          RideID: rideData.rideId,
         },
-        data:rideData
-      })
+        data: rideData,
+      });
 
-      if(!rideUpdate){
-        throw  new ServiceError('Not able to update',"Update failed",status.BAD_REQUEST)
+      if (!rideUpdate) {
+        throw new ServiceError(
+          "Not able to update",
+          "Update failed",
+          status.BAD_REQUEST
+        );
       }
 
       return rideUpdate;
@@ -495,56 +544,63 @@ export default class AdminRepository {
     }
   }
 
-  async getCompletedRides(){
+  async getCompletedRides() {
     try {
-      const rides=await prisma.completedRides.findMany();
+      const rides = await prisma.completedRides.findMany();
       return rides;
     } catch (error) {
       throw error;
     }
   }
 
-  async getCancelledRides(){
+  async getCancelledRides() {
     try {
-      const data=await prisma.rides.findMany({
-        where:{
-          Ride_Status:"CANCELLED"
-        }
+      const data = await prisma.rides.findMany({
+        where: {
+          Ride_Status: "CANCELLED",
+        },
       });
       return data;
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 
-  async updatePassword(emailId:string,password:string){
-    try { 
+  async updatePassword(emailId: string, password: string) {
+    try {
       const hashedPassword = await bcrypt.hash(password, 10);
 
       const existingUser = await prisma.admin.update({
         where: {
           email: emailId,
         },
-        data:{
-          password:hashedPassword,
-        }
+        data: {
+          password: hashedPassword,
+        },
       });
-      if(!existingUser){
-        throw new AppError("Admin Not Exits","User with EmailId do not exits",httpStatus.INTERNAL_SERVER_ERROR);
+      if (!existingUser) {
+        throw new AppError(
+          "Admin Not Exits",
+          "User with EmailId do not exits",
+          httpStatus.INTERNAL_SERVER_ERROR
+        );
       }
 
       return true;
-
     } catch (error) {
       throw error;
     }
   }
 
-  async getAllAdmins(){
+  async getAllAdmins() {
     try {
-      const admins=await prisma.admin.findMany();
-      if(!admins){
-        throw new AppError("Fetching failed","Database error",httpStatus.BAD_REQUEST);
+      const admins = await prisma.admin.findMany();
+      if (!admins) {
+        throw new AppError(
+          "Fetching failed",
+          "Database error",
+          httpStatus.BAD_REQUEST
+        );
       }
       return admins;
     } catch (error) {
@@ -552,15 +608,19 @@ export default class AdminRepository {
     }
   }
 
-  async deleteAdminWithID(id:string){
-    try { 
-      const value=await prisma.admin.delete({
-        where:{
-          adminId:id
+  async deleteAdminWithID(id: string) {
+    try {
+      const value = await prisma.admin.delete({
+        where: {
+          adminId: id,
         },
-      })
-      if(!value){
-        throw new AppError("Admin Not Found","Admin with the id not found",httpStatus.NOT_FOUND);
+      });
+      if (!value) {
+        throw new AppError(
+          "Admin Not Found",
+          "Admin with the id not found",
+          httpStatus.NOT_FOUND
+        );
       }
       return value;
     } catch (error) {
@@ -568,40 +628,49 @@ export default class AdminRepository {
     }
   }
 
-  async updateAdmin(id:string,adminData:AdminUpdateInput){
+  async updateAdmin(id: string, adminData: AdminUpdateInput) {
     try {
-
-      const findAdmin=await prisma.admin.findFirst({
-        where:{
-          adminId:id
-        }
-      })
-
-      if(!findAdmin) throw new AppError("Admin not found","Admin is not present in DB",httpStatus.NOT_FOUND)
-      
-      const admins=await prisma.admin.update({
-        where:{
-          adminId:id
+      const findAdmin = await prisma.admin.findFirst({
+        where: {
+          adminId: id,
         },
-        data:adminData
-      })
-      
-      return admins
+      });
+
+      if (!findAdmin)
+        throw new AppError(
+          "Admin not found",
+          "Admin is not present in DB",
+          httpStatus.NOT_FOUND
+        );
+
+      const admins = await prisma.admin.update({
+        where: {
+          adminId: id,
+        },
+        data: adminData,
+      });
+
+      return admins;
     } catch (error) {
       throw error;
     }
   }
 
-  async createPayment(driverId:string,paid:number,date?:string,feedBack?:string){
+  async createPayment(
+    driverId: string,
+    paid: number,
+    date?: string,
+    feedBack?: string
+  ) {
     try {
-      console.log("repo 1")
-      const findDriver =await prisma.driver.findUnique({
-        where:{
-          driverID:driverId
-        }
-      })
-      console.log("repo 2")
-      
+      console.log("repo 1");
+      const findDriver = await prisma.driver.findUnique({
+        where: {
+          driverID: driverId,
+        },
+      });
+      console.log("repo 2");
+
       let payment;
       if (date) {
         payment = await prisma.payment.create({
@@ -609,8 +678,8 @@ export default class AdminRepository {
             driverID: driverId,
             amount: paid,
             paymentDate: new Date(date).toISOString(),
-            remarks: feedBack?feedBack:"null" 
-          }
+            remarks: feedBack ? feedBack : "null",
+          },
         });
       } else {
         payment = await prisma.payment.create({
@@ -618,33 +687,33 @@ export default class AdminRepository {
             driverID: driverId,
             amount: paid,
             paymentDate: new Date().toISOString(),
-            remarks: feedBack?feedBack:"null" 
-          }
+            remarks: feedBack ? feedBack : "null",
+          },
         });
       }
-  
+
       return payment;
     } catch (error) {
       throw error;
     }
   }
 
-  async getAllPayments(){
+  async getAllPayments() {
     try {
-      const payments=await prisma.payment.findMany();
+      const payments = await prisma.payment.findMany();
       return payments;
     } catch (error) {
       throw error;
     }
   }
 
-  async getPaymentByDriverId(driverId:string){
+  async getPaymentByDriverId(driverId: string) {
     try {
-      const payment=await prisma.payment.findMany({
-        where:{
-          driverID:driverId
-        }
-      })
+      const payment = await prisma.payment.findMany({
+        where: {
+          driverID: driverId,
+        },
+      });
 
       return payment;
     } catch (error) {
@@ -652,4 +721,28 @@ export default class AdminRepository {
     }
   }
 
+  async updatePayment(paymentId: string, date?: string, remarks?: string) {
+    try {
+      const data: { paymentDate?: string; remarks?: string } = {};
+
+      if (date !== undefined) {
+        data.paymentDate = date;
+      }
+
+      if (remarks !== undefined) {
+        data.remarks = remarks;
+      }
+
+      const updatedPayment = await prisma.payment.update({
+        where: {
+          paymentID: paymentId,
+        },
+        data: data,
+      });
+
+      return updatedPayment;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

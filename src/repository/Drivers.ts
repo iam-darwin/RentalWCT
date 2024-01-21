@@ -19,14 +19,23 @@ export default class DriverRepository {
         },
       });
 
-      if(existingDriver){
-        throw new ServiceError("User Exists","Driver with these details already exists",status.CONFLICT);
+      if (existingDriver) {
+        throw new ServiceError(
+          "User Exists",
+          "Driver with these details already exists",
+          status.CONFLICT
+        );
       }
 
       const hashedPassword = await bcrypt.hash(details.password, 10);
 
+      const last5SSNnumbers = details.driverSSN.substring(
+        details.driverSSN.length - 5
+      );
+
       const driver = await prisma.driver.create({
         data: {
+          driverID: last5SSNnumbers,
           driverFirstName: details.driverFirstName,
           driverLastName: details.driverLastName,
           email: details.email,
@@ -49,98 +58,99 @@ export default class DriverRepository {
         },
       });
 
-      if(!driver){
-        throw new ServiceError("Failed to create","Not able to create Driver",status.INTERNAL_SERVER_ERROR);
+      if (!driver) {
+        throw new ServiceError(
+          "Failed to create",
+          "Not able to create Driver",
+          status.INTERNAL_SERVER_ERROR
+        );
       }
 
       return driver;
     } catch (error) {
-       throw error;
+      throw error;
     }
   }
 
-  async getEmail(email:string){
+  async getEmail(email: string) {
     try {
-      const emailUser=await prisma.driver.findUnique({
-        where:{
-          email
-        }
-      })
+      const emailUser = await prisma.driver.findUnique({
+        where: {
+          email,
+        },
+      });
 
       return emailUser;
     } catch (error) {
-      throw error
-    }
-
-
-  }
-
-  async getAssignedRides(driverId:string){ //driver checking his website after getting message
-    try {
-      const rides=await prisma.rides.findMany({
-        where:{
-          Driver_ID:driverId,
-          Ride_Status:'ASSIGNED'
-        }
-      })
-
-      return rides
-    } catch (error) {
-      throw error      
+      throw error;
     }
   }
 
-  async getCompletedRides(driverId:string){
+  async getAssignedRides(driverId: string) {
+    //driver checking his website after getting message
     try {
-      const rides=await prisma.completedRides.findMany({
-        where:{
-            Driver_ID:driverId,
-            Ride_Status:'COMPLETED'
+      const rides = await prisma.rides.findMany({
+        where: {
+          Driver_ID: driverId,
+          Ride_Status: "ASSIGNED",
         },
-        select:{
-          RideID:true,
-          Ride_Status:true,
-          Ride_Date:true,
-          Customer_FirstName:true,
-          Customer_LastName:true,
-          Phone_Number:true,
-          Transportation_Type:true,
-          Pick_Up_Time:true,
-          Arrival_Time:true,
-          Estimated_Distance:true,
-          Pickup_Address:true,
-          Dropoff_Address:true,
-          Pickup_Directions:true,
-          Cost:true
-        }
-      })
+      });
+
       return rides;
     } catch (error) {
-      
+      throw error;
     }
   }
 
-  async checkPayments(driverId:string){
+  async getCompletedRides(driverId: string) {
     try {
-      const payments=await prisma.payment.findMany({
-        where:{
-          driverID:driverId
-        }
-      })
+      const rides = await prisma.completedRides.findMany({
+        where: {
+          Driver_ID: driverId,
+          Ride_Status: "COMPLETED",
+        },
+        select: {
+          RideID: true,
+          Ride_Status: true,
+          Ride_Date: true,
+          Customer_FirstName: true,
+          Customer_LastName: true,
+          Phone_Number: true,
+          Transportation_Type: true,
+          Pick_Up_Time: true,
+          Arrival_Time: true,
+          Estimated_Distance: true,
+          Pickup_Address: true,
+          Dropoff_Address: true,
+          Pickup_Directions: true,
+          Cost: true,
+        },
+      });
+      return rides;
+    } catch (error) {}
+  }
 
-      return payments
+  async checkPayments(driverId: string) {
+    try {
+      const payments = await prisma.payment.findMany({
+        where: {
+          driverID: driverId,
+        },
+      });
+
+      return payments;
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 
-  async getDetails(driverId:string){
-    try { 
-      const driver =await prisma.driver.findUnique({
-        where:{
-          driverID:driverId
+  async getDetails(driverId: string) {
+    try {
+      const driver = await prisma.driver.findUnique({
+        where: {
+          driverID: driverId,
         },
-      })
+      });
 
       return driver;
     } catch (error) {
