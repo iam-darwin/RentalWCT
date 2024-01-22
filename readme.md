@@ -302,7 +302,7 @@ Before proceeding to this route, make sure to sign in first. Once signed in, the
 
 ### Add Payment Info
 
-Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
+Before proceeding to this route, make sure to sign in first Super Admin. Once signed in, the server will generate a JWT token that should be kept in the headers
 
 **METHOD** :`POST`
 **URL** :`http://localhost:PORT/api/v1/admin/createPayment`
@@ -318,20 +318,41 @@ date?: "2024-01-10T12:53:38.729Z" //format
 
 ### Get All Payments
 
-Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
+Before proceeding to this route, make sure to sign in first Super Admin. Once signed in, the server will generate a JWT token that should be kept in the headers
 
 **METHOD** :`GET`
 **URL** :`http://localhost:PORT/api/v1/admin/getAllPayments`
 
 ### Get Payments By DriverID
 
-Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
+Before proceeding to this route, make sure to sign in first Super Admin. Once signed in, the server will generate a JWT token that should be kept in the headers
 
 **METHOD** :`GET`
 **URL** :`http://localhost:PORT/api/v1/admin/payment/:driverId`
 
-**Request Parasm**
-`   {
+**Request Params**
+`{
       driverId:"asdasdasd"
-    }
-  `
+}`
+
+### Update Payments
+
+Before proceeding to this route, make sure to sign in first as Super Admin. Once signed in, the server will generate a JWT token that should be kept in the headers
+
+**METHOD** :`POST`
+**URL** :`http://localhost:8000/api/v1/admin/payments/:paymentId`
+
+**Request Params**
+`{
+      paymentId:"asdasdasd" 
+}`
+
+**Request Body**
+
+```
+{
+  date?:"2024-01-10T12:53:38.729Z" //format
+  remarks:"just checking updation",
+  amount:"756"
+}
+```

@@ -382,12 +382,18 @@ export default class AdminService {
     }
   }
 
-  async updatePayment(paymentId: string, date?: string, remarks?: string) {
+  async updatePayment(
+    paymentId: string,
+    date?: string,
+    remarks?: string,
+    amount?: number
+  ) {
     try {
       const updatedPayment = this.adminService.updatePayment(
         paymentId,
         date,
-        remarks
+        remarks,
+        amount
       );
       return updatedPayment;
     } catch (error) {

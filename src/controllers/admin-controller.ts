@@ -8,9 +8,9 @@ import {
   loginSchema,
   driverInputSchema,
   AdminUpdateInputValidation,
-  adminIdValidation,
   assgnRideValidation,
   paymentRequestValidation,
+  updatePaymentSchema,
 } from "../config/validations";
 import { AppError, ServiceError } from "../utils/Errors";
 
@@ -24,7 +24,10 @@ export const registerAdmin = async (
 ) => {
   try {
     const adminBody: AdminInput = adminSchema.parse(req.body);
-    const adminUser = await admin.createAdmin({...adminBody,role:req.body.role});
+    const adminUser = await admin.createAdmin({
+      ...adminBody,
+      role: req.body.role,
+    });
 
     return res.status(status.CREATED).json({
       message: "User created Successfully",
@@ -32,7 +35,7 @@ export const registerAdmin = async (
       err: {},
     });
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
@@ -176,8 +179,11 @@ export const assignRideToDriver = async (
   next: NextFunction
 ) => {
   try {
-    const assignBody=assgnRideValidation.parse(req.body)
-    const success = await admin.assginRideToDriver(assignBody.rideId,assignBody.driverId);
+    const assignBody = assgnRideValidation.parse(req.body);
+    const success = await admin.assginRideToDriver(
+      assignBody.rideId,
+      assignBody.driverId
+    );
     return res.status(status.OK).json({
       message: `ASSIGNED DRIVER`,
       assigned: success,
@@ -243,9 +249,7 @@ export const updateAssignedRides = async (
 ) => {
   try {
     //@ts-ignore
-    const updateData = await admin.updateAssignRides(
-      req.body
-    );
+    const updateData = await admin.updateAssignRides(req.body);
     return res.status(status.OK).json({
       message: "Successfully updated",
       data: updateData,
@@ -305,40 +309,48 @@ export const forgotPassword = async (
   }
 };
 
-
-export const resetPasswordGET =async(req:Request,res:Response,next:NextFunction)=>{
+export const resetPasswordGET = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     //@ts-ignore
-    const {emailId}=req.user;
-    const url=req.originalUrl
-    const tokenMatch=url.match(/\/resetPwd\/([^\/]+)/);
-    let token
+    const { emailId } = req.user;
+    const url = req.originalUrl;
+    const tokenMatch = url.match(/\/resetPwd\/([^\/]+)/);
+    let token;
     if (tokenMatch && tokenMatch[1]) {
       token = tokenMatch[1];
     } else {
-     return res.render("req-newLink");
+      return res.render("req-newLink");
     }
 
-    return res.render("reset-password",{email:emailId,token});
+    return res.render("reset-password", { email: emailId, token });
   } catch (error) {
     next(error);
   }
-}
+};
 
-export const resetPasswordPOST=async (req:Request,res:Response,next:NextFunction)=>{
+export const resetPasswordPOST = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    //@ts-ignore
-    console.log("2",req.user)
-    //@ts-ignore
-    const response=await admin.updateForgotPassword(req.user.emailId,req.body.confirmPassword);
-    if(response){
-      return res.status(status.OK).render('pwd-Update-Success')
+    const response = await admin.updateForgotPassword(
+      //@ts-ignore
+      req.user.emailId,
+      req.body.confirmPassword
+    );
+    if (response) {
+      return res.status(status.OK).render("pwd-Update-Success");
     }
-    return res.status(status.UNAUTHORIZED).render('req-newLink')
+    return res.status(status.UNAUTHORIZED).render("req-newLink");
   } catch (error) {
     next(error);
   }
-}
+};
 
 export const getAllAdmins = async (
   req: Request,
@@ -346,45 +358,56 @@ export const getAllAdmins = async (
   next: NextFunction
 ) => {
   try {
-    const admins=await admin.getAllAdmins();
+    const admins = await admin.getAllAdmins();
 
     return res.status(status.OK).json({
-      msg:"Successfull fetched",
-      data:admins
-    })
-  } catch (error) {
-    next(error)
-  }
-};
-
-export const updateAdmin=async(req:Request,res:Response,next:NextFunction)=>{
-  try {
-    const adminUpateBody=AdminUpdateInputValidation.parse(req.body)
-    //@ts-ignore
-    const response=await admin.updateAdmin(adminUpateBody.adminId,adminUpateBody);
-
-    return res.status(status.OK).json({
-      msg:"Successfull updated",
-      data:response
-    })
+      msg: "Successfull fetched",
+      data: admins,
+    });
   } catch (error) {
     next(error);
   }
-}
+};
 
-export const deleteAdmin=async(req:Request,res:Response,next:NextFunction)=>{
-try {
-  console.log(req.body.adminId)
-  const response=await admin.deleteAdminWithID(req.body.adminId);
+export const updateAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const adminUpateBody = AdminUpdateInputValidation.parse(req.body);
+    //@ts-ignore
+    const response = await admin.updateAdmin(
+      adminUpateBody.adminId,
+      adminUpateBody
+    );
 
-  return res.status(status.OK).json({
-    msg:"Successfull deleted",
-    data:response
-  })
-} catch (error) {
-  next(error)
-}
-}
+    return res.status(status.OK).json({
+      msg: "Successfull updated",
+      data: response,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    console.log(req.body.adminId);
+    const response = await admin.deleteAdminWithID(req.body.adminId);
+
+    return res.status(status.OK).json({
+      msg: "Successfull deleted",
+      data: response,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const createPayment = async (
   req: Request,
@@ -392,36 +415,39 @@ export const createPayment = async (
   next: NextFunction
 ) => {
   try {
-    const paymentBody=paymentRequestValidation.parse(req.body)
-    const response=await admin.createPayment(paymentBody.driverId,Number(paymentBody.amount),paymentBody.date,paymentBody.remarks);
+    const paymentBody = paymentRequestValidation.parse(req.body);
+    const response = await admin.createPayment(
+      paymentBody.driverId,
+      Number(paymentBody.amount),
+      paymentBody.date,
+      paymentBody.remarks
+    );
 
     return res.status(status.OK).json({
-      msg:"Successfull Created",
-      data:response
-    })
+      msg: "Successfull Created",
+      data: response,
+    });
   } catch (error) {
     next(error);
   }
-}
-
+};
 
 export const getAllPayments = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-try {
-
-    const response=await admin.getAllPayments();
+  try {
+    const response = await admin.getAllPayments();
 
     return res.status(status.OK).json({
-      msg:"Successfull Fetched",
-      data:response
-    })
-} catch (error) {
-  next(error)
-}
-}
+      msg: "Successfull Fetched",
+      data: response,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const getPaymentByDriverId = async (
   req: Request,
@@ -429,18 +455,53 @@ export const getPaymentByDriverId = async (
   next: NextFunction
 ) => {
   try {
-    const {driverId}=req.params;
+    const { driverId } = req.params;
 
-    if(!driverId) throw new AppError("Id null","Can't access without driverId",status.FORBIDDEN)
-    const response=await admin.getPaymentByDriverId(driverId);
+    if (!driverId)
+      throw new AppError(
+        "Id null",
+        "Can't access without driverId",
+        status.FORBIDDEN
+      );
+    const response = await admin.getPaymentByDriverId(driverId);
 
     return res.status(status.OK).json({
-      msg:"Successfull Fetched",
-      data:response
-    })
+      msg: "Successfull Fetched",
+      data: response,
+    });
   } catch (error) {
     next(error);
   }
-}
+};
 
+export const updatePayments = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { paymentId } = req.params;
+    if (!paymentId) {
+      throw new AppError(
+        "PaymentID Undefined",
+        "PaymentId field should not be empty",
+        status.BAD_REQUEST
+      );
+    }
 
+    const updatePaymentBody = updatePaymentSchema.parse(req.body);
+    const response = await admin.updatePayment(
+      paymentId,
+      updatePaymentBody.date,
+      updatePaymentBody.remarks,
+      Number(updatePaymentBody.amount)
+    );
+
+    return res.status(status.OK).json({
+      msg: "Updated sucessful",
+      data: response,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

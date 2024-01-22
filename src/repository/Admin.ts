@@ -721,9 +721,15 @@ export default class AdminRepository {
     }
   }
 
-  async updatePayment(paymentId: string, date?: string, remarks?: string) {
+  async updatePayment(
+    paymentId: string,
+    date?: string,
+    remarks?: string,
+    amount?: number
+  ) {
     try {
-      const data: { paymentDate?: string; remarks?: string } = {};
+      const data: { paymentDate?: string; remarks?: string; amount?: number } =
+        {};
 
       if (date !== undefined) {
         data.paymentDate = date;
@@ -731,6 +737,9 @@ export default class AdminRepository {
 
       if (remarks !== undefined) {
         data.remarks = remarks;
+      }
+      if (amount !== undefined) {
+        data.amount = amount;
       }
 
       const updatedPayment = await prisma.payment.update({
