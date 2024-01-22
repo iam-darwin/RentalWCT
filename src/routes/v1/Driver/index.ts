@@ -10,13 +10,9 @@ const router = express.Router();
 
 router.post("/signIn", DriverRoutes.loginDriver);
 router.get("/assignedRides", authDriver, DriverRoutes.checkHisRides);
-router.get(
-  "/completedRides/:driverId",
-  authDriver,
-  DriverRoutes.getCompletedRides
-);
-router.get("/payments/:driverId", authDriver, DriverRoutes.checkPayments);
-router.get("/getDetails/:driverId", authDriver, DriverRoutes.getDriverDetails);
+router.get("/completedRides", authDriver, DriverRoutes.getCompletedRides);
+router.get("/payments", authDriver, DriverRoutes.checkPayments);
+router.get("/getDetails", authDriver, DriverRoutes.getDriverDetails);
 
 router.post("/forgotPassword", DriverRoutes.forgotPassword);
 router.get("/resetPwd/:token", resetPwdAuthGet, DriverRoutes.resetPasswordGET);

@@ -1,6 +1,6 @@
 # WCT API Documentation
 
-This documentation provides information on the API endpoints.
+This documentation provides information on the Adimn API endpoints.
 
 ## Starting the Application
 

@@ -5,6 +5,7 @@ import { prisma } from "../config/Connectdb";
 import { DriverInput } from "../intrefaces";
 import { AppError, ServiceError } from "../utils/Errors";
 import httpStatus from "http-status";
+import { excludeFields } from "../utils/helper";
 
 export default class DriverRepository {
   async createDriver(details: DriverInput) {
@@ -152,8 +153,9 @@ export default class DriverRepository {
           driverID: driverId,
         },
       });
-
-      return driver;
+      //@ts-ignore
+      const updateDetails = excludeFields(driver, ["createdAt", "updatedAt"]);
+      return updateDetails;
     } catch (error) {
       throw error;
     }

@@ -39,15 +39,16 @@ export const checkHisRides = async (
   next: NextFunction
 ) => {
   try {
-    const { driverId } = req.params;
-    if (!driverId) {
+    //@ts-ignore
+    const { driverID } = req.user;
+    if (!driverID) {
       throw new ServiceError(
         "Id not found",
         "Send Driver Id",
         status.UNAUTHORIZED
       );
     }
-    const rides = await driver.getAssignedRides(driverId);
+    const rides = await driver.getAssignedRides(driverID);
     return res.status(status.OK).json({
       message: "Successfully fetched rides",
       data: rides,
@@ -63,15 +64,16 @@ export const getCompletedRides = async (
   next: NextFunction
 ) => {
   try {
-    const { driverId } = req.params;
-    if (!driverId) {
+    //@ts-ignore
+    const { driverID } = req.user;
+    if (!driverID) {
       throw new ServiceError(
         "Id not found",
         "Send Driver Id",
         status.UNAUTHORIZED
       );
     }
-    const rides = await driver.getCompletedRidesDriver(driverId);
+    const rides = await driver.getCompletedRidesDriver(driverID);
     return res.status(status.OK).json({
       message: "Succesffuly Fetced",
       data: rides,
@@ -87,7 +89,17 @@ export const checkPayments = async (
   next: NextFunction
 ) => {
   try {
-    const response = await driver.checkPayments(req.params.driverId);
+    //@ts-ignore
+    const { driverID } = req.user;
+
+    if (!driverID) {
+      throw new ServiceError(
+        "Id not found",
+        "Send Driver Id",
+        status.UNAUTHORIZED
+      );
+    }
+    const response = await driver.checkPayments(driverID);
 
     return res.status(status.OK).json({
       message: "Succesffuly Fetced",
@@ -104,8 +116,9 @@ export const getDriverDetails = async (
   next: NextFunction
 ) => {
   try {
-    const { driverId } = req.params;
-    if (!driverId) {
+    //@ts-ignore
+    const { driverID } = req.user;
+    if (!driverID) {
       throw new ServiceError(
         "Id not found",
         "Send Driver Id",
@@ -113,7 +126,7 @@ export const getDriverDetails = async (
       );
     }
 
-    const response = await driver.getDetails(driverId);
+    const response = await driver.getDetails(driverID);
 
     return res.status(status.OK).json({
       message: "Succesffuly Fetced",
