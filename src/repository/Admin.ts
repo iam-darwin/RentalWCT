@@ -34,7 +34,7 @@ export default class AdminRepository {
       return user;
     } catch (error) {
       //@ts-ignore
-      if (error.name == "PrismaClientKnownRequestError") {
+      if (error.name == "prismaKnownRequestError") {
         throw new AppError(
           "Client Error",
           "User email already exists",
@@ -497,24 +497,29 @@ export default class AdminRepository {
 
   async updateRideAsCompleted(rideId: string) {
     try {
-      const updateRide = await prisma.rides.update({
-        where: {
-          RideID: rideId,
-        },
-        data: {
-          Ride_Status: "COMPLETED",
-        },
+      const completedRides = await prisma.$transaction(async (prismaClient) => {
+        const updateRide = await prismaClient.rides.update({
+          where: {
+            RideID: rideId,
+          },
+          data: {
+            Ride_Status: "COMPLETED",
+          },
+        });
+
+        const updateDetails = excludeFields(updateRide, [
+          "createdAt",
+          "updatedAt",
+        ]);
+
+        const completedRidesResult = await prismaClient.completedRides.create({
+          //@ts-ignore
+          data: updateDetails,
+        });
+
+        return completedRidesResult;
       });
 
-      const updateDetails = excludeFields(updateRide, [
-        "createdAt",
-        "updatedAt",
-      ]);
-
-      const completedRides = await prisma.completedRides.create({
-        //@ts-ignore
-        data: updateDetails,
-      });
       return completedRides;
     } catch (error) {
       throw error;
@@ -663,34 +668,49 @@ export default class AdminRepository {
     feedBack?: string
   ) {
     try {
-      console.log("repo 1");
-      const findDriver = await prisma.driver.findUnique({
-        where: {
-          driverID: driverId,
-        },
-      });
-      console.log("repo 2");
+      const payment = await prisma.$transaction(async (prismaClient) => {
+        const findDriver = await prismaClient.driver.findUnique({
+          where: {
+            driverID: driverId,
+          },
+        });
 
-      let payment;
-      if (date) {
-        payment = await prisma.payment.create({
-          data: {
+        if (!findDriver) {
+          throw new Error(`Driver with ID ${driverId} not found`);
+        }
+
+        let payment;
+        if (date) {
+          payment = await prismaClient.payment.create({
+            data: {
+              driverID: driverId,
+              amount: paid,
+              paymentDate: new Date(date).toISOString(),
+              remarks: feedBack ? feedBack : "null",
+            },
+          });
+        } else {
+          payment = await prismaClient.payment.create({
+            data: {
+              driverID: driverId,
+              amount: paid,
+              paymentDate: new Date().toISOString(),
+              remarks: feedBack ? feedBack : "null",
+            },
+          });
+        }
+
+        await prismaClient.driver.update({
+          where: {
             driverID: driverId,
-            amount: paid,
-            paymentDate: new Date(date).toISOString(),
-            remarks: feedBack ? feedBack : "null",
+          },
+          data: {
+            lastPaymentDate: new Date(payment.paymentDate).toString(),
           },
         });
-      } else {
-        payment = await prisma.payment.create({
-          data: {
-            driverID: driverId,
-            amount: paid,
-            paymentDate: new Date().toISOString(),
-            remarks: feedBack ? feedBack : "null",
-          },
-        });
-      }
+
+        return payment;
+      });
 
       return payment;
     } catch (error) {
