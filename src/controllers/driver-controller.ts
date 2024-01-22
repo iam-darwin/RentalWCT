@@ -12,7 +12,7 @@ const driver = new DriverService();
 export const loginDriver = async (req: Request, res: Response) => {
   try {
     const driverLoginBody: LoginInput = loginSchema.parse(req.body);
-
+    console.log(driverLoginBody);
     const driverToken = await driver.login(driverLoginBody);
 
     return res.status(status.OK).json({
@@ -39,9 +39,13 @@ export const checkHisRides = async (
   next: NextFunction
 ) => {
   try {
-    const {driverId}=req.params;
-    if(!driverId){
-      throw new ServiceError("Id not found","Send Driver Id",status.UNAUTHORIZED)
+    const { driverId } = req.params;
+    if (!driverId) {
+      throw new ServiceError(
+        "Id not found",
+        "Send Driver Id",
+        status.UNAUTHORIZED
+      );
     }
     const rides = await driver.getAssignedRides(driverId);
     return res.status(status.OK).json({
@@ -59,15 +63,19 @@ export const getCompletedRides = async (
   next: NextFunction
 ) => {
   try {
-    const {driverId}=req.params;
-    if(!driverId){
-      throw new ServiceError("Id not found","Send Driver Id",status.UNAUTHORIZED)
+    const { driverId } = req.params;
+    if (!driverId) {
+      throw new ServiceError(
+        "Id not found",
+        "Send Driver Id",
+        status.UNAUTHORIZED
+      );
     }
-    const rides=await driver.getCompletedRidesDriver(driverId);
+    const rides = await driver.getCompletedRidesDriver(driverId);
     return res.status(status.OK).json({
-      message:"Succesffuly Fetced",
-      data:rides
-    })
+      message: "Succesffuly Fetced",
+      data: rides,
+    });
   } catch (error) {
     next(error);
   }
@@ -79,32 +87,98 @@ export const checkPayments = async (
   next: NextFunction
 ) => {
   try {
+    const response = await driver.checkPayments(req.params.driverId);
 
-    const response=await driver.checkPayments(req.params.driverId);
-   
     return res.status(status.OK).json({
-      message:"Succesffuly Fetced",
-      data:response
-    })
+      message: "Succesffuly Fetced",
+      data: response,
+    });
   } catch (error) {
     next(error);
   }
 };
 
-export const getDriverDetails=async(req:Request,res:Response,next:NextFunction)=>{
+export const getDriverDetails = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const {driverId}=req.params;
-    if(!driverId){
-      throw new ServiceError("Id not found","Send Driver Id",status.UNAUTHORIZED)
+    const { driverId } = req.params;
+    if (!driverId) {
+      throw new ServiceError(
+        "Id not found",
+        "Send Driver Id",
+        status.UNAUTHORIZED
+      );
     }
 
-    const response=await driver.getDetails(driverId);
+    const response = await driver.getDetails(driverId);
 
     return res.status(status.OK).json({
-      message:"Succesffuly Fetced",
-      data:response
-    })
+      message: "Succesffuly Fetced",
+      data: response,
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
+
+export const forgotPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const response = await driver.forgotPwd(req.body.email);
+
+    return res.status(status.OK).json({
+      msg: response,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resetPasswordGET = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    //@ts-ignore
+    const { emailId } = req.user;
+    const url = req.originalUrl;
+    const tokenMatch = url.match(/\/resetPwd\/([^\/]+)/);
+    let token;
+    if (tokenMatch && tokenMatch[1]) {
+      token = tokenMatch[1];
+    } else {
+      return res.render("req-newLink");
+    }
+
+    return res.render("reset-pwd-driver", { email: emailId, token });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resetPasswordPOST = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const response = await driver.updateForgotPassword(
+      //@ts-ignore
+      req.user.emailId,
+      req.body.confirmPassword
+    );
+    if (response) {
+      return res.status(status.OK).render("pwd-Update-Success");
+    }
+    return res.status(status.UNAUTHORIZED).render("req-newLink");
+  } catch (error) {
+    next(error);
+  }
+};

@@ -6,6 +6,10 @@ import { DriverInput, LoginInput } from "../intrefaces";
 import { DriverRepository } from "../repository";
 import { utils } from "../utils/utilities";
 import { AppError } from "../utils/Errors";
+import httpStatus from "http-status";
+import { htmlTemplate } from "../utils/helper";
+import { transporter } from "../config/email";
+import { Driver } from "@prisma/client";
 
 export default class DriverService {
   private driverRepo: DriverRepository;
@@ -64,7 +68,10 @@ export default class DriverService {
   }
 
   generateToken(data: JwtPayload) {
-    return jwt.sign(data, utils.JWT_SECRET, { expiresIn: "2h" });
+    return jwt.sign(data, utils.JWT_SECRET, { expiresIn: "10h" });
+  }
+  generateToken5mins(data: JwtPayload) {
+    return jwt.sign(data, utils.JWT_SECRET, { expiresIn: "5m" });
   }
 
   async getAssignedRides(driverId: string) {
@@ -94,10 +101,59 @@ export default class DriverService {
     }
   }
 
-  async getDetails(driverId:string){
-    try { 
-      const driver =await this.driverRepo.getDetails(driverId);
+  async getDetails(driverId: string) {
+    try {
+      const driver = await this.driverRepo.getDetails(driverId);
       return driver;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async forgotPwd(email: string) {
+    try {
+      const user = await this.driverRepo.getEmail(email);
+
+      const token = this.generateToken5mins({ emailId: user?.email });
+      if (!token) {
+        throw new AppError(
+          "Something went wrong",
+          "Internal Server Error",
+          httpStatus.INTERNAL_SERVER_ERROR
+        );
+      }
+      //@ts-ignore
+      const info = await this.sendEmail(user?.email, user, token);
+      return info;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  private async sendEmail(email: string, user: Driver, token: string) {
+    try {
+      const mailOptions = {
+        from: utils.fromEmail,
+        to: email,
+        subject: "Test HTML Email",
+        text: "Hello, this is a test email!",
+        html: htmlTemplate(user.driverFirstName, token, utils.driverURL),
+      };
+
+      const info = await transporter.sendMail(mailOptions);
+      return info;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateForgotPassword(emailId: string, confirmPassword: string) {
+    try {
+      const user = await this.driverRepo.updatePassword(
+        emailId,
+        confirmPassword
+      );
+      return user;
     } catch (error) {
       throw error;
     }

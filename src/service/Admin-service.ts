@@ -296,7 +296,7 @@ export default class AdminService {
         to: email,
         subject: "Test HTML Email",
         text: "Hello, this is a test email!",
-        html: htmlTemplate(user.name, token),
+        html: htmlTemplate(user.name, token, utils.adminURL),
       };
 
       const info = await transporter.sendMail(mailOptions);

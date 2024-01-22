@@ -4,6 +4,7 @@ import status from "http-status";
 import { prisma } from "../config/Connectdb";
 import { DriverInput } from "../intrefaces";
 import { AppError, ServiceError } from "../utils/Errors";
+import httpStatus from "http-status";
 
 export default class DriverRepository {
   async createDriver(details: DriverInput) {
@@ -153,6 +154,31 @@ export default class DriverRepository {
       });
 
       return driver;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updatePassword(emailId: string, password: string) {
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const existingUser = await prisma.driver.update({
+        where: {
+          email: emailId,
+        },
+        data: {
+          password: hashedPassword,
+        },
+      });
+      if (!existingUser) {
+        throw new AppError(
+          "Admin Not Exits",
+          "User with EmailId do not exits",
+          httpStatus.INTERNAL_SERVER_ERROR
+        );
+      }
+      return true;
     } catch (error) {
       throw error;
     }

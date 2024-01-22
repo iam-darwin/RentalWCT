@@ -31,6 +31,29 @@ export const authAdmin = async (
   }
 };
 
+export const authDriver = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const token = req.header("Authorization");
+    if (!token) {
+      return res
+        .status(httpStatus.UNAUTHORIZED)
+        .json({ error: "Unauthorized", message: "Token missing" });
+    }
+    const decoded = await JWT.verify(token, jwtKey);
+    //@ts-ignore
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res
+      .status(httpStatus.UNAUTHORIZED)
+      .json({ error: "Unauthorized", message: "Invalid token" });
+  }
+};
+
 export const superAdminAuth = (
   req: Request,
   res: Response,
@@ -76,7 +99,6 @@ export const resetPwdAuthPOST = async (
 ) => {
   try {
     const { token } = req.body;
-    console.log("inside midle ware");
     const payload = await JWT.verify(token, jwtKey);
     //@ts-ignore
     req.user = payload;
