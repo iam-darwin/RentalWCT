@@ -356,3 +356,18 @@ Before proceeding to this route, make sure to sign in first as Super Admin. Once
   amount:"756"
 }
 ```
+
+### Admin Forgot Pwd
+
+This Endpoint is responsible for changing the pwd
+
+**METHOD** : `POST`
+**URL** : `http://localhost:8000/api/v1/admin/forgotPassword`
+
+**Request Body**
+
+```
+{
+    email:"asdadz@domain.com"
+}
+```

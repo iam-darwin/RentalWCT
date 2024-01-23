@@ -54,8 +54,6 @@ This Endpoint is responsible for fetching the driver details
 
 ### Driver Forgot Pwd
 
-Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
-
 This Endpoint is responsible for changing the pwd
 
 **METHOD** : `POST`
