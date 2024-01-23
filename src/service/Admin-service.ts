@@ -20,6 +20,7 @@ import { htmlTemplate } from "../utils/helper";
 import { Admin } from "@prisma/client";
 import { transporter } from "../config/email";
 import { client } from "../config/aws";
+import { ContactUsFormData } from "../config/validations";
 
 export default class AdminService {
   private adminService: AdminRepository;
@@ -396,6 +397,33 @@ export default class AdminService {
         amount
       );
       return updatedPayment;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getFormDataUnchecked() {
+    try {
+      const alldetails = await this.adminService.getFormDataUnchecked();
+      return alldetails;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateFormContacted(id: string) {
+    try {
+      const data = await this.adminService.updateFormContacted(id);
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getFormDataChecked() {
+    try {
+      const alldetails = await this.adminService.getFormDataChecked();
+      return alldetails;
     } catch (error) {
       throw error;
     }

@@ -774,4 +774,46 @@ export default class AdminRepository {
       throw error;
     }
   }
+
+  async getFormDataUnchecked() {
+    try {
+      const alldetails = await prisma.contactUsForm.findMany({
+        where: {
+          status: "NOT CHECKED",
+        },
+      });
+      return alldetails;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateFormContacted(id: string) {
+    try {
+      const data = await prisma.contactUsForm.update({
+        where: {
+          contactID: id,
+        },
+        data: {
+          status: "CHECKED",
+        },
+      });
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getFormDataChecked() {
+    try {
+      const alldetails = await prisma.contactUsForm.findMany({
+        where: {
+          status: "CHECKED",
+        },
+      });
+      return alldetails;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

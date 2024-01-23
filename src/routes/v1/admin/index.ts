@@ -100,4 +100,24 @@ router.post(
   adminControllers.updatePayments
 );
 
+//to Check form details
+router.get(
+  "/getFormDetailsNotContacted",
+  authAdmin,
+  superAdminAuth,
+  adminControllers.getAllFormDataOfUnchecked
+);
+router.get(
+  "/getFormDetailsContacted",
+  authAdmin,
+  superAdminAuth,
+  adminControllers.getFormDataChecked
+);
+router.post(
+  "/updateFormContact/:contactId",
+  authAdmin,
+  superAdminAuth,
+  adminControllers.updateFormContacted
+);
+
 export default router;

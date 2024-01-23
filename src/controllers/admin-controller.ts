@@ -11,6 +11,7 @@ import {
   assgnRideValidation,
   paymentRequestValidation,
   updatePaymentSchema,
+  ContactUsFormSchema,
 } from "../config/validations";
 import { AppError, ServiceError } from "../utils/Errors";
 
@@ -500,6 +501,62 @@ export const updatePayments = async (
     return res.status(status.OK).json({
       msg: "Updated sucessful",
       data: response,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAllFormDataOfUnchecked = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const data = await admin.getFormDataUnchecked();
+    return res.status(status.OK).json({
+      message: "Details fetched SuccessFully",
+      details: data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateFormContacted = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { contactId } = req.params;
+    if (!contactId) {
+      throw new AppError(
+        "Id undefined",
+        "Send the ID you want to update",
+        status.BAD_REQUEST
+      );
+    }
+    const data = await admin.updateFormContacted(contactId);
+    return res.status(status.OK).json({
+      message: "Details fetched SuccessFully",
+      details: data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getFormDataChecked = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const data = await admin.getFormDataChecked();
+    return res.status(status.OK).json({
+      message: "Details fetched SuccessFully",
+      details: data,
     });
   } catch (error) {
     next(error);

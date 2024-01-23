@@ -66,3 +66,23 @@ This Endpoint is responsible for changing the pwd
     email:"asdadz@domain.com"
 }
 ```
+
+### Form End Points
+
+## Form creation
+
+make sure to integrate invisible google recaptcha in the front-end
+
+**METHOD** : `POST`
+**URL** : `http://localhost:8000/api/v1/form/createForm`
+
+**Request Body**
+
+```
+{
+    email:"asdadz@domain.com",
+    name:"asdasd",
+    phoneNumber:"982139132879",
+    message:"asdasdsadsad"
+}
+```

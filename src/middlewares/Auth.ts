@@ -60,7 +60,6 @@ export const superAdminAuth = (
   next: NextFunction
 ) => {
   try {
-    console.log("inside super admin auth");
     //@ts-ignore
     if (req.user.role !== "SUPER ADMIN") {
       return res

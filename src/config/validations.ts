@@ -123,3 +123,19 @@ export const updatePaymentSchema = z
         "Either one of date, remarks, or amount should be present, or else what will you update",
     }
   );
+export const ContactUsFormSchema = z.object({
+  name: z.string().refine((value) => value.trim() !== "", {
+    message: "Name cannot be empty or contain only whitespaces",
+  }),
+  phoneNumber: z.string().refine((value) => /^\d{10}$/.test(value), {
+    message: "Phone number must be a 10-digit number",
+  }),
+  email: z.string().email({
+    message: "Invalid email address format",
+  }),
+  message: z.string().refine((value) => value.trim() !== "", {
+    message: "Message cannot be empty or contain only whitespaces",
+  }),
+});
+
+export type ContactUsFormData = z.infer<typeof ContactUsFormSchema>;

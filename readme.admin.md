@@ -371,3 +371,24 @@ This Endpoint is responsible for changing the pwd
     email:"asdadz@domain.com"
 }
 ```
+
+### Form Details(Not Contacted)
+
+Before proceeding to this route, make sure to sign in first as Super Admin. Once signed in, the server will generate a JWT token that should be kept in the headers
+
+**METHOD** : `GET`
+**URL** : `http://localhost:8000/api/v1/admin/getFormDetailsNotContacted`
+
+### Update Form Data(Contacted)
+
+Before proceeding to this route, make sure to sign in first as Super Admin. Once signed in, the server will generate a JWT token that should be kept in the headers
+
+**METHOD** : `POST`
+**URL** : `http://localhost:8000/api/v1/admin/updateFormContact/:contactId` //mention the contactId in the params
+
+### Form Details(Contacted)
+
+Before proceeding to this route, make sure to sign in first as Super Admin. Once signed in, the server will generate a JWT token that should be kept in the headers
+
+**METHOD** : `GET`
+**URL** : `http://localhost:8000/api/v1/admin/getFormDetailsContacted`
