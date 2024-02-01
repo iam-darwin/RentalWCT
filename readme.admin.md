@@ -221,7 +221,7 @@ Before proceeding to this route, make sure to sign in first. Once signed in, the
 Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
 
 **METHOD** : `POST`
-**URL** : `http://localhost:PORT/api/v1/admin/updateDriverDetails`
+**URL** : `http://localhost:PORT/api/v1/admin/updateDriverDetails/:driverId`
 
 **Request Params**
 

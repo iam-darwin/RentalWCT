@@ -18,7 +18,7 @@ router.get("/drivers", authAdmin, adminControllers.getDrivers);
 router.get("/driver/:driverId", authAdmin, adminControllers.getDriverById);
 router.get("/activeDrivers", authAdmin, adminControllers.getActiveDrivers);
 router.post(
-  "/updateDriverDetails",
+  "/updateDriverDetails/:driverId",
   authAdmin,
   adminControllers.updateDrivedetails
 );
