@@ -3,8 +3,7 @@ import httpStatus from "http-status";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
 
-
-import {AppError,ServiceError} from "../utils/Errors/index"
+import { AppError, ServiceError } from "../utils/Errors/index";
 
 export const errorHandler = (
   err: any,
@@ -12,9 +11,9 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  console.error(err)
+  console.error(err);
   let statusCode = 500;
-  let errorMessage = "Internal  server error";
+  let errorMessage = err.message;
   if (err.message === "CSV_file") {
     statusCode = 400;
     errorMessage = "Invalid file type. Only CSV files are allowed.";
@@ -22,27 +21,27 @@ export const errorHandler = (
     statusCode = 413;
     errorMessage = "File size exceeds the allowed limit.";
   } else if (err instanceof z.ZodError) {
-     return res
-      .status(httpStatus.UNAUTHORIZED)
-      .json({ message: err.issues[0].message });
-  }else if (err instanceof AppError){
+    return res
+      .status(httpStatus.BAD_REQUEST)
+      .json({ message: `${err.issues[0].path[0]} ${err.issues[0].message}` });
+  } else if (err instanceof AppError) {
     return res.status(err.statusCode).json({
-        name:err.name,
-        message:err.message
-    })
-  }else if (err instanceof ServiceError){
+      name: err.name,
+      message: err.message,
+    });
+  } else if (err instanceof ServiceError) {
     return res.status(err.statusCode).json({
-        name:err.name,
-        message:err.message
-    })
-  }else if(err instanceof Prisma.PrismaClientValidationError){
+      name: err.name,
+      message: err.message,
+    });
+  } else if (err instanceof Prisma.PrismaClientValidationError) {
     return res.status(400).json({
-      msg:"Invalid input"
-    })
-  }else if(err instanceof Prisma.PrismaClientKnownRequestError){
-    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-      msg:"Invalid data input"
-    })
+      msg: "Invalid input",
+    });
+  } else if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    return res.status(httpStatus.CONFLICT).json({
+      msg: `the user with this ${err.meta?.target} already exists`,
+    });
   }
 
   return res.status(statusCode).json({ error: errorMessage });

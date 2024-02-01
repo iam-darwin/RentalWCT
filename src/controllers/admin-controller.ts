@@ -139,6 +139,7 @@ export const fileUpload = async (
   res: Response,
   next: NextFunction
 ) => {
+  console.log("im here", req.file);
   try {
     if (!req.file) {
       throw new ServiceError(

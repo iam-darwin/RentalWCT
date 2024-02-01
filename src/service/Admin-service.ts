@@ -141,7 +141,7 @@ export default class AdminService {
 
   async assginRideToDriver(rideID: string, driverId: string) {
     try {
-      const done = await this.adminService.assignRideToDriver(rideID, driverId); //this tas
+      const done = await this.adminService.assignRideToDriver(rideID, driverId);
       const driver = await this.adminService.getDriver(driverId);
       const {
         RideID,

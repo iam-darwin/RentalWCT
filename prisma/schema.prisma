@@ -70,25 +70,25 @@ model Rides_Kaizen {
   Scheduled_Pickup_Time  String
   Estimated_Distance     String
   Pickup_Address         String
-  Pickup_Lat             String
-  Pickup_Lng             String
-  Pickup_Directions      String
-  Dropoff_Address        String
-  Dropoff_Lat            String
-  Dropoff_Lng            String
-  Dropoff_Directions     String
-  Driver_FirstName       String
-  Driver_Photo_Url       String
-  Driver_Phone           String
-  Vehicle_Color          String
-  Vehicle_Make           String
-  Vehicle_Model          String
-  Vehicle_License        String
-  Vehicle_Photo_Url      String
-  Provider_Name          String
-  Provider_Trip_Id       String
-  Rider_Patient_ID       String
-  Member_ID              String
+  Pickup_Lat             String?
+  Pickup_Lng             String?
+  Pickup_Directions      String?
+  Dropoff_Address        String?
+  Dropoff_Lat            String?
+  Dropoff_Lng            String?
+  Dropoff_Directions     String?
+  Driver_FirstName       String?
+  Driver_Photo_Url       String?
+  Driver_Phone           String?
+  Vehicle_Color          String?
+  Vehicle_Make           String?
+  Vehicle_Model          String?
+  Vehicle_License        String?
+  Vehicle_Photo_Url      String?
+  Provider_Name          String?
+  Provider_Trip_Id       String?
+  Rider_Patient_ID       String?
+  Member_ID              String?
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
 }
