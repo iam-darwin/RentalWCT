@@ -59,7 +59,7 @@ export default class AdminService {
       const { adminId, name, role } = findAdmin;
       const token = this.generateToken({ adminId, name, role });
 
-      return token;
+      return { token: token, role: findAdmin.role };
     } catch (error) {
       throw error;
     }

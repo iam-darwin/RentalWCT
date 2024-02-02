@@ -48,10 +48,11 @@ export const loginAdmin = async (
   try {
     const adminLoginBody = loginSchema.parse(req.body);
 
-    const adminToken = await admin.loginAdmin(adminLoginBody);
+    const { token, role } = await admin.loginAdmin(adminLoginBody);
 
     return res.status(status.OK).json({
-      token: adminToken,
+      token,
+      role,
     });
   } catch (error) {
     next(error);

@@ -373,7 +373,7 @@ export default class AdminRepository {
 
   async assignRideToDriver(rideID: string, driverId: string) {
     try {
-      //update as ASSIGNED in the databse
+      //update as ASSIGNED in the database
 
       const updated = await prisma.rides.findUnique({
         where: {
