@@ -120,4 +120,54 @@ router.post(
   adminControllers.updateFormContacted
 );
 
+//add user rides
+
+router.post("/addUserRide", authAdmin, adminControllers.createUserRide);
+router.get(
+  "/getUnassignedUserRides",
+  authAdmin,
+  adminControllers.getUnassignedUserRides
+);
+router.post(
+  "/assignUserRideToDriver",
+  authAdmin,
+  adminControllers.assignUserRidesToDriver
+);
+
+router.get(
+  "/getUserAssignedRides",
+  authAdmin,
+  adminControllers.getAssignedUserRides
+);
+
+router.post(
+  "/updateUserRides",
+  authAdmin,
+  adminControllers.updateAssignedUserRides
+);
+
+router.post(
+  "/updateUserRideAsCompleted",
+  authAdmin,
+  adminControllers.updateUserRideAsCompleted
+);
+
+router.post(
+  "/updateUserRideAsCancelled",
+  authAdmin,
+  adminControllers.updateUserRideAsCancelled
+);
+
+router.get(
+  "/getCompletedUserRides",
+  authAdmin,
+  adminControllers.getCompletedUserRides
+);
+
+router.get(
+  "/getCancelledUserRides",
+  authAdmin,
+  adminControllers.getCancelledUserRides
+);
+
 export default router;

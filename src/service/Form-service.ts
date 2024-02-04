@@ -10,8 +10,8 @@ export default class FormService {
 
   async createFormDetails(data: ContactUsFormData) {
     try {
-      const formdetails = await this.formService.createFormDetails(data);
-      return formdetails;
+      const formDetails = await this.formService.createFormDetails(data);
+      return formDetails;
     } catch (error) {
       throw error;
     }

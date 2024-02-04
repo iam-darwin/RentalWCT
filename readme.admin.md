@@ -392,3 +392,163 @@ Before proceeding to this route, make sure to sign in first as Super Admin. Once
 
 **METHOD** : `GET`
 **URL** : `http://localhost:8000/api/v1/admin/getFormDetailsContacted`
+
+# User ride routes
+
+### Add User Ride
+
+**METHOD** : `POST`
+**URL** : `http://localhost:8000/api/v1/admin/addUserRide`
+
+**Request Body**
+
+```
+{
+    "firstName":"asdadz@domain.com",
+    "lastName":"asdasd",
+    "rideDate":"1234567890",
+    "pickUpTime":"asdasdsadsad",
+    "pickUpAddress":"asdasdasdsadasd",
+    "dropOffAddress":"asdasdasdsadasd",
+    "phoneNumber":"9876919921",
+    "instructions"?:"optional",
+}
+```
+
+**Response**
+
+```
+{
+  "message": "Ride successfully added",
+  "details": {
+    "rideId": 1,
+    "rideStatus": "PENDING UPDATE",
+    "firstName": "asdadz@domain.com",
+    "lastName": "asdasd",
+    "rideDate": "1234567890",
+    "pickUpTime": "asdasdsadsad",
+    "pickUpAddress": "asdasdasdsadasd",
+    "dropOffAddress": "asdasdasdsadasd",
+    "phoneNumber": "9876919921",
+    "instructions": "NULL",
+    "driverId": "NULL",
+    "createdAt": "2024-02-03T19:57:57.228Z",
+    "updatedAt": "2024-02-03T19:57:57.228Z"
+  }
+}
+```
+
+### Get Unassigned User Rides
+
+**METHOD** : `GET`
+**URL** : `http://localhost:8000/api/v1/admin/getUnassignedUserRides`
+
+**Response**
+
+```
+{
+  "message": "Details fetched successfully",
+  "details": [
+    {
+      "rideId": 1,
+      "rideStatus": "PENDING UPDATE",
+      "firstName": "asdadz@domain.com",
+      "lastName": "asdasd",
+      "rideDate": "1234567890",
+      "pickUpTime": "asdasdsadsad",
+      "pickUpAddress": "asdasdasdsadasd",
+      "dropOffAddress": "asdasdasdsadasd",
+      "phoneNumber": "9876919921",
+      "instructions": "NULL",
+      "driverId": "NULL",
+      "createdAt": "2024-02-03T19:57:57.228Z",
+      "updatedAt": "2024-02-03T19:57:57.228Z"
+    }
+  ]
+}
+```
+
+### Assign driver to user ride
+
+**METHOD** : `POST`
+**URL** : `http://localhost:8000/api/v1/admin/assignUserRideToDriver`
+
+**Request Body**
+
+```
+{
+  "rideId":"123123123",
+  "driverId":"asdasdsdad"
+}
+```
+
+### Assign driver to user ride
+
+**METHOD** : `POST`
+**URL** : `http://localhost:8000/api/v1/admin/assignUserRideToDriver`
+
+**Request Body**
+
+```
+{
+  "rideId":"123123123",
+  "driverId":"asdasdsdad"
+}
+```
+
+### get User Assigned Rides
+
+**METHOD** : `GET`
+**URL** : `http://localhost:8000/api/v1/admin/getUserAssignedRides`
+
+**Request Body Empty**
+
+### Update User Assigned Rides
+
+**METHOD** : `POST`
+**URL** : `http://localhost:8000/api/v1/admin/updateUserRides`
+
+**Request Body**
+
+```
+{
+  "rideId":"123123123",
+  "driverId":"asdasdsdad"
+}
+```
+
+### Update User Assigned Rides as completed
+
+**METHOD** : `POST`
+**URL** : `http://localhost:8000/api/v1/admin/updateUserRideAsCompleted`
+
+**Request Body**
+
+```
+{
+  "rideId":"123123123",
+}
+```
+
+### Update User Assigned Rides as Cancelled
+
+**METHOD** : `POST`
+**URL** : `http://localhost:8000/api/v1/admin/updateUserRideAsCancelled`
+
+**Request Body**
+
+```
+{
+  "rideId":"123123123",
+}
+```
+
+### Get completed UserRides
+
+**METHOD** : `GET`
+**URL** : `http://localhost:8000/api/v1/admin/getCompletedUserRides`
+
+### Get Cancelled UserRides
+
+**METHOD** : `GET`
+**URL** : `http://localhost:8000/api/v1/admin/getCancelledUserRides`

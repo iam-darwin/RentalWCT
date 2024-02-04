@@ -16,6 +16,7 @@ import {
   hasAtLeastTenDigits,
 } from "../utils/helper";
 import httpStatus from "http-status";
+import { UserRideType } from "../config/validations";
 
 export default class AdminRepository {
   async createAdmin(details: AdminInput) {
@@ -812,6 +813,174 @@ export default class AdminRepository {
         },
       });
       return alldetails;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async addUserRide(userRideData: UserRideType) {
+    try {
+      const userRide = await prisma.userRide.create({
+        //@ts-ignore
+        data: userRideData,
+      });
+      return userRide;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getUnassignedUserRides() {
+    try {
+      const data = await prisma.userRide.findMany({
+        where: {
+          rideStatus: "PENDING UPDATE",
+        },
+      });
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async assignUserRideToDriver(rideID: string, driverID: string) {
+    try {
+      const updated = await prisma.userRide.findUnique({
+        where: {
+          rideId: Number(rideID),
+        },
+      });
+
+      if (!updated) {
+        throw new ServiceError(
+          "Ride Not Available",
+          "Not able to assign unavailable ride",
+          status.INTERNAL_SERVER_ERROR
+        );
+      }
+
+      const ride = await prisma.userRide.update({
+        where: {
+          rideId: Number(rideID),
+        },
+        data: {
+          rideStatus: "ASSIGNED",
+          driverId: driverID,
+        },
+      });
+
+      return ride;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getAssignedUserRides() {
+    try {
+      const details = await prisma.userRide.findMany({
+        where: {
+          rideStatus: {
+            in: ["ASSIGNED"],
+          },
+        },
+      });
+      if (!details) {
+        throw new ServiceError(
+          "Something went wrong",
+          "Not able to fetch details",
+          status.INTERNAL_SERVER_ERROR
+        );
+      }
+      return details;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateAssignedUserRides(rideData: RidesAssignedUpdate) {
+    try {
+      const rideUpdate = await prisma.userRide.update({
+        where: {
+          rideId: Number(rideData.rideId),
+        },
+        data: {
+          driverId: rideData.Driver_ID,
+        },
+      });
+
+      if (!rideUpdate) {
+        throw new ServiceError(
+          "Not able to update",
+          "Update failed",
+          status.BAD_REQUEST
+        );
+      }
+
+      return rideUpdate;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateUserRideAsCompleted(rideID: string) {
+    try {
+      const completedRide = await prisma.userRide.update({
+        where: {
+          rideId: Number(rideID),
+        },
+        data: {
+          rideStatus: "COMPLETED",
+        },
+      });
+
+      return completedRide;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateUserRideAsCancelled(rideID: string) {
+    try {
+      const completedRide = await prisma.userRide.update({
+        where: {
+          rideId: Number(rideID),
+        },
+        data: {
+          rideStatus: "CANCELLED",
+        },
+      });
+
+      return completedRide;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getCompletedUserRides() {
+    try {
+      const rides = await prisma.userRide.findMany({
+        where: {
+          rideStatus: {
+            in: ["COMPLETED"],
+          },
+        },
+      });
+      return rides;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getCancelledUserRides() {
+    try {
+      const rides = await prisma.userRide.findMany({
+        where: {
+          rideStatus: {
+            in: ["CANCELLED"],
+          },
+        },
+      });
+      return rides;
     } catch (error) {
       throw error;
     }

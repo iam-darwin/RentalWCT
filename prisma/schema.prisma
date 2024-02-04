@@ -168,7 +168,25 @@ model ContactUsForm {
   phoneNumber String
   email       String
   message     String
-  status      String   @default("NOT CHECKED") //Checked
+  status      String   @default("NOT CHECKED") //CHECKED
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model UserRide {
+  rideId         Int      @id @default(autoincrement())
+  rideStatus     String   @default("PENDING UPDATE") //ASSIGNED, COMPLETED,
+  firstName      String
+  lastName       String
+  rideDate       String
+  pickUpTime     String
+  pickUpAddress  String
+  dropOffAddress String
+  phoneNumber    String
+  instructions   String   @default("NULL")
+  driverId       String   @default("NULL")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([rideId])
 }

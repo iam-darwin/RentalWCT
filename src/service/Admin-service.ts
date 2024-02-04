@@ -11,6 +11,7 @@ import {
   LoginInput,
   Rides,
   RidesAssignedUpdate,
+  UserRideTypeSMS,
 } from "../intrefaces";
 import { utils } from "../utils/utilities";
 import { AdminRepository } from "../repository/index";
@@ -20,7 +21,7 @@ import { htmlTemplate } from "../utils/helper";
 import { Admin } from "@prisma/client";
 import { transporter } from "../config/email";
 import { client } from "../config/aws";
-import { ContactUsFormData } from "../config/validations";
+import { ContactUsFormData, UserRideType } from "../config/validations";
 
 export default class AdminService {
   private adminService: AdminRepository;
@@ -230,6 +231,44 @@ export default class AdminService {
       throw error;
     }
   }
+  private async sendSmsUserRide(data: UserRideTypeSMS, phoneNumber: string) {
+    const client = new TwilioSDK.Twilio(utils.accountSid, utils.authToken);
+    try {
+      const message = await client.messages.create({
+        body: `Your ride details
+        Customer Name:${data.firstName} ${data.lastName},
+        Phone No:${data.phoneNumber},
+        Pick Up Time :${data.pickUpTime},
+        Pick Up Address : ${data.pickUpAddress},
+        Drop Off Address : ${data.dropOffAddress},
+        Instructions :${data.instructions}
+        `,
+        to: `+91${phoneNumber}`,
+        from: utils.fromNumber,
+      });
+
+      //@ts-ignore
+      if (message.code) {
+        throw new ServiceError(
+          "SMS NOT SENT",
+          "Not able to send sms to driver",
+          status.INTERNAL_SERVER_ERROR
+        );
+      }
+
+      if (!message.body) {
+        throw new ServiceError(
+          "SMS NOT SENT",
+          "Not able to send sms to driver",
+          status.INTERNAL_SERVER_ERROR
+        );
+      }
+
+      return message.body ? true : false;
+    } catch (error) {
+      throw error;
+    }
+  }
 
   async updateRideAsCompleted(rideId: string) {
     try {
@@ -243,12 +282,9 @@ export default class AdminService {
   async updateAssignRides(data: RidesAssignedUpdate) {
     try {
       const updated = await this.adminService.updateAssignedRides(data);
-      if (data.Driver_ID) {
-        const driver = await this.adminService.getDriver(data.Driver_ID);
-        const sendSms = await this.sendSms(updated, driver.driverPhoneNumber1);
-        return sendSms;
-      }
-      return updated ? true : false;
+      const driver = await this.adminService.getDriver(data.Driver_ID);
+      const sendSms = await this.sendSms(updated, driver.driverPhoneNumber1);
+      return sendSms;
     } catch (error) {
       throw error;
     }
@@ -422,8 +458,118 @@ export default class AdminService {
 
   async getFormDataChecked() {
     try {
-      const alldetails = await this.adminService.getFormDataChecked();
-      return alldetails;
+      const allDetails = await this.adminService.getFormDataChecked();
+      return allDetails;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async addUserRide(userRideData: UserRideType) {
+    try {
+      const userRide = await this.adminService.addUserRide(userRideData);
+      return userRide;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getUnassignedUserRides() {
+    try {
+      const data = await this.adminService.getUnassignedUserRides();
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async assignDriverToUserRide(rideId: string, driverId: string) {
+    try {
+      const done = await this.adminService.assignUserRideToDriver(
+        rideId,
+        driverId
+      );
+      const driver = await this.adminService.getDriver(driverId);
+      const {
+        firstName,
+        lastName,
+        rideDate,
+        pickUpAddress,
+        dropOffAddress,
+        phoneNumber,
+        pickUpTime,
+        instructions,
+      } = done;
+      const data: UserRideTypeSMS = {
+        firstName,
+        lastName,
+        rideDate,
+        pickUpAddress,
+        dropOffAddress,
+        phoneNumber,
+        pickUpTime,
+        instructions,
+      };
+      const messageData = await this.sendSmsUserRide(
+        data,
+        driver.driverPhoneNumber1
+      );
+      return messageData;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getAssignedUserRides() {
+    try {
+      const data = await this.adminService.getAssignedUserRides();
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateAssignUserRides(data: any) {
+    try {
+      const updated = await this.adminService.updateAssignedUserRides(data);
+      const driver = await this.adminService.getDriver(data.driverId);
+      const sendSms = await this.sendSmsUserRide(
+        updated,
+        driver.driverPhoneNumber1
+      );
+      return sendSms;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async updateUserRideAsCompleted(rideId: string) {
+    try {
+      const details = await this.adminService.updateUserRideAsCompleted(rideId);
+      return details;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async updateUserRideAsCancelled(rideId: string) {
+    try {
+      const details = await this.adminService.updateUserRideAsCancelled(rideId);
+      return details;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getCompletedUserRides() {
+    try {
+      const data = await this.adminService.getCompletedUserRides();
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getCancelledUserRides() {
+    try {
+      const data = await this.adminService.getCancelledUserRides();
+      return data;
     } catch (error) {
       throw error;
     }

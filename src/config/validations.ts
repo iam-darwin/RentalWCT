@@ -1,5 +1,7 @@
 import { ZodType, z } from "zod";
 
+const isNonEmptyString = (data: string) => data.trim() !== "";
+
 export const adminSchema = z.object({
   name: z.string(),
   email: z
@@ -74,7 +76,7 @@ export const adminIdValidation = z
     }
   );
 
-export const assgnRideValidation = z
+export const assignRideValidation = z
   .object({
     rideId: z.string(),
     driverId: z.string(),
@@ -138,4 +140,32 @@ export const ContactUsFormSchema = z.object({
   }),
 });
 
+export const UserRideSchema = z.object({
+  firstName: z.string().refine(isNonEmptyString, {
+    message: "First name is required",
+  }),
+  lastName: z.string().refine(isNonEmptyString, {
+    message: "Last name is required",
+  }),
+  rideDate: z.string().refine(isNonEmptyString, {
+    message: "Ride date is required",
+  }),
+  pickUpTime: z.string().refine(isNonEmptyString, {
+    message: "Pick-up time is required",
+  }),
+  pickUpAddress: z.string().refine(isNonEmptyString, {
+    message: "Pick-up address is required",
+  }),
+  dropOffAddress: z.string().refine(isNonEmptyString, {
+    message: "Drop-off address is required",
+  }),
+  phoneNumber: z
+    .string()
+    .refine((value) => value.length === 10 && /^\d+$/.test(value), {
+      message: "Phone number should have exactly 10 digits",
+    }),
+});
+
+// Types
 export type ContactUsFormData = z.infer<typeof ContactUsFormSchema>;
+export type UserRideType = z.infer<typeof UserRideSchema>;
