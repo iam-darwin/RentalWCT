@@ -67,6 +67,16 @@ This Endpoint is responsible for changing the pwd
 }
 ```
 
+### Driver Get ASsigned User Rides
+
+**METHOD** : `GET`
+**URL** : `http://localhost:8000/api/v1/driver/getAssignedUserRides`
+
+### Driver Get Completed User Rides
+
+**METHOD** : `GET`
+**URL** : `http://localhost:8000/api/v1/driver/getCompletedUserRides`
+
 ### Form End Points
 
 ## Form creation

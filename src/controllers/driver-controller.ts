@@ -74,7 +74,7 @@ export const getCompletedRides = async (
     }
     const rides = await driver.getCompletedRidesDriver(driverID);
     return res.status(status.OK).json({
-      message: "Succesffuly Fetced",
+      message: "Successfully Fetched",
       data: rides,
     });
   } catch (error) {
@@ -142,6 +142,7 @@ export const forgotPassword = async (
   next: NextFunction
 ) => {
   try {
+    console.log(req.body.email);
     const response = await driver.forgotPwd(req.body.email);
 
     return res.status(status.OK).json({
@@ -190,6 +191,56 @@ export const resetPasswordPOST = async (
       return res.status(status.OK).render("pwd-Update-Success");
     }
     return res.status(status.UNAUTHORIZED).render("req-newLink");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const checkAssignedUserRides = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    //@ts-ignore
+    const { driverID } = req.user;
+    if (!driverID) {
+      throw new ServiceError(
+        "Id not found",
+        "Send Driver Id",
+        status.UNAUTHORIZED
+      );
+    }
+    const rides = await driver.getAssignedUserRides(driverID);
+    return res.status(status.OK).json({
+      message: "Successfully fetched rides",
+      data: rides,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getCompletedUserRides = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    //@ts-ignore
+    const { driverID } = req.user;
+    if (!driverID) {
+      throw new ServiceError(
+        "Id not found",
+        "Send Driver Id",
+        status.UNAUTHORIZED
+      );
+    }
+    const rides = await driver.getCompletedUserRides(driverID);
+    return res.status(status.OK).json({
+      message: "Successfully Fetched",
+      data: rides,
+    });
   } catch (error) {
     next(error);
   }

@@ -158,4 +158,22 @@ export default class DriverService {
       throw error;
     }
   }
+
+  async getAssignedUserRides(driverId: string) {
+    try {
+      const data = await this.driverRepo.getAssignedUserRides(driverId);
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getCompletedUserRides(driverId: string) {
+    try {
+      const data = await this.driverRepo.getCompletedUserRides(driverId);
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

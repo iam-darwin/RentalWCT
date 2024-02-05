@@ -18,4 +18,16 @@ router.post("/forgotPassword", DriverRoutes.forgotPassword);
 router.get("/resetPwd/:token", resetPwdAuthGet, DriverRoutes.resetPasswordGET);
 router.post("/updatePwd", resetPwdAuthPOST, DriverRoutes.resetPasswordPOST);
 
+router.get(
+  "/getAssignedUserRides",
+  authDriver,
+  DriverRoutes.checkAssignedUserRides
+);
+
+router.get(
+  "/getCompletedUserRides",
+  authDriver,
+  DriverRoutes.getCompletedUserRides
+);
+
 export default router;

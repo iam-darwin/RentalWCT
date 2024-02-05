@@ -76,12 +76,19 @@ export default class DriverRepository {
 
   async getEmail(email: string) {
     try {
+      console.log(email);
       const emailUser = await prisma.driver.findUnique({
         where: {
           email,
         },
       });
-
+      if (!emailUser) {
+        throw new ServiceError(
+          "Email Not found",
+          "User not present in db",
+          status.UNAUTHORIZED
+        );
+      }
       return emailUser;
     } catch (error) {
       throw error;
@@ -181,6 +188,33 @@ export default class DriverRepository {
         );
       }
       return true;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getAssignedUserRides(driverId: string) {
+    try {
+      const data = await prisma.userRide.findMany({
+        where: {
+          driverId: driverId,
+          rideStatus: "ASSIGNED",
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getCompletedUserRides(driverId: string) {
+    try {
+      const data = await prisma.userRide.findMany({
+        where: {
+          driverId: driverId,
+          rideStatus: "COMPLETED",
+        },
+      });
+      return data;
     } catch (error) {
       throw error;
     }
