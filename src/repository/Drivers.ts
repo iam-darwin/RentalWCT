@@ -201,6 +201,7 @@ export default class DriverRepository {
           rideStatus: "ASSIGNED",
         },
       });
+      return data;
     } catch (error) {
       throw error;
     }
