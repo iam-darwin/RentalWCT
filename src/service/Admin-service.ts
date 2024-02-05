@@ -12,7 +12,7 @@ import {
   Rides,
   RidesAssignedUpdate,
   UserRideTypeSMS,
-} from "../intrefaces";
+} from "../interfaces";
 import { utils } from "../utils/utilities";
 import { AdminRepository } from "../repository/index";
 import { AppError, ServiceError } from "../utils/Errors";
@@ -21,7 +21,7 @@ import { htmlTemplate } from "../utils/helper";
 import { Admin } from "@prisma/client";
 import { transporter } from "../config/email";
 import { client } from "../config/aws";
-import { ContactUsFormData, UserRideType } from "../config/validations";
+import { UserRideType } from "../config/validations";
 
 export default class AdminService {
   private adminService: AdminRepository;
@@ -131,7 +131,7 @@ export default class AdminService {
     }
   }
 
-  async getUnAssiignedRides() {
+  async getUnAssignedRides() {
     try {
       const rides = await this.adminService.getUnAssignedRides();
       return rides;
@@ -140,7 +140,7 @@ export default class AdminService {
     }
   }
 
-  async assginRideToDriver(rideID: string, driverId: string) {
+  async assignRideToDriver(rideID: string, driverId: string) {
     try {
       const done = await this.adminService.assignRideToDriver(rideID, driverId);
       const driver = await this.adminService.getDriver(driverId);

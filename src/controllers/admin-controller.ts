@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import status from "http-status";
 
 import { AdminService, DriverService } from "../service/index";
-import { AdminInput } from "../intrefaces/index";
+import { AdminInput } from "../interfaces/index";
 import {
   adminSchema,
   loginSchema,
@@ -10,7 +10,6 @@ import {
   AdminUpdateInputValidation,
   paymentRequestValidation,
   updatePaymentSchema,
-  ContactUsFormSchema,
   UserRideSchema,
   assignRideValidation,
 } from "../config/validations";
@@ -32,7 +31,7 @@ export const registerAdmin = async (
     });
 
     return res.status(status.CREATED).json({
-      message: "User created Successfully",
+      message: "User created Successfullyy",
       data: adminUser,
       err: {},
     });
@@ -70,7 +69,7 @@ export const createDriver = async (
     const newDriver = await driver.createDriver(driverBody);
 
     return res.status(status.CREATED).json({
-      message: "Driver created Successfully",
+      message: "Driver created Successfullyy",
       data: newDriver,
     });
   } catch (error) {
@@ -111,7 +110,7 @@ export const getDriverById = async (
     const driverDetails = await admin.getDriverById(id);
 
     return res.status(status.OK).json({
-      message: "Successfull fetched",
+      message: "Successfully fetched",
       data: driverDetails,
     });
   } catch (error) {
@@ -141,7 +140,6 @@ export const fileUpload = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log("im here", req.file);
   try {
     if (!req.file) {
       throw new ServiceError(
@@ -168,7 +166,7 @@ export const getUnAssignedRides = async (
   next: NextFunction
 ) => {
   try {
-    const rides = await admin.getUnAssiignedRides();
+    const rides = await admin.getUnAssignedRides();
     return res.status(status.OK).json({
       data: rides,
     });
@@ -184,7 +182,7 @@ export const assignRideToDriver = async (
 ) => {
   try {
     const assignBody = assignRideValidation.parse(req.body);
-    const success = await admin.assginRideToDriver(
+    const success = await admin.assignRideToDriver(
       assignBody.rideId,
       assignBody.driverId
     );
@@ -213,7 +211,7 @@ export const getAssignedRides = async (
   }
 };
 
-export const updateDrivedetails = async (
+export const updateDriverDetails = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -237,7 +235,7 @@ export const updateRideAsCompleted = async (
   try {
     const data = await admin.updateRideAsCompleted(req.body.rideId);
     return res.status(status.OK).json({
-      message: "Data Successfully Updated",
+      message: "Data Successfullyy Updated",
       details: data,
       err: {},
     });
@@ -255,7 +253,7 @@ export const updateAssignedRides = async (
     //@ts-ignore
     const updateData = await admin.updateAssignRides(req.body);
     return res.status(status.OK).json({
-      message: "Successfully updated",
+      message: "Successfullyy updated",
       data: updateData,
     });
   } catch (error) {
@@ -272,7 +270,7 @@ export const getCompletedRides = async (
     //@ts-ignore
     const updateData = await admin.getCompletedRides();
     return res.status(status.OK).json({
-      message: "Successfully fetched",
+      message: "Successfullyy fetched",
       data: updateData,
     });
   } catch (error) {
@@ -289,7 +287,7 @@ export const getCancelledRides = async (
     //@ts-ignore
     const updateData = await admin.getCancelledRides();
     return res.status(status.OK).json({
-      message: "Successfully fetched",
+      message: "Successfullyy fetched",
       data: updateData,
     });
   } catch (error) {
@@ -365,7 +363,7 @@ export const getAllAdmins = async (
     const admins = await admin.getAllAdmins();
 
     return res.status(status.OK).json({
-      msg: "Successfull fetched",
+      msg: "Successfully fetched",
       data: admins,
     });
   } catch (error) {
@@ -387,7 +385,7 @@ export const updateAdmin = async (
     );
 
     return res.status(status.OK).json({
-      msg: "Successfull updated",
+      msg: "Successfully updated",
       data: response,
     });
   } catch (error) {
@@ -401,11 +399,10 @@ export const deleteAdmin = async (
   next: NextFunction
 ) => {
   try {
-    console.log(req.body.adminId);
     const response = await admin.deleteAdminWithID(req.body.adminId);
 
     return res.status(status.OK).json({
-      msg: "Successfull deleted",
+      msg: "Successfully deleted",
       data: response,
     });
   } catch (error) {
@@ -428,7 +425,7 @@ export const createPayment = async (
     );
 
     return res.status(status.OK).json({
-      msg: "Successfull Created",
+      msg: "Successfully Created",
       data: response,
     });
   } catch (error) {
@@ -445,7 +442,7 @@ export const getAllPayments = async (
     const response = await admin.getAllPayments();
 
     return res.status(status.OK).json({
-      msg: "Successfull Fetched",
+      msg: "Successfully Fetched",
       data: response,
     });
   } catch (error) {
@@ -470,7 +467,7 @@ export const getPaymentByDriverId = async (
     const response = await admin.getPaymentByDriverId(driverId);
 
     return res.status(status.OK).json({
-      msg: "Successfull Fetched",
+      msg: "Successfully Fetched",
       data: response,
     });
   } catch (error) {
@@ -518,7 +515,7 @@ export const getAllFormDataOfUnchecked = async (
   try {
     const data = await admin.getFormDataUnchecked();
     return res.status(status.OK).json({
-      message: "Details fetched SuccessFully",
+      message: "Details fetched Successfullyy",
       details: data,
     });
   } catch (error) {
@@ -542,7 +539,7 @@ export const updateFormContacted = async (
     }
     const data = await admin.updateFormContacted(contactId);
     return res.status(status.OK).json({
-      message: "Details fetched SuccessFully",
+      message: "Details fetched Successfullyy",
       details: data,
     });
   } catch (error) {
@@ -558,7 +555,7 @@ export const getFormDataChecked = async (
   try {
     const data = await admin.getFormDataChecked();
     return res.status(status.OK).json({
-      message: "Details fetched SuccessFully",
+      message: "Details fetched Successfullyy",
       details: data,
     });
   } catch (error) {
@@ -575,7 +572,7 @@ export const createUserRide = async (
     const addUserRideBody = UserRideSchema.parse(req.body);
     const response = await admin.addUserRide(addUserRideBody);
     return res.status(status.OK).json({
-      message: "Ride successfully added",
+      message: "Ride Successfullyy added",
       details: response,
     });
   } catch (error) {
@@ -591,7 +588,7 @@ export const getUnassignedUserRides = async (
   try {
     const response = await admin.getUnassignedUserRides();
     return res.status(status.OK).json({
-      message: "Details fetched successfully",
+      message: "Details fetched Successfullyy",
       details: response,
     });
   } catch (error) {
@@ -643,7 +640,7 @@ export const updateAssignedUserRides = async (
     //@ts-ignore
     const updateData = await admin.updateAssignUserRides(req.body);
     return res.status(status.OK).json({
-      message: "Successfully updated",
+      message: "Successfullyy updated",
       data: updateData,
     });
   } catch (error) {
@@ -659,7 +656,7 @@ export const updateUserRideAsCompleted = async (
   try {
     const data = await admin.updateUserRideAsCompleted(req.body.rideId);
     return res.status(status.OK).json({
-      message: "Data Successfully Updated",
+      message: "Data Successfullyy Updated",
       details: data,
       err: {},
     });
@@ -676,7 +673,7 @@ export const updateUserRideAsCancelled = async (
   try {
     const data = await admin.updateUserRideAsCancelled(req.body.rideId);
     return res.status(status.OK).json({
-      message: "Data Successfully Updated",
+      message: "Data Successfullyy Updated",
       details: data,
       err: {},
     });
@@ -694,7 +691,7 @@ export const getCompletedUserRides = async (
     //@ts-ignore
     const updateData = await admin.getCompletedUserRides();
     return res.status(status.OK).json({
-      message: "Successfully fetched",
+      message: "Successfullyy fetched",
       data: updateData,
     });
   } catch (error) {
@@ -711,7 +708,7 @@ export const getCancelledUserRides = async (
     //@ts-ignore
     const updateData = await admin.getCancelledUserRides();
     return res.status(status.OK).json({
-      message: "Successfully fetched",
+      message: "Successfullyy fetched",
       data: updateData,
     });
   } catch (error) {

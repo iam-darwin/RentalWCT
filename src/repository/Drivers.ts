@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import status from "http-status";
 
 import { prisma } from "../config/Connectdb";
-import { DriverInput } from "../intrefaces";
+import { DriverInput } from "../interfaces";
 import { AppError, ServiceError } from "../utils/Errors";
 import httpStatus from "http-status";
 import { excludeFields } from "../utils/helper";

@@ -419,7 +419,7 @@ Before proceeding to this route, make sure to sign in first as Super Admin. Once
 
 ```
 {
-  "message": "Ride successfully added",
+  "message": "Ride Successfullyy added",
   "details": {
     "rideId": 1,
     "rideStatus": "PENDING UPDATE",
@@ -447,7 +447,7 @@ Before proceeding to this route, make sure to sign in first as Super Admin. Once
 
 ```
 {
-  "message": "Details fetched successfully",
+  "message": "Details fetched Successfullyy",
   "details": [
     {
       "rideId": 1,

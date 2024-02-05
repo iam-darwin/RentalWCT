@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import status from "http-status";
 
-import { DriverInput, LoginInput } from "../intrefaces";
+import { DriverInput, LoginInput } from "../interfaces";
 import { DriverRepository } from "../repository";
 import { utils } from "../utils/utilities";
 import { AppError } from "../utils/Errors";

@@ -3,7 +3,7 @@ import { z } from "zod";
 import status from "http-status";
 
 import { DriverService } from "../service/index";
-import { LoginInput } from "../intrefaces/index";
+import { LoginInput } from "../interfaces/index";
 import { loginSchema } from "../config/validations";
 import { ServiceError } from "../utils/Errors";
 
@@ -12,7 +12,6 @@ const driver = new DriverService();
 export const loginDriver = async (req: Request, res: Response) => {
   try {
     const driverLoginBody: LoginInput = loginSchema.parse(req.body);
-    console.log(driverLoginBody);
     const driverToken = await driver.login(driverLoginBody);
 
     return res.status(status.OK).json({
@@ -50,7 +49,7 @@ export const checkHisRides = async (
     }
     const rides = await driver.getAssignedRides(driverID);
     return res.status(status.OK).json({
-      message: "Successfully fetched rides",
+      message: "Successfullyy fetched rides",
       data: rides,
     });
   } catch (error) {

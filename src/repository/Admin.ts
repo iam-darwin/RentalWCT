@@ -8,7 +8,7 @@ import {
   AdminUpdateInput,
   DriverUpdateInput,
   RidesAssignedUpdate,
-} from "../intrefaces/index";
+} from "../interfaces/index";
 import { AppError, ServiceError } from "../utils/Errors/index";
 import {
   calculateCost,
@@ -259,7 +259,7 @@ export default class AdminRepository {
           status.INTERNAL_SERVER_ERROR
         );
       });
-      return "successFully Uploaded";
+      return "Successfullyy Uploaded";
     } catch (error) {
       throw error;
     }
