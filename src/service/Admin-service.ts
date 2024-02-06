@@ -170,8 +170,9 @@ export default class AdminService {
         Pickup_Address,
         Dropoff_Address,
       };
-      const messageData = await this.sendSms(data, driver.driverPhoneNumber1); //this will send SMS
-      return messageData;
+      // const messageData = await this.sendSms(data, driver.driverPhoneNumber1); //this will send SMS
+      // return messageData;
+      return done ? true : false;
     } catch (error) {
       throw error;
     }
@@ -283,8 +284,9 @@ export default class AdminService {
     try {
       const updated = await this.adminService.updateAssignedRides(data);
       const driver = await this.adminService.getDriver(data.Driver_ID);
-      const sendSms = await this.sendSms(updated, driver.driverPhoneNumber1);
-      return sendSms;
+      // const sendSms = await this.sendSms(updated, driver.driverPhoneNumber1);
+      // return sendSms;
+      return updated ? true : false;
     } catch (error) {
       throw error;
     }
@@ -489,31 +491,32 @@ export default class AdminService {
         driverId
       );
       const driver = await this.adminService.getDriver(driverId);
-      const {
-        firstName,
-        lastName,
-        rideDate,
-        pickUpAddress,
-        dropOffAddress,
-        phoneNumber,
-        pickUpTime,
-        instructions,
-      } = done;
-      const data: UserRideTypeSMS = {
-        firstName,
-        lastName,
-        rideDate,
-        pickUpAddress,
-        dropOffAddress,
-        phoneNumber,
-        pickUpTime,
-        instructions,
-      };
-      const messageData = await this.sendSmsUserRide(
-        data,
-        driver.driverPhoneNumber1
-      );
-      return messageData;
+      // const {
+      //   firstName,
+      //   lastName,
+      //   rideDate,
+      //   pickUpAddress,
+      //   dropOffAddress,
+      //   phoneNumber,
+      //   pickUpTime,
+      //   instructions,
+      // } = done;
+      // const data: UserRideTypeSMS = {
+      //   firstName,
+      //   lastName,
+      //   rideDate,
+      //   pickUpAddress,
+      //   dropOffAddress,
+      //   phoneNumber,
+      //   pickUpTime,
+      //   instructions,
+      // };
+      // const messageData = await this.sendSmsUserRide(
+      //   data,
+      //   driver.driverPhoneNumber1
+      // );
+      // return messageData?true : false;
+      return done ? true : false;
     } catch (error) {
       throw error;
     }
@@ -532,11 +535,12 @@ export default class AdminService {
     try {
       const updated = await this.adminService.updateAssignedUserRides(data);
       const driver = await this.adminService.getDriver(data.driverId);
-      const sendSms = await this.sendSmsUserRide(
-        updated,
-        driver.driverPhoneNumber1
-      );
-      return sendSms;
+      // const sendSms = await this.sendSmsUserRide(
+      //   updated,
+      //   driver.driverPhoneNumber1
+      // );
+      // return sendSms;
+      return updated ? true : false;
     } catch (error) {
       throw error;
     }

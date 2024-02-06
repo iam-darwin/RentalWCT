@@ -253,7 +253,7 @@ export const updateAssignedRides = async (
     //@ts-ignore
     const updateData = await admin.updateAssignRides(req.body);
     return res.status(status.OK).json({
-      message: "Successfullyy updated",
+      message: "Successfully updated",
       data: updateData,
     });
   } catch (error) {
