@@ -136,7 +136,6 @@ export const forgotPassword = async (
   next: NextFunction
 ) => {
   try {
-    console.log(req.body.email);
     const response = await driver.forgotPwd(req.body.email);
 
     return res.status(status.OK).json({

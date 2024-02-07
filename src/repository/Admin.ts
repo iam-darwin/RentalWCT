@@ -383,6 +383,8 @@ export default class AdminRepository {
 
   async updateDriverDetails(id: string, updateFields: DriverUpdateInput) {
     try {
+      console.log(id);
+      console.log(updateFields);
       const user = await prisma.driver.findUnique({
         where: {
           driverID: id,
@@ -396,22 +398,11 @@ export default class AdminRepository {
           status.INTERNAL_SERVER_ERROR
         );
       }
-
-      const fields = {};
-
-      for (const field in updateFields) {
-        //@ts-ignore
-        if (user[field] != undefined) {
-          //@ts-ignore
-          fields[field] = user[field];
-        }
-      }
-
       const updateDetails = await prisma.driver.update({
         where: {
           driverID: id,
         },
-        data: fields,
+        data: updateFields,
       });
 
       if (!updateDetails) {
