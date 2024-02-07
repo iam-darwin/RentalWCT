@@ -69,7 +69,7 @@ export const createDriver = async (
     const newDriver = await driver.createDriver(driverBody);
 
     return res.status(status.CREATED).json({
-      message: "Driver created Successfullyy",
+      message: "Driver created Successfully",
       data: newDriver,
     });
   } catch (error) {
@@ -219,7 +219,7 @@ export const updateDriverDetails = async (
   try {
     const user = await admin.updateDriverDetails(req.params.driverId, req.body);
     return res.status(status.NO_CONTENT).json({
-      message: "Sucessfully Updated",
+      message: "Successfully Updated",
       status: user,
     });
   } catch (error) {

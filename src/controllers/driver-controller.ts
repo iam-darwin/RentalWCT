@@ -9,7 +9,11 @@ import { ServiceError } from "../utils/Errors";
 
 const driver = new DriverService();
 
-export const loginDriver = async (req: Request, res: Response) => {
+export const loginDriver = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const driverLoginBody: LoginInput = loginSchema.parse(req.body);
     const driverToken = await driver.login(driverLoginBody);
@@ -18,17 +22,7 @@ export const loginDriver = async (req: Request, res: Response) => {
       token: driverToken,
     });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res
-        .status(status.UNAUTHORIZED)
-        .json({ message: error.issues[0].message });
-    }
-    //@ts-ignore
-    res.status(error.statusCode).json({
-      //@ts-ignore
-      err: error.message,
-      success: "fail",
-    });
+    next(error);
   }
 };
 

@@ -29,9 +29,13 @@ export default class DriverService {
   async login(data: LoginInput) {
     try {
       const findDriver = await this.driverRepo.getEmail(data.email);
-
+      console.log(findDriver);
       if (!findDriver) {
-        throw Error("No_Driver");
+        throw new AppError(
+          "Email not found",
+          "User not found",
+          status.UNAUTHORIZED
+        );
       }
 
       const passwordMatch = await bcrypt.compare(
@@ -40,7 +44,11 @@ export default class DriverService {
       );
 
       if (!passwordMatch) {
-        throw new Error("Password_Wrong");
+        throw new AppError(
+          "Password_Wrong",
+          "Password wrong",
+          status.UNAUTHORIZED
+        );
       }
 
       const { driverID, driverFirstName } = findDriver;
@@ -49,21 +57,7 @@ export default class DriverService {
       return token;
     } catch (error) {
       //@ts-ignore
-      if (error.message == "No_Driver") {
-        throw new AppError(
-          "No_Driver",
-          "Driver with the email doesn't exist",
-          status.NOT_FOUND
-        );
-      }
-      //@ts-ignore
-      if (error.message == "Password_Wrong") {
-        throw new AppError(
-          "Password_Wrong",
-          "Incorrect Password",
-          status.UNAUTHORIZED
-        );
-      }
+      throw error;
     }
   }
 
