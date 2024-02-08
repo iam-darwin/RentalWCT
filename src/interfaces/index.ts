@@ -1,3 +1,5 @@
+import { string } from "zod";
+
 export interface AdminInput {
   name: string;
   email: string;
@@ -54,6 +56,11 @@ export interface UserRideTypeSMS {
 export interface RidesAssignedUpdate {
   rideId: string;
   Driver_ID: string;
+}
+
+export interface RideUpdateData {
+  driverId: string;
+  rideId: string;
 }
 
 export interface DriverUpdateInput {

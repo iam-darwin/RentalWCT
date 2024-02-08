@@ -166,6 +166,15 @@ export const UserRideSchema = z.object({
     }),
 });
 
+export const RideUpdateDataSchema = z.object({
+  driverId: z.string().refine((value) => value.length > 0, {
+    message: "Driver ID must not be empty",
+  }),
+  rideId: z.string().refine((value) => value.length > 0, {
+    message: "Ride ID must not be empty",
+  }),
+});
+
 // Types
 export type ContactUsFormData = z.infer<typeof ContactUsFormSchema>;
 export type UserRideType = z.infer<typeof UserRideSchema>;

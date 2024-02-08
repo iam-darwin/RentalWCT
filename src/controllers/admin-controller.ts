@@ -12,6 +12,7 @@ import {
   updatePaymentSchema,
   UserRideSchema,
   assignRideValidation,
+  RideUpdateDataSchema,
 } from "../config/validations";
 import { AppError, ServiceError } from "../utils/Errors";
 
@@ -251,7 +252,8 @@ export const updateAssignedRides = async (
 ) => {
   try {
     //@ts-ignore
-    const updateData = await admin.updateAssignRides(req.body);
+    const updateBody = RideUpdateDataSchema.parse(req.body);
+    const updateData = await admin.updateAssignRides(updateBody);
     return res.status(status.OK).json({
       message: "Successfully updated",
       data: updateData,
@@ -270,7 +272,7 @@ export const getCompletedRides = async (
     //@ts-ignore
     const updateData = await admin.getCompletedRides();
     return res.status(status.OK).json({
-      message: "Successfullyy fetched",
+      message: "Successfully fetched",
       data: updateData,
     });
   } catch (error) {
@@ -287,7 +289,7 @@ export const getCancelledRides = async (
     //@ts-ignore
     const updateData = await admin.getCancelledRides();
     return res.status(status.OK).json({
-      message: "Successfullyy fetched",
+      message: "Successfully fetched",
       data: updateData,
     });
   } catch (error) {

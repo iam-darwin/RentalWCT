@@ -20,13 +20,24 @@ export default class DriverRepository {
           ],
         },
       });
-
+      const existingFields = [];
       if (existingDriver) {
-        throw new ServiceError(
-          "User Exists",
-          "Driver with these details already exists",
-          status.CONFLICT
-        );
+        if (existingDriver.email === details.email) {
+          existingFields.push("Email");
+        }
+        if (existingDriver.vehicleLicense === details.vehicleLicense) {
+          existingFields.push("Vehicle License");
+        }
+        if (existingDriver.driverLicense === details.driverLicense) {
+          existingFields.push("Driver License");
+        }
+        if (existingDriver.driverSSN === details.driverSSN) {
+          existingFields.push("Driver SSN");
+        }
+        const errorMessage = `Driver with these details already exists. Existing fields: ${existingFields.join(
+          ", "
+        )}`;
+        throw new ServiceError("User Exists", errorMessage, status.CONFLICT);
       }
 
       const hashedPassword = await bcrypt.hash(details.password, 10);
