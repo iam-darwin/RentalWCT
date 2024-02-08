@@ -9,6 +9,7 @@ import {
   AdminUpdateInput,
   DriverUpdateInput,
   LoginInput,
+  RideUpdateData,
   Rides,
   RidesAssignedUpdate,
   UserRideTypeSMS,
@@ -103,9 +104,13 @@ export default class AdminService {
 
   async fileUpload(filePath: string) {
     try {
-      const upload = await this.adminService.uploadCsvFile(filePath);
-      await this.storeInS3(filePath);
-      return upload;
+      const uploadPromise = this.adminService.uploadCsvFile(filePath);
+      const storeInS3Promise = this.storeInS3(filePath);
+      const [uploadResult, storeInS3Result] = await Promise.all([
+        uploadPromise,
+        storeInS3Promise,
+      ]);
+      return uploadResult;
     } catch (error) {
       throw error;
     }
@@ -280,10 +285,10 @@ export default class AdminService {
     }
   }
 
-  async updateAssignRides(data: RidesAssignedUpdate) {
+  async updateAssignRides(data: RideUpdateData) {
     try {
       const updated = await this.adminService.updateAssignedRides(data);
-      const driver = await this.adminService.getDriver(data.Driver_ID);
+      const driver = await this.adminService.getDriver(data.driverId);
       // const sendSms = await this.sendSms(updated, driver.driverPhoneNumber1);
       // return sendSms;
       return updated ? true : false;

@@ -44,5 +44,5 @@ export const errorHandler = (
     });
   }
 
-  return res.status(statusCode).json({ error: errorMessage });
+  return res.status(statusCode).json({ message: errorMessage });
 };

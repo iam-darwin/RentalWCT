@@ -7,6 +7,7 @@ import {
   AdminInput,
   AdminUpdateInput,
   DriverUpdateInput,
+  RideUpdateData,
   RidesAssignedUpdate,
 } from "../interfaces/index";
 import { AppError, ServiceError } from "../utils/Errors/index";
@@ -234,7 +235,40 @@ export default class AdminRepository {
                 RideID: ride["Ride ID"],
               },
               data: {
+                RideID: ride["Ride ID"],
                 Ride_Status: ride["Status"],
+                Ride_Date: ride["Ride Date"],
+                Customer_FirstName: ride["First Name"],
+                Customer_LastName: ride["Last Name"],
+                Phone_Number: ride["Phone"],
+                Transportation_Type: ride["Transportation Type"],
+                Cancel_Reason: ride["Cancel Reason"],
+                Cost: ride["Cost"],
+                Pick_Up_Time: ride["Pick Up Time"],
+                Arrival_Time: ride["Arrival Time"],
+                Estimated_Arrival_Time: ride["Estimated Arrival Time"],
+                Scheduled_Pickup_Time: ride["Scheduled Pickup Time"],
+                Estimated_Distance: ride["Estimated Distance"],
+                Pickup_Address: ride["Pickup Address"],
+                Pickup_Lat: ride["Pickup Lat"],
+                Pickup_Lng: ride["Pickup Lng"],
+                Pickup_Directions: ride["Pickup Directions"],
+                Dropoff_Address: ride["Dropoff Address"],
+                Dropoff_Lat: ride["Dropoff Lat"],
+                Dropoff_Lng: ride["Dropoff Lng"],
+                Dropoff_Directions: ride["Dropoff Directions"],
+                Driver_FirstName: ride["Driver First Name"],
+                Driver_Photo_Url: ride["Driver Photo Url"],
+                Driver_Phone: ride["Driver Phone"],
+                Vehicle_Color: ride["Vehicle Color"],
+                Vehicle_Make: ride["Vehicle Make"],
+                Vehicle_Model: ride["Vehicle Model"],
+                Vehicle_License: ride["Vehicle License"],
+                Vehicle_Photo_Url: ride["Vehicle Photo Url"],
+                Provider_Name: ride["Provider Name"],
+                Provider_Trip_Id: ride["Provider Trip Id"],
+                Rider_Patient_ID: ride["Rider/Patient ID"],
+                Member_ID: ride["Member ID"],
               },
             });
 
@@ -243,7 +277,31 @@ export default class AdminRepository {
                 RideID: ride["Ride ID"],
               },
               data: {
+                RideID: ride["Ride ID"],
                 Ride_Status: ride["Status"],
+                Ride_Date: ride["Ride Date"],
+                Customer_FirstName: ride["First Name"],
+                Customer_LastName: ride["Last Name"],
+                Phone_Number: ride["Phone"],
+                Transportation_Type: ride["Transportation Type"],
+                Cancel_Reason: ride["Cancel Reason"],
+                Cost: ride["Cost"],
+                Pick_Up_Time: ride["Pick Up Time"],
+                Arrival_Time: ride["Arrival Time"],
+                Estimated_Arrival_Time: ride["Estimated Arrival Time"],
+                Scheduled_Pickup_Time: ride["Scheduled Pickup Time"],
+                Estimated_Distance: ride["Estimated Distance"],
+                Pickup_Address: ride["Pickup Address"],
+                Pickup_Lat: ride["Pickup Lat"],
+                Pickup_Lng: ride["Pickup Lng"],
+                Pickup_Directions: ride["Pickup Directions"],
+                Dropoff_Address: ride["Dropoff Address"],
+                Dropoff_Lat: ride["Dropoff Lat"],
+                Dropoff_Lng: ride["Dropoff Lng"],
+                Dropoff_Directions: ride["Dropoff Directions"],
+                Provider_Trip_Id: ride["Provider Trip Id"],
+                Rider_Patient_ID: ride["Rider/Patient ID"],
+                Driver_ID: "NULL",
               },
             });
           }
@@ -259,7 +317,7 @@ export default class AdminRepository {
           status.INTERNAL_SERVER_ERROR
         );
       });
-      return "Successfullyy Uploaded";
+      return "Successfully Uploaded";
     } catch (error) {
       throw error;
     }
@@ -315,8 +373,22 @@ export default class AdminRepository {
       if (!updated) {
         throw new ServiceError(
           "Ride Not Available",
-          "Not able to assign unavailable ride",
-          status.INTERNAL_SERVER_ERROR
+          "Not able to assign unavailable ride,rideId not present in the DB",
+          status.NOT_FOUND
+        );
+      }
+
+      const driver = await prisma.driver.findUnique({
+        where: {
+          driverID: driverId,
+        },
+      });
+      console.log(driver);
+      if (!driver) {
+        throw new ServiceError(
+          "Driver Not Available",
+          "Not able to assign ride to someone who's not present in db",
+          status.NOT_FOUND
         );
       }
 
@@ -448,13 +520,42 @@ export default class AdminRepository {
     }
   }
 
-  async updateAssignedRides(rideData: RidesAssignedUpdate) {
+  async updateAssignedRides(rideData: RideUpdateData) {
     try {
+      const updated = await prisma.rides.findUnique({
+        where: {
+          RideID: rideData.rideId,
+        },
+      });
+
+      if (!updated) {
+        throw new ServiceError(
+          "Ride Not Available",
+          "Not able to assign unavailable ride,rideId not present in the DB",
+          status.NOT_FOUND
+        );
+      }
+
+      const driver = await prisma.driver.findUnique({
+        where: {
+          driverID: rideData.driverId,
+        },
+      });
+      if (!driver) {
+        throw new ServiceError(
+          "Driver Not Available",
+          "Not able to assign ride to someone who's not present in db",
+          status.NOT_FOUND
+        );
+      }
+
       const rideUpdate = await prisma.rides.update({
         where: {
           RideID: rideData.rideId,
         },
-        data: rideData,
+        data: {
+          Driver_ID: rideData.driverId,
+        },
       });
 
       if (!rideUpdate) {
