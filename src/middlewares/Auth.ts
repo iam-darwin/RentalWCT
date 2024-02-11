@@ -64,7 +64,7 @@ export const superAdminAuth = (
     if (req.user.role !== "SUPER ADMIN") {
       return res
         .status(httpStatus.UNAUTHORIZED)
-        .json({ error: "Unauthorized", message: "You cant add Admins" });
+        .json({ error: "Unauthorized", message: "You cant proceed further, You're not a super admin" });
     }
     next();
   } catch (error) {
