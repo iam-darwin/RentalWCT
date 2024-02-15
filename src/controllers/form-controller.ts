@@ -13,7 +13,7 @@ export const createContactForm = async (
     const formBody = ContactUsFormSchema.parse(req.body);
     const data = await form.createFormDetails(formBody);
     return res.status(status.OK).json({
-      message: "Form created Successfullyy",
+      message: "Form created Successfully",
       details: data,
       err: {},
     });

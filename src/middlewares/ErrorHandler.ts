@@ -36,7 +36,7 @@ export const errorHandler = (
     });
   } else if (err instanceof Prisma.PrismaClientValidationError) {
     return res.status(400).json({
-      msg: "Invalid input",
+      message: "Invalid input",
     });
   } else if (err instanceof Prisma.PrismaClientKnownRequestError) {
     return res.status(httpStatus.CONFLICT).json({

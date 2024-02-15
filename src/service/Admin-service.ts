@@ -22,7 +22,11 @@ import { htmlTemplate } from "../utils/helper";
 import { Admin } from "@prisma/client";
 import { transporter } from "../config/email";
 import { client } from "../config/aws";
-import { UserRideType } from "../config/validations";
+import {
+  UserRideType,
+  updateBodyPayment,
+  updateUserRide,
+} from "../config/validations";
 
 export default class AdminService {
   private adminService: AdminRepository;
@@ -95,7 +99,7 @@ export default class AdminService {
 
   async getActiveDrivers() {
     try {
-      const active = await this.adminService.getActiverDrivers();
+      const active = await this.adminService.getActiveDrivers();
       return active;
     } catch (error) {
       throw error;
@@ -175,9 +179,8 @@ export default class AdminService {
         Pickup_Address,
         Dropoff_Address,
       };
-      // const messageData = await this.sendSms(data, driver.driverPhoneNumber1); //this will send SMS
-      // return messageData;
-      return done ? true : false;
+      const messageData = await this.sendSms(data, driver.driverPhoneNumber1); //this will send SMS
+      return messageData;
     } catch (error) {
       throw error;
     }
@@ -209,11 +212,11 @@ export default class AdminService {
 
     try {
       const message = await client.messages.create({
-        body: `Your ride details
-            Customer Name :${data.Customer_FirstName} ${data.Customer_LastName}, PhoneNo: ${data.Phone_Number},PickUpTime:${data.Scheduled_Pickup_Time},ArrivalTime:${data.Estimated_Arrival_Time},Pick Up Address :${data.Pickup_Address},Drop Off Address:${data.Dropoff_Address},Instructions:${data.Dropoff_Directions},Distance :${data.Estimated_Distance} 
+        body: `Your ride details Customer Name :${data.Customer_FirstName} ${data.Customer_LastName}, PhoneNo: ${data.Phone_Number},PickUpTime:${data.Scheduled_Pickup_Time},ArrivalTime:${data.Estimated_Arrival_Time},Pick Up Address :${data.Pickup_Address},Drop Off Address:${data.Dropoff_Address},Instructions:${data.Dropoff_Directions},Distance :${data.Estimated_Distance} 
             `,
         to: `+91${driverNumber}`,
         from: utils.fromNumber,
+        messagingServiceSid: utils.twilioMessageId,
       });
       //@ts-ignore
       if (message.code) {
@@ -289,9 +292,8 @@ export default class AdminService {
     try {
       const updated = await this.adminService.updateAssignedRides(data);
       const driver = await this.adminService.getDriver(data.driverId);
-      // const sendSms = await this.sendSms(updated, driver.driverPhoneNumber1);
-      // return sendSms;
-      return updated ? true : false;
+      const sendSms = await this.sendSms(updated, driver.driverPhoneNumber1);
+      return sendSms;
     } catch (error) {
       throw error;
     }
@@ -426,19 +428,9 @@ export default class AdminService {
     }
   }
 
-  async updatePayment(
-    paymentId: string,
-    date?: string,
-    remarks?: string,
-    amount?: number
-  ) {
+  async updatePayment(paymentId: string, values: updateBodyPayment) {
     try {
-      const updatedPayment = this.adminService.updatePayment(
-        paymentId,
-        date,
-        remarks,
-        amount
-      );
+      const updatedPayment = this.adminService.updatePayment(paymentId, values);
       return updatedPayment;
     } catch (error) {
       throw error;
@@ -496,32 +488,31 @@ export default class AdminService {
         driverId
       );
       const driver = await this.adminService.getDriver(driverId);
-      // const {
-      //   firstName,
-      //   lastName,
-      //   rideDate,
-      //   pickUpAddress,
-      //   dropOffAddress,
-      //   phoneNumber,
-      //   pickUpTime,
-      //   instructions,
-      // } = done;
-      // const data: UserRideTypeSMS = {
-      //   firstName,
-      //   lastName,
-      //   rideDate,
-      //   pickUpAddress,
-      //   dropOffAddress,
-      //   phoneNumber,
-      //   pickUpTime,
-      //   instructions,
-      // };
-      // const messageData = await this.sendSmsUserRide(
-      //   data,
-      //   driver.driverPhoneNumber1
-      // );
-      // return messageData?true : false;
-      return done ? true : false;
+      const {
+        firstName,
+        lastName,
+        rideDate,
+        pickUpAddress,
+        dropOffAddress,
+        phoneNumber,
+        pickUpTime,
+        instructions,
+      } = done;
+      const data: UserRideTypeSMS = {
+        firstName,
+        lastName,
+        rideDate,
+        pickUpAddress,
+        dropOffAddress,
+        phoneNumber,
+        pickUpTime,
+        instructions,
+      };
+      const messageData = await this.sendSmsUserRide(
+        data,
+        driver.driverPhoneNumber1
+      );
+      return messageData ? true : false;
     } catch (error) {
       throw error;
     }
@@ -536,16 +527,15 @@ export default class AdminService {
     }
   }
 
-  async updateAssignUserRides(data: any) {
+  async updateAssignUserRides(data: updateUserRide) {
     try {
       const updated = await this.adminService.updateAssignedUserRides(data);
       const driver = await this.adminService.getDriver(data.driverId);
-      // const sendSms = await this.sendSmsUserRide(
-      //   updated,
-      //   driver.driverPhoneNumber1
-      // );
-      // return sendSms;
-      return updated ? true : false;
+      const sendSms = await this.sendSmsUserRide(
+        updated,
+        driver.driverPhoneNumber1
+      );
+      return sendSms;
     } catch (error) {
       throw error;
     }

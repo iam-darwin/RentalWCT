@@ -164,6 +164,7 @@ export const UserRideSchema = z.object({
     .refine((value) => value.length === 10 && /^\d+$/.test(value), {
       message: "Phone number should have exactly 10 digits",
     }),
+  instructions: z.string().optional(),
 });
 
 export const RideUpdateDataSchema = z.object({
@@ -175,6 +176,47 @@ export const RideUpdateDataSchema = z.object({
   }),
 });
 
+export const DriverUpdateInputSchema = z
+  .object({
+    driverFirstName: z.string().optional(),
+    driverLastName: z.string().optional(),
+    email: z.string().email().optional(),
+    driverAddress: z.string().optional(),
+    driverPhoneNumber1: z.string().optional(),
+    driverPhoneNumber2: z.string().optional(),
+    vehicleColor: z.string().optional(),
+    vehicleMake: z.string().optional(),
+    vehicleModel: z.string().optional(),
+    vehicleLicense: z.string().optional(),
+    driverSSN: z.string().optional(),
+    driverLicense: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      const values = Object.values(data);
+      const atLeastOneProvided = values.some(
+        (value) => value !== undefined && value !== null && value !== ""
+      );
+
+      if (!atLeastOneProvided) {
+        throw new Error("At least one property should be provided");
+      }
+      return true; // No error
+    },
+    { message: "At least one property should be provided" }
+  );
+
+export const UserRideUpdateSchema = z.object({
+  driverId: z.string().refine(isNonEmptyString, {
+    message: "Driver ID must not be empty",
+  }),
+  rideId: z.string().refine(isNonEmptyString, {
+    message: "Ride ID must not be empty",
+  }),
+});
+
 // Types
 export type ContactUsFormData = z.infer<typeof ContactUsFormSchema>;
 export type UserRideType = z.infer<typeof UserRideSchema>;
+export type updateBodyPayment = z.infer<typeof updatePaymentSchema>;
+export type updateUserRide = z.infer<typeof UserRideUpdateSchema>;

@@ -21,4 +21,5 @@ export const utils = {
   bucket: process.env.S3_BUCKET as string,
   adminURL: process.env.ADMIN_FORGOT_PWD as string,
   driverURL: process.env.DRIVER_FORGOT_PWD as string,
+  twilioMessageId: process.env.TWILIO_MESSAGE_ID as string,
 };

@@ -17,7 +17,11 @@ import {
   hasAtLeastTenDigits,
 } from "../utils/helper";
 import httpStatus from "http-status";
-import { UserRideType } from "../config/validations";
+import {
+  UserRideType,
+  updateBodyPayment,
+  updateUserRide,
+} from "../config/validations";
 
 export default class AdminRepository {
   async createAdmin(details: AdminInput) {
@@ -28,21 +32,19 @@ export default class AdminRepository {
           email: details.email,
         },
       });
-
+      if (existingUser) {
+        throw new AppError(
+          "Admin exists",
+          "Admin already exists with the email",
+          httpStatus.CONFLICT
+        );
+      }
       const user = await prisma.admin.create({
         data: { ...details, password: hashedPassword },
       });
 
       return user;
     } catch (error) {
-      //@ts-ignore
-      if (error.name == "prismaKnownRequestError") {
-        throw new AppError(
-          "Client Error",
-          "User email already exists",
-          httpStatus.CONFLICT
-        );
-      }
       //@ts-ignore
       throw error;
     }
@@ -69,7 +71,7 @@ export default class AdminRepository {
     }
   }
 
-  async getActiverDrivers() {
+  async getActiveDrivers() {
     try {
       const active = await prisma.driver.findMany({
         where: {
@@ -383,7 +385,6 @@ export default class AdminRepository {
           driverID: driverId,
         },
       });
-      console.log(driver);
       if (!driver) {
         throw new ServiceError(
           "Driver Not Available",
@@ -455,8 +456,6 @@ export default class AdminRepository {
 
   async updateDriverDetails(id: string, updateFields: DriverUpdateInput) {
     try {
-      console.log(id);
-      console.log(updateFields);
       const user = await prisma.driver.findUnique({
         where: {
           driverID: id,
@@ -485,12 +484,26 @@ export default class AdminRepository {
         );
       }
 
-      return true;
+      return updateDetails;
     } catch (error) {}
   }
 
   async updateRideAsCompleted(rideId: string) {
     try {
+      const rideFound = await prisma.completedRides.findUnique({
+        where: {
+          RideID: rideId,
+        },
+      });
+
+      if (rideFound) {
+        throw new AppError(
+          "Ride Already Completed",
+          "You can't mark again as completed because the ride is already completed",
+          httpStatus.CONFLICT
+        );
+      }
+
       const completedRides = await prisma.$transaction(async (prismaClient) => {
         const updateRide = await prismaClient.rides.update({
           where: {
@@ -638,6 +651,18 @@ export default class AdminRepository {
 
   async deleteAdminWithID(id: string) {
     try {
+      const findAdmin = await prisma.admin.findUnique({
+        where: {
+          adminId: id,
+        },
+      });
+      if (!findAdmin) {
+        throw new AppError(
+          "Admin not present",
+          "Admin not present in DB which you want to delete",
+          httpStatus.CONFLICT
+        );
+      }
       const value = await prisma.admin.delete({
         where: {
           adminId: id,
@@ -764,27 +789,33 @@ export default class AdminRepository {
     }
   }
 
-  async updatePayment(
-    paymentId: string,
-    date?: string,
-    remarks?: string,
-    amount?: number
-  ) {
+  async updatePayment(paymentId: string, values: updateBodyPayment) {
     try {
+      const findFirst = await prisma.payment.findUnique({
+        where: {
+          paymentID: paymentId,
+        },
+      });
+      if (!findFirst) {
+        throw new AppError(
+          "PaymentId undefined",
+          "PaymentId details not present in database",
+          httpStatus.CONFLICT
+        );
+      }
       const data: { paymentDate?: string; remarks?: string; amount?: number } =
         {};
 
-      if (date !== undefined) {
-        data.paymentDate = date;
+      if (values.date !== undefined) {
+        data.paymentDate = new Date(values.date).toISOString();
       }
 
-      if (remarks !== undefined) {
-        data.remarks = remarks;
+      if (values.remarks !== undefined) {
+        data.remarks = values.remarks;
       }
-      if (amount !== undefined) {
-        data.amount = amount;
+      if (values.amount !== undefined) {
+        data.amount = Number(values.amount);
       }
-
       const updatedPayment = await prisma.payment.update({
         where: {
           paymentID: paymentId,
@@ -813,6 +844,18 @@ export default class AdminRepository {
 
   async updateFormContacted(id: string) {
     try {
+      const findFirst = await prisma.contactUsForm.findUnique({
+        where: {
+          contactID: id,
+        },
+      });
+      if (!findFirst) {
+        throw new AppError(
+          "ID Not available",
+          "contact id is not present in DB",
+          httpStatus.CONFLICT
+        );
+      }
       const data = await prisma.contactUsForm.update({
         where: {
           contactID: id,
@@ -919,14 +962,14 @@ export default class AdminRepository {
     }
   }
 
-  async updateAssignedUserRides(rideData: RidesAssignedUpdate) {
+  async updateAssignedUserRides(rideData: updateUserRide) {
     try {
       const rideUpdate = await prisma.userRide.update({
         where: {
           rideId: Number(rideData.rideId),
         },
         data: {
-          driverId: rideData.Driver_ID,
+          driverId: rideData.driverId,
         },
       });
 
@@ -946,6 +989,18 @@ export default class AdminRepository {
 
   async updateUserRideAsCompleted(rideID: string) {
     try {
+      const findIfItsAssigned = await prisma.userRide.findUnique({
+        where: {
+          rideId: Number(rideID),
+        },
+      });
+      if (findIfItsAssigned?.rideStatus !== "ASSIGNED") {
+        throw new AppError(
+          "Ride is not assigned",
+          "For completeing the ride, first it should be assigned",
+          httpStatus.BAD_REQUEST
+        );
+      }
       const completedRide = await prisma.userRide.update({
         where: {
           rideId: Number(rideID),

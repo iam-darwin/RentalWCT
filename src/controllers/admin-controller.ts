@@ -13,6 +13,8 @@ import {
   UserRideSchema,
   assignRideValidation,
   RideUpdateDataSchema,
+  DriverUpdateInputSchema,
+  UserRideUpdateSchema,
 } from "../config/validations";
 import { AppError, ServiceError } from "../utils/Errors";
 
@@ -32,7 +34,7 @@ export const registerAdmin = async (
     });
 
     return res.status(status.CREATED).json({
-      message: "User created Successfullyy",
+      message: "User created Successfully",
       data: adminUser,
       err: {},
     });
@@ -218,8 +220,20 @@ export const updateDriverDetails = async (
   next: NextFunction
 ) => {
   try {
-    const user = await admin.updateDriverDetails(req.params.driverId, req.body);
-    return res.status(status.NO_CONTENT).json({
+    const { driverId } = req.params;
+    if (!driverId) {
+      throw new AppError(
+        "DriverId not sent",
+        "DriverId should be sent for updating fields",
+        status.UNAUTHORIZED
+      );
+    }
+    const driverBody = DriverUpdateInputSchema.parse(req.body);
+    const user = await admin.updateDriverDetails(
+      req.params.driverId,
+      driverBody
+    );
+    return res.status(status.OK).json({
       message: "Successfully Updated",
       status: user,
     });
@@ -234,9 +248,17 @@ export const updateRideAsCompleted = async (
   next: NextFunction
 ) => {
   try {
-    const data = await admin.updateRideAsCompleted(req.body.rideId);
+    const { rideId } = req.body;
+    if (!rideId) {
+      throw new AppError(
+        "RideId undefined",
+        "RideId not provided",
+        status.NOT_ACCEPTABLE
+      );
+    }
+    const data = await admin.updateRideAsCompleted(rideId);
     return res.status(status.OK).json({
-      message: "Data Successfullyy Updated",
+      message: "Data Successfully Updated",
       details: data,
       err: {},
     });
@@ -379,11 +401,11 @@ export const updateAdmin = async (
   next: NextFunction
 ) => {
   try {
-    const adminUpateBody = AdminUpdateInputValidation.parse(req.body);
+    const adminUpdateBody = AdminUpdateInputValidation.parse(req.body);
     //@ts-ignore
     const response = await admin.updateAdmin(
-      adminUpateBody.adminId,
-      adminUpateBody
+      adminUpdateBody.adminId,
+      adminUpdateBody
     );
 
     return res.status(status.OK).json({
@@ -401,7 +423,23 @@ export const deleteAdmin = async (
   next: NextFunction
 ) => {
   try {
-    const response = await admin.deleteAdminWithID(req.body.adminId);
+    const { adminId } = req.body;
+    if (!adminId) {
+      throw new AppError(
+        "AdminId undefined",
+        "AdminId should be provided which you want to remove",
+        status.BAD_REQUEST
+      );
+    }
+    //@ts-ignore
+    if (req.user.adminId === adminId) {
+      throw new AppError(
+        "You cant perform the operation",
+        "You can't delete yourself try to delete other admins",
+        status.BAD_REQUEST
+      );
+    }
+    const response = await admin.deleteAdminWithID(adminId);
 
     return res.status(status.OK).json({
       msg: "Successfully deleted",
@@ -493,15 +531,10 @@ export const updatePayments = async (
     }
 
     const updatePaymentBody = updatePaymentSchema.parse(req.body);
-    const response = await admin.updatePayment(
-      paymentId,
-      updatePaymentBody.date,
-      updatePaymentBody.remarks,
-      Number(updatePaymentBody.amount)
-    );
+    const response = await admin.updatePayment(paymentId, updatePaymentBody);
 
     return res.status(status.OK).json({
-      msg: "Updated sucessful",
+      msg: "Updated successfully",
       data: response,
     });
   } catch (error) {
@@ -541,7 +574,7 @@ export const updateFormContacted = async (
     }
     const data = await admin.updateFormContacted(contactId);
     return res.status(status.OK).json({
-      message: "Details fetched Successfullyy",
+      message: "Details fetched Successfully",
       details: data,
     });
   } catch (error) {
@@ -574,7 +607,7 @@ export const createUserRide = async (
     const addUserRideBody = UserRideSchema.parse(req.body);
     const response = await admin.addUserRide(addUserRideBody);
     return res.status(status.OK).json({
-      message: "Ride Successfullyy added",
+      message: "Ride Successfully added",
       details: response,
     });
   } catch (error) {
@@ -590,7 +623,7 @@ export const getUnassignedUserRides = async (
   try {
     const response = await admin.getUnassignedUserRides();
     return res.status(status.OK).json({
-      message: "Details fetched Successfullyy",
+      message: "Details fetched Successfully",
       details: response,
     });
   } catch (error) {
@@ -639,10 +672,11 @@ export const updateAssignedUserRides = async (
   next: NextFunction
 ) => {
   try {
-    //@ts-ignore
-    const updateData = await admin.updateAssignUserRides(req.body);
+    const updateBodySchema = UserRideUpdateSchema.parse(req.body);
+    console.log(updateBodySchema);
+    const updateData = await admin.updateAssignUserRides(updateBodySchema);
     return res.status(status.OK).json({
-      message: "Successfullyy updated",
+      message: "Successfully updated",
       data: updateData,
     });
   } catch (error) {
@@ -656,9 +690,17 @@ export const updateUserRideAsCompleted = async (
   next: NextFunction
 ) => {
   try {
-    const data = await admin.updateUserRideAsCompleted(req.body.rideId);
+    const { rideId } = req.body;
+    if (!rideId) {
+      throw new AppError(
+        "RideID Undefined",
+        "RideId is not sent from the client",
+        status.BAD_REQUEST
+      );
+    }
+    const data = await admin.updateUserRideAsCompleted(rideId);
     return res.status(status.OK).json({
-      message: "Data Successfullyy Updated",
+      message: "Data Successfully Updated",
       details: data,
       err: {},
     });
@@ -673,9 +715,17 @@ export const updateUserRideAsCancelled = async (
   next: NextFunction
 ) => {
   try {
-    const data = await admin.updateUserRideAsCancelled(req.body.rideId);
+    const { rideId } = req.body;
+    if (!rideId) {
+      throw new AppError(
+        "RideID Undefined",
+        "RideId is not sent from the client",
+        status.BAD_REQUEST
+      );
+    }
+    const data = await admin.updateUserRideAsCancelled(rideId);
     return res.status(status.OK).json({
-      message: "Data Successfullyy Updated",
+      message: "Data Successfully Updated",
       details: data,
       err: {},
     });
@@ -693,7 +743,7 @@ export const getCompletedUserRides = async (
     //@ts-ignore
     const updateData = await admin.getCompletedUserRides();
     return res.status(status.OK).json({
-      message: "Successfullyy fetched",
+      message: "Successfully fetched",
       data: updateData,
     });
   } catch (error) {
@@ -710,7 +760,7 @@ export const getCancelledUserRides = async (
     //@ts-ignore
     const updateData = await admin.getCancelledUserRides();
     return res.status(status.OK).json({
-      message: "Successfullyy fetched",
+      message: "Successfully fetched",
       data: updateData,
     });
   } catch (error) {

@@ -19,10 +19,18 @@ export const authAdmin = async (
     }
 
     const decoded = await JWT.verify(token, jwtKey);
-    //@ts-ignore
-    req.user = decoded;
 
-    next();
+    //@ts-ignore
+    if (decoded.role == "SUPER ADMIN" || decoded.role == "ADMIN") {
+      //@ts-ignore
+      req.user = decoded;
+      return next();
+    }
+
+    return res.status(httpStatus.UNAUTHORIZED).json({
+      error: "Unauthorized",
+      message: "You can't perform any actions",
+    });
   } catch (error) {
     console.error(error);
     return res
@@ -64,7 +72,10 @@ export const superAdminAuth = (
     if (req.user.role !== "SUPER ADMIN") {
       return res
         .status(httpStatus.UNAUTHORIZED)
-        .json({ error: "Unauthorized", message: "You cant proceed further, You're not a super admin" });
+        .json({
+          error: "Unauthorized",
+          message: "You're not a super admin you cant perform any actions",
+        });
     }
     next();
   } catch (error) {
