@@ -70,12 +70,10 @@ export const superAdminAuth = (
   try {
     //@ts-ignore
     if (req.user.role !== "SUPER ADMIN") {
-      return res
-        .status(httpStatus.UNAUTHORIZED)
-        .json({
-          error: "Unauthorized",
-          message: "You're not a super admin you cant perform any actions",
-        });
+      return res.status(httpStatus.UNAUTHORIZED).json({
+        error: "Unauthorized",
+        message: "You're not a super admin you cant perform any actions",
+      });
     }
     next();
   } catch (error) {
