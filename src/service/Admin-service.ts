@@ -76,7 +76,7 @@ export default class AdminService {
   }
 
   private generateToken5mins(data: JwtPayload) {
-    return jwt.sign(data, utils.JWT_SECRET, { expiresIn: "1m" });
+    return jwt.sign(data, utils.JWT_SECRET, { expiresIn: "10m" });
   }
 
   async getDrivers() {
@@ -165,6 +165,7 @@ export default class AdminService {
         Dropoff_Directions,
         Pickup_Address,
         Dropoff_Address,
+        Cost,
       } = done;
       const data: Rides = {
         RideID,
@@ -178,6 +179,7 @@ export default class AdminService {
         Dropoff_Directions,
         Pickup_Address,
         Dropoff_Address,
+        Cost,
       };
       const messageData = await this.sendSms(data, driver.driverPhoneNumber1); //this will send SMS
       return messageData;
@@ -212,7 +214,7 @@ export default class AdminService {
 
     try {
       const message = await client.messages.create({
-        body: `Your ride details Customer Name :${data.Customer_FirstName} ${data.Customer_LastName}, PhoneNo: ${data.Phone_Number},PickUpTime:${data.Scheduled_Pickup_Time},ArrivalTime:${data.Estimated_Arrival_Time},Pick Up Address :${data.Pickup_Address},Drop Off Address:${data.Dropoff_Address},Instructions:${data.Dropoff_Directions},Distance :${data.Estimated_Distance} 
+        body: `Your ride details Customer Name :${data.Customer_FirstName} ${data.Customer_LastName}, PhoneNo: ${data.Phone_Number},PickUpTime:${data.Scheduled_Pickup_Time},ArrivalTime:${data.Estimated_Arrival_Time},Pick Up Address :${data.Pickup_Address},Drop Off Address:${data.Dropoff_Address},Instructions:${data.Dropoff_Directions},Distance :${data.Estimated_Distance},Cost:${data.Cost}
             `,
         to: `+91${driverNumber}`,
         from: utils.fromNumber,

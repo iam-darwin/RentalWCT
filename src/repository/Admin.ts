@@ -8,14 +8,9 @@ import {
   AdminUpdateInput,
   DriverUpdateInput,
   RideUpdateData,
-  RidesAssignedUpdate,
 } from "../interfaces/index";
 import { AppError, ServiceError } from "../utils/Errors/index";
-import {
-  calculateCost,
-  excludeFields,
-  hasAtLeastTenDigits,
-} from "../utils/helper";
+import { calculateCost, excludeFields } from "../utils/helper";
 import httpStatus from "http-status";
 import {
   UserRideType,
@@ -60,7 +55,7 @@ export default class AdminRepository {
       if (!user) {
         throw new ServiceError(
           "NOT_FOUND",
-          "User with email didnt found",
+          "User with email not found",
           httpStatus.NOT_FOUND
         );
       }
@@ -82,13 +77,6 @@ export default class AdminRepository {
           driverFirstName: true,
         },
       });
-      if (!active) {
-        throw new ServiceError(
-          "Something went wrong",
-          "Not able to fetch details",
-          status.INTERNAL_SERVER_ERROR
-        );
-      }
       return active;
     } catch (error) {
       throw error;
@@ -106,13 +94,6 @@ export default class AdminRepository {
           },
         },
       });
-      if (!drivers) {
-        throw new ServiceError(
-          "Something went wrong",
-          "Not able to fetch details",
-          status.INTERNAL_SERVER_ERROR
-        );
-      }
       return drivers;
     } catch (error) {
       throw error;
@@ -139,9 +120,9 @@ export default class AdminRepository {
 
       if (!driver) {
         throw new ServiceError(
-          "Something went wrong",
-          "Not able to fetch details",
-          status.INTERNAL_SERVER_ERROR
+          "DriverId undefined",
+          "Driver with this Id is not present in the database",
+          status.NOT_FOUND
         );
       }
       return driver;
@@ -349,13 +330,6 @@ export default class AdminRepository {
           Pickup_Directions: true,
         },
       });
-      if (!details) {
-        throw new ServiceError(
-          "Something went wrong",
-          "Not able to fetch details",
-          status.INTERNAL_SERVER_ERROR
-        );
-      }
       return details;
     } catch (error) {
       throw error;
@@ -405,13 +379,6 @@ export default class AdminRepository {
           Cost: rideCost,
         },
       });
-      if (!ride) {
-        throw new ServiceError(
-          "Something went wrong",
-          "Not able to update ride",
-          status.INTERNAL_SERVER_ERROR
-        );
-      }
       return ride;
     } catch (error) {
       throw error;
@@ -441,13 +408,6 @@ export default class AdminRepository {
           Cost: true,
         },
       });
-      if (!details) {
-        throw new ServiceError(
-          "Something went wrong",
-          "Not able to fetch details",
-          status.INTERNAL_SERVER_ERROR
-        );
-      }
       return details;
     } catch (error) {
       throw error;

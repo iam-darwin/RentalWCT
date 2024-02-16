@@ -127,7 +127,7 @@ export const updatePaymentSchema = z
   );
 export const ContactUsFormSchema = z.object({
   name: z.string().refine((value) => value.trim() !== "", {
-    message: "Name cannot be empty or contain only whitespaces",
+    message: "Name cannot be empty or contain only whitespace",
   }),
   phoneNumber: z.string().refine((value) => /^\d{10}$/.test(value), {
     message: "Phone number must be a 10-digit number",
@@ -136,7 +136,7 @@ export const ContactUsFormSchema = z.object({
     message: "Invalid email address format",
   }),
   message: z.string().refine((value) => value.trim() !== "", {
-    message: "Message cannot be empty or contain only whitespaces",
+    message: "Message cannot be empty or contain only whitespace",
   }),
 });
 

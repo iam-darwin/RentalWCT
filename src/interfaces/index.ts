@@ -40,6 +40,7 @@ export interface Rides {
   Dropoff_Directions: string;
   Pickup_Address: string;
   Dropoff_Address: string;
+  Cost: string;
 }
 
 export interface UserRideTypeSMS {

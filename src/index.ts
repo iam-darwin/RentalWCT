@@ -25,5 +25,3 @@ app.use(errorHandler);
 app.listen(utils.PORT, () => {
   console.log(`Server started at ${utils.PORT}`);
 });
-
-// just checking the branches thing

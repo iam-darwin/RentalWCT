@@ -17,16 +17,14 @@ export const authAdmin = async (
         .status(httpStatus.UNAUTHORIZED)
         .json({ error: "Unauthorized", message: "Token missing" });
     }
-
     const decoded = await JWT.verify(token, jwtKey);
-
     //@ts-ignore
     if (decoded.role == "SUPER ADMIN" || decoded.role == "ADMIN") {
+      console.log("inside");
       //@ts-ignore
       req.user = decoded;
       return next();
     }
-
     return res.status(httpStatus.UNAUTHORIZED).json({
       error: "Unauthorized",
       message: "You can't perform any actions",
@@ -68,6 +66,8 @@ export const superAdminAuth = (
   next: NextFunction
 ) => {
   try {
+    //@ts-ignore
+    console.log(req.user);
     //@ts-ignore
     if (req.user.role !== "SUPER ADMIN") {
       return res.status(httpStatus.UNAUTHORIZED).json({
