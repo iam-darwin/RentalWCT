@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit",
     "clear":"mv ./dist/views ./src/views &&rm -r public &&  mkdir -p public && rm -r dist && cd ../frontend && rm -r build",
     "stop":"pm2 stop all && pm2 delete all",
-    "rename":"npm i && cd .. && mv RENTALWCT backend && mv wctfrontend frontend && cd frontend && npm i && cd backend"
+    "rename":"npm i && cd .. && mv RENTALWCT backend && mv wctfrontend frontend && cd frontend && npm i && cd ../backend"
   },
   "keywords": [],
   "author": "CJ R. <cj@null.computer> (https://w3cj.now.sh)",
