@@ -20,7 +20,6 @@ export const authAdmin = async (
     const decoded = await JWT.verify(token, jwtKey);
     //@ts-ignore
     if (decoded.role == "SUPER ADMIN" || decoded.role == "ADMIN") {
-      console.log("inside");
       //@ts-ignore
       req.user = decoded;
       return next();
@@ -66,8 +65,6 @@ export const superAdminAuth = (
   next: NextFunction
 ) => {
   try {
-    //@ts-ignore
-    console.log(req.user);
     //@ts-ignore
     if (req.user.role !== "SUPER ADMIN") {
       return res.status(httpStatus.UNAUTHORIZED).json({

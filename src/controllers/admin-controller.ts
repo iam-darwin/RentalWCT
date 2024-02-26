@@ -673,7 +673,6 @@ export const updateAssignedUserRides = async (
 ) => {
   try {
     const updateBodySchema = UserRideUpdateSchema.parse(req.body);
-    console.log(updateBodySchema);
     const updateData = await admin.updateAssignUserRides(updateBodySchema);
     return res.status(status.OK).json({
       message: "Successfully updated",

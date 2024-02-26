@@ -34,7 +34,7 @@ export default class DriverRepository {
         if (existingDriver.driverSSN === details.driverSSN) {
           existingFields.push("Driver SSN");
         }
-        const errorMessage = `Driver with these details already exists. Existing fields: ${existingFields.join(
+        const errorMessage = `Driver with these details already exists. Change fields: ${existingFields.join(
           ", "
         )}`;
         throw new ServiceError("User Exists", errorMessage, status.CONFLICT);
@@ -87,7 +87,6 @@ export default class DriverRepository {
 
   async getEmail(email: string) {
     try {
-      console.log(email);
       const emailUser = await prisma.driver.findUnique({
         where: {
           email,

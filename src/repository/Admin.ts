@@ -21,7 +21,6 @@ import {
 export default class AdminRepository {
   async createAdmin(details: AdminInput) {
     try {
-      const hashedPassword = await bcrypt.hash(details.password, 10);
       const existingUser = await prisma.admin.findUnique({
         where: {
           email: details.email,
@@ -34,6 +33,7 @@ export default class AdminRepository {
           httpStatus.CONFLICT
         );
       }
+      const hashedPassword = await bcrypt.hash(details.password, 10);
       const user = await prisma.admin.create({
         data: { ...details, password: hashedPassword },
       });
@@ -416,19 +416,40 @@ export default class AdminRepository {
 
   async updateDriverDetails(id: string, updateFields: DriverUpdateInput) {
     try {
+      // Check if the user with the provided ID exists
       const user = await prisma.driver.findUnique({
         where: {
           driverID: id,
         },
       });
 
+      // Check if the email is already taken
+      if (updateFields.email) {
+        const userEmail = await prisma.driver.findUnique({
+          where: {
+            email: updateFields.email,
+          },
+        });
+
+        if (userEmail && userEmail.driverID !== id) {
+          throw new AppError(
+            "Email already taken",
+            "A user with this email already exists",
+            httpStatus.CONFLICT
+          );
+        }
+      }
+
+      // If the user does not exist, throw an error
       if (!user) {
         throw new ServiceError(
           "User Not Found",
           "Not able to update driver details",
-          status.INTERNAL_SERVER_ERROR
+          status.NOT_FOUND
         );
       }
+
+      // Update driver details
       const updateDetails = await prisma.driver.update({
         where: {
           driverID: id,
@@ -436,6 +457,7 @@ export default class AdminRepository {
         data: updateFields,
       });
 
+      // Check if the update was successful
       if (!updateDetails) {
         throw new ServiceError(
           "Driver Not updated",
@@ -445,7 +467,11 @@ export default class AdminRepository {
       }
 
       return updateDetails;
-    } catch (error) {}
+    } catch (error) {
+      // Handle errors appropriately, e.g., log them or rethrow
+      console.error("Error updating driver details:", error);
+      throw error;
+    }
   }
 
   async updateRideAsCompleted(rideId: string) {
@@ -793,7 +819,7 @@ export default class AdminRepository {
     try {
       const alldetails = await prisma.contactUsForm.findMany({
         where: {
-          status: "NOT CHECKED",
+          status: "NOT_CHECKED",
         },
       });
       return alldetails;

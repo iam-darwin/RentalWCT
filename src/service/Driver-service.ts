@@ -29,7 +29,6 @@ export default class DriverService {
   async login(data: LoginInput) {
     try {
       const findDriver = await this.driverRepo.getEmail(data.email);
-      console.log(findDriver);
       if (!findDriver) {
         throw new AppError(
           "Email not found",

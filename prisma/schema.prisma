@@ -10,14 +10,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum AdminRoleStatus {
+  SUPER_ADMIN
+  ADMIN
+}
+
 model Admin {
-  adminId   String   @id @unique @default(uuid())
+  adminId   String          @id @unique @default(uuid())
   name      String
-  email     String   @unique
+  email     String          @unique
   password  String
-  role      String   @default("ADMIN")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role      AdminRoleStatus @default(ADMIN)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 }
 
 model Driver {
@@ -93,9 +98,15 @@ model Rides_Kaizen {
   updatedAt              DateTime @updatedAt
 }
 
+enum RideStatus {
+  ASSIGNED
+  CANCELLED
+  PENDING_UPDATE
+}
+
 model Rides {
-  RideID                 String   @id @unique
-  Ride_Status            String //ASSIGNED //CANCELLED //PENDING_UPDATE 
+  RideID                 String     @id @unique
+  Ride_Status            RideStatus //ASSIGNED //CANCELLED //PENDING_UPDATE 
   Ride_Date              String
   Customer_FirstName     String
   Customer_LastName      String
@@ -119,8 +130,8 @@ model Rides {
   Driver_ID              String
   Provider_Trip_Id       String
   Rider_Patient_ID       String
-  createdAt              DateTime @default(now())
-  updatedAt              DateTime @updatedAt
+  createdAt              DateTime   @default(now())
+  updatedAt              DateTime   @updatedAt
 }
 
 model CompletedRides {
@@ -162,20 +173,25 @@ model Customer {
   updatedAt          DateTime @updatedAt
 }
 
+enum ContactStatus {
+  CHECKED
+  NOT_CHECKED
+}
+
 model ContactUsForm {
-  contactID   String   @id @default(uuid())
+  contactID   String        @id @default(uuid())
   name        String
   phoneNumber String
   email       String
   message     String
-  status      String   @default("NOT CHECKED") //CHECKED
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  status      ContactStatus @default(NOT_CHECKED) //CHECKED
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 }
 
 model UserRide {
-  rideId         Int      @id @default(autoincrement())
-  rideStatus     String   @default("PENDING UPDATE") //ASSIGNED, COMPLETED,
+  rideId         Int        @id @default(autoincrement())
+  rideStatus     RideStatus @default(PENDING_UPDATE) //ASSIGNED, COMPLETED,
   firstName      String
   lastName       String
   rideDate       String
@@ -183,10 +199,10 @@ model UserRide {
   pickUpAddress  String
   dropOffAddress String
   phoneNumber    String
-  instructions   String   @default("NULL")
-  driverId       String   @default("NULL")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  instructions   String     @default("NULL")
+  driverId       String     @default("NULL")
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
 
   @@unique([rideId])
 }
