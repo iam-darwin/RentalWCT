@@ -37,7 +37,7 @@ Below are the details for the Admin end points
   name:"asdasd",
   email:"asdasd@dsa.com",
   password:"sdaasd"
-  role:"SUPER ADMIN" //if you're testing application make sure you're a super admin (By default it will be admin)
+  role:"SUPER_ADMIN" //if you're testing application make sure you're a SUPER_ADMIN (By default it will be admin)
 }
 ```
 
@@ -255,7 +255,7 @@ Before proceeding to this route, make sure to sign in first. Once signed in, the
   //send what ever fields you want to update among them
   //one of them must be sent
   name?:"JOey",
-  role?:"SUPER ADMIN",
+  role?:"SUPER_ADMIN",
   email?:"asdasd@lamdsv.com"
 }
 ```
@@ -274,7 +274,7 @@ Before proceeding to this route, make sure to sign in first. Once signed in, the
   name:"JOEY",
   email:"iamojey@lamdsv.com",
   password:"88888888",
-  role?:"SUPER ADMIN" //if you dont provide by default it will create "ADMIN"
+  role?:"SUPER_ADMIN" //if you dont provide by default it will create "ADMIN"
 }
 ```
 
@@ -302,7 +302,7 @@ Before proceeding to this route, make sure to sign in first. Once signed in, the
 
 ### Add Payment Info
 
-Before proceeding to this route, make sure to sign in first Super Admin. Once signed in, the server will generate a JWT token that should be kept in the headers
+Before proceeding to this route, make sure to sign in first SUPER_ADMIN. Once signed in, the server will generate a JWT token that should be kept in the headers
 
 **METHOD** :`POST`
 **URL** :`http://localhost:PORT/api/v1/admin/createPayment`
@@ -318,14 +318,14 @@ date?: "2024-01-10T12:53:38.729Z" //format
 
 ### Get All Payments
 
-Before proceeding to this route, make sure to sign in first Super Admin. Once signed in, the server will generate a JWT token that should be kept in the headers
+Before proceeding to this route, make sure to sign in first SUPER_ADMIN. Once signed in, the server will generate a JWT token that should be kept in the headers
 
 **METHOD** :`GET`
 **URL** :`http://localhost:PORT/api/v1/admin/getAllPayments`
 
 ### Get Payments By DriverID
 
-Before proceeding to this route, make sure to sign in first Super Admin. Once signed in, the server will generate a JWT token that should be kept in the headers
+Before proceeding to this route, make sure to sign in first SUPER_ADMIN. Once signed in, the server will generate a JWT token that should be kept in the headers
 
 **METHOD** :`GET`
 **URL** :`http://localhost:PORT/api/v1/admin/payment/:driverId`
@@ -337,7 +337,7 @@ Before proceeding to this route, make sure to sign in first Super Admin. Once si
 
 ### Update Payments
 
-Before proceeding to this route, make sure to sign in first as Super Admin. Once signed in, the server will generate a JWT token that should be kept in the headers
+Before proceeding to this route, make sure to sign in first as SUPER_ADMIN. Once signed in, the server will generate a JWT token that should be kept in the headers
 
 **METHOD** :`POST`
 **URL** :`http://localhost:8000/api/v1/admin/payments/:paymentId`
@@ -374,21 +374,21 @@ This Endpoint is responsible for changing the pwd
 
 ### Form Details(Not Contacted)
 
-Before proceeding to this route, make sure to sign in first as Super Admin. Once signed in, the server will generate a JWT token that should be kept in the headers
+Before proceeding to this route, make sure to sign in first as SUPER_ADMIN. Once signed in, the server will generate a JWT token that should be kept in the headers
 
 **METHOD** : `GET`
 **URL** : `http://localhost:8000/api/v1/admin/getFormDetailsNotContacted`
 
 ### Update Form Data(Contacted)
 
-Before proceeding to this route, make sure to sign in first as Super Admin. Once signed in, the server will generate a JWT token that should be kept in the headers
+Before proceeding to this route, make sure to sign in first as SUPER_ADMIN. Once signed in, the server will generate a JWT token that should be kept in the headers
 
 **METHOD** : `POST`
 **URL** : `http://localhost:8000/api/v1/admin/updateFormContact/:contactId` //mention the contactId in the params
 
 ### Form Details(Contacted)
 
-Before proceeding to this route, make sure to sign in first as Super Admin. Once signed in, the server will generate a JWT token that should be kept in the headers
+Before proceeding to this route, make sure to sign in first as SUPER_ADMIN. Once signed in, the server will generate a JWT token that should be kept in the headers
 
 **METHOD** : `GET`
 **URL** : `http://localhost:8000/api/v1/admin/getFormDetailsContacted`
