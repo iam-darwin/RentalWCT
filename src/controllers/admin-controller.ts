@@ -155,7 +155,7 @@ export const fileUpload = async (
     const message = await admin.fileUpload(req.file.path);
 
     return res.status(status.OK).json({
-      msg: message,
+      message,
       success: true,
     });
   } catch (error) {
@@ -328,7 +328,7 @@ export const forgotPassword = async (
     const response = await admin.forgotPwd(req.body.email);
 
     return res.status(status.OK).json({
-      msg: response,
+      message: response,
     });
   } catch (error) {
     next(error);
@@ -387,7 +387,7 @@ export const getAllAdmins = async (
     const admins = await admin.getAllAdmins();
 
     return res.status(status.OK).json({
-      msg: "Successfully fetched",
+      message: "Successfully fetched",
       data: admins,
     });
   } catch (error) {
@@ -409,7 +409,7 @@ export const updateAdmin = async (
     );
 
     return res.status(status.OK).json({
-      msg: "Successfully updated",
+      message: "Successfully updated",
       data: response,
     });
   } catch (error) {
@@ -442,7 +442,7 @@ export const deleteAdmin = async (
     const response = await admin.deleteAdminWithID(adminId);
 
     return res.status(status.OK).json({
-      msg: "Successfully deleted",
+      message: "Successfully deleted",
       data: response,
     });
   } catch (error) {
@@ -465,7 +465,7 @@ export const createPayment = async (
     );
 
     return res.status(status.OK).json({
-      msg: "Successfully Created",
+      message: "Successfully Created",
       data: response,
     });
   } catch (error) {
@@ -482,7 +482,7 @@ export const getAllPayments = async (
     const response = await admin.getAllPayments();
 
     return res.status(status.OK).json({
-      msg: "Successfully Fetched",
+      message: "Successfully Fetched",
       data: response,
     });
   } catch (error) {
@@ -507,7 +507,7 @@ export const getPaymentByDriverId = async (
     const response = await admin.getPaymentByDriverId(driverId);
 
     return res.status(status.OK).json({
-      msg: "Successfully Fetched",
+      message: "Successfully Fetched",
       data: response,
     });
   } catch (error) {
@@ -534,7 +534,7 @@ export const updatePayments = async (
     const response = await admin.updatePayment(paymentId, updatePaymentBody);
 
     return res.status(status.OK).json({
-      msg: "Updated successfully",
+      message: "Updated successfully",
       data: response,
     });
   } catch (error) {

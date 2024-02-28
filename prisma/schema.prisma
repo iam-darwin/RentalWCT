@@ -102,6 +102,8 @@ enum RideStatus {
   ASSIGNED
   CANCELLED
   PENDING_UPDATE
+  COMPLETED
+  UPCOMING
 }
 
 model Rides {

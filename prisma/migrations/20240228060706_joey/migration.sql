@@ -1,10 +1,19 @@
+-- CreateEnum
+CREATE TYPE "AdminRoleStatus" AS ENUM ('SUPER_ADMIN', 'ADMIN');
+
+-- CreateEnum
+CREATE TYPE "RideStatus" AS ENUM ('ASSIGNED', 'CANCELLED', 'PENDING_UPDATE', 'COMPLETED', 'UPCOMING');
+
+-- CreateEnum
+CREATE TYPE "ContactStatus" AS ENUM ('CHECKED', 'NOT_CHECKED');
+
 -- CreateTable
 CREATE TABLE "Admin" (
     "adminId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "role" TEXT NOT NULL DEFAULT 'ADMIN',
+    "role" "AdminRoleStatus" NOT NULL DEFAULT 'ADMIN',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -94,7 +103,7 @@ CREATE TABLE "Rides_Kaizen" (
 -- CreateTable
 CREATE TABLE "Rides" (
     "RideID" TEXT NOT NULL,
-    "Ride_Status" TEXT NOT NULL,
+    "Ride_Status" "RideStatus" NOT NULL,
     "Ride_Date" TEXT NOT NULL,
     "Customer_FirstName" TEXT NOT NULL,
     "Customer_LastName" TEXT NOT NULL,
@@ -176,7 +185,7 @@ CREATE TABLE "ContactUsForm" (
     "phoneNumber" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "message" TEXT NOT NULL,
-    "status" TEXT NOT NULL DEFAULT 'NOT CHECKED',
+    "status" "ContactStatus" NOT NULL DEFAULT 'NOT_CHECKED',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -186,7 +195,7 @@ CREATE TABLE "ContactUsForm" (
 -- CreateTable
 CREATE TABLE "UserRide" (
     "rideId" SERIAL NOT NULL,
-    "rideStatus" TEXT NOT NULL DEFAULT 'PENDING UPDATE',
+    "rideStatus" "RideStatus" NOT NULL DEFAULT 'PENDING_UPDATE',
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
     "rideDate" TEXT NOT NULL,

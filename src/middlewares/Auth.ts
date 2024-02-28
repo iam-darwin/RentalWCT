@@ -24,6 +24,7 @@ export const authAdmin = async (
       req.user = decoded;
       return next();
     }
+    //@ts-ignore
     return res.status(httpStatus.UNAUTHORIZED).json({
       error: "Unauthorized",
       message: "You can't perform any actions",

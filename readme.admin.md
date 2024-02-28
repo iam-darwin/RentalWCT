@@ -422,7 +422,7 @@ Before proceeding to this route, make sure to sign in first as SUPER_ADMIN. Once
   "message": "Ride Successfullyy added",
   "details": {
     "rideId": 1,
-    "rideStatus": "PENDING UPDATE",
+    "rideStatus": "PENDING_UPDATE",
     "firstName": "asdadz@domain.com",
     "lastName": "asdasd",
     "rideDate": "1234567890",

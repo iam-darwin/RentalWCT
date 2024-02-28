@@ -40,7 +40,7 @@ export const errorHandler = (
     });
   } else if (err instanceof Prisma.PrismaClientKnownRequestError) {
     return res.status(httpStatus.CONFLICT).json({
-      msg: `the user with this ${err.meta?.target} already exists`,
+      message: `the user with this ${err.meta?.target} already exists`,
     });
   }
 

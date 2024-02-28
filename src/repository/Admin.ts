@@ -17,6 +17,7 @@ import {
   updateBodyPayment,
   updateUserRide,
 } from "../config/validations";
+import { AdminRoleStatus } from "@prisma/client";
 
 export default class AdminRepository {
   async createAdmin(details: AdminInput) {
@@ -35,7 +36,12 @@ export default class AdminRepository {
       }
       const hashedPassword = await bcrypt.hash(details.password, 10);
       const user = await prisma.admin.create({
-        data: { ...details, password: hashedPassword },
+        data: {
+          password: hashedPassword,
+          name: details.name,
+          email: details.email,
+          role: (details.role as AdminRoleStatus) || AdminRoleStatus.ADMIN,
+        },
       });
 
       return user;
@@ -681,12 +687,17 @@ export default class AdminRepository {
           "Admin is not present in DB",
           httpStatus.NOT_FOUND
         );
-
+      const validAdminData: AdminUpdateInput = {
+        ...adminData,
+      };
+      if (validAdminData.role) {
+        validAdminData.role = validAdminData.role as AdminRoleStatus;
+      }
       const admins = await prisma.admin.update({
         where: {
           adminId: id,
         },
-        data: adminData,
+        data: validAdminData as any, // Use 'as any' to handle type discrepancy
       });
 
       return admins;
@@ -875,6 +886,7 @@ export default class AdminRepository {
         //@ts-ignore
         data: userRideData,
       });
+      console.log(userRide);
       return userRide;
     } catch (error) {
       throw error;
@@ -885,7 +897,7 @@ export default class AdminRepository {
     try {
       const data = await prisma.userRide.findMany({
         where: {
-          rideStatus: "PENDING UPDATE",
+          rideStatus: "PENDING_UPDATE",
         },
       });
       return data;
