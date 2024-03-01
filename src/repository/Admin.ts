@@ -454,7 +454,11 @@ export default class AdminRepository {
           status.NOT_FOUND
         );
       }
-
+      let hashedPassword;
+      if (updateFields.password) {
+        hashedPassword = await bcrypt.hash(updateFields.password, 10);
+        updateFields.password = hashedPassword;
+      }
       // Update driver details
       const updateDetails = await prisma.driver.update({
         where: {
@@ -692,6 +696,11 @@ export default class AdminRepository {
       };
       if (validAdminData.role) {
         validAdminData.role = validAdminData.role as AdminRoleStatus;
+      }
+      let hashedPassword;
+      if (validAdminData.password) {
+        hashedPassword = await bcrypt.hash(validAdminData.password, 10);
+        validAdminData.password = hashedPassword;
       }
       const admins = await prisma.admin.update({
         where: {

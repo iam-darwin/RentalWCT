@@ -77,10 +77,12 @@ export interface DriverUpdateInput {
   vehicleLicense?: string;
   driverSSN?: string;
   driverLicense?: string;
+  password?: string;
 }
 
 export interface AdminUpdateInput {
   name?: string;
   email?: string;
   role?: string;
+  password?: string;
 }

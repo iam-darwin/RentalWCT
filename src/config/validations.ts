@@ -51,14 +51,21 @@ export const AdminUpdateInputValidation = z
     name: z.string().optional(),
     email: z.string().email().optional(),
     role: z.string().optional(),
+    password: z.string().optional(),
   })
   .refine(
     (data) => {
-      const { name, email, role } = data;
-      return name !== undefined || email !== undefined || role !== undefined;
+      const { name, email, role, password } = data;
+      return (
+        name !== undefined ||
+        email !== undefined ||
+        role !== undefined ||
+        password !== undefined
+      );
     },
     {
-      message: "At least one of 'name', 'email', or 'role' must be provided.",
+      message:
+        "At least one of 'name', 'email','password' or 'role' must be provided.",
     }
   );
 
@@ -190,6 +197,7 @@ export const DriverUpdateInputSchema = z
     vehicleLicense: z.string().optional(),
     driverSSN: z.string().optional(),
     driverLicense: z.string().optional(),
+    password: z.string().optional(),
   })
   .refine(
     (data) => {
