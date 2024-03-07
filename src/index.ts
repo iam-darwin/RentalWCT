@@ -6,7 +6,7 @@ import { utils } from "./utils/utilities";
 import apiRoutes from "./routes/index";
 import { errorHandler } from "./middlewares";
 
-const app = express();
+export const app = express();
 
 const specificFilePath = "/home/user/RentalWCT/public/index.html";
 
@@ -21,7 +21,3 @@ app.use("/*", (req: Request, res: Response) => {
   res.sendFile(path.resolve(specificFilePath));
 });
 app.use(errorHandler);
-
-app.listen(utils.PORT, () => {
-  console.log(`Server started at ${utils.PORT}`);
-});

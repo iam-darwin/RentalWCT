@@ -4,15 +4,15 @@
   "description": " A basic starter for an express.js API with Typescript",
   "main": "src/index.ts",
   "scripts": {
-    "start": "ts-node src/index.ts",
-    "dev": "nodemon src/index.ts",
-    "build": "tsc && cd ../frontend && npm run build && rm -r ../backend/public && mkdir -p ../backend/public && mv ./build/* ../backend/public && cd ../backend && mv ./src/views ./dist  && pm2 start dist/index.js",
+    "start": "ts-node src/cluster.ts",
+    "dev": "nodemon src/cluster.ts",
+    "build": "tsc && cd ../frontend && npm run build && rm -r ../backend/public && mkdir -p ../backend/public && mv ./build/* ../backend/public && cd ../backend && mv ./src/views ./dist  && pm2 start dist/cluster.js",
     "lint": "eslint --fix src test",
     "test": "jest",
     "typecheck": "tsc --noEmit",
     "clear":"mv ./dist/views ./src/views &&rm -r public &&  mkdir -p public && rm -r dist && cd ../frontend && rm -r build",
     "stop":"pm2 stop all && pm2 delete all",
-    "rename":"npm i && cd .. && mv RENTALWCT backend && mv wctfrontend frontend && cd frontend && npm i && cd ../backend"
+    "rename":"npm i && cd .. && mv RentalWCT backend && mv wctfrontend frontend && cd frontend && npm i && cd ../backend"
   },
   "keywords": [],
   "author": "CJ R. <cj@null.computer> (https://w3cj.now.sh)",
