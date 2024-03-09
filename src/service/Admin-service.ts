@@ -214,7 +214,13 @@ export default class AdminService {
 
     try {
       const message = await client.messages.create({
-        body: `Your ride details Customer Name :${data.Customer_FirstName} ${data.Customer_LastName}, PhoneNo: ${data.Phone_Number},PickUpTime:${data.Scheduled_Pickup_Time},ArrivalTime:${data.Estimated_Arrival_Time},Pick Up Address :${data.Pickup_Address},Drop Off Address:${data.Dropoff_Address},Instructions:${data.Dropoff_Directions},Distance :${data.Estimated_Distance},Cost:${data.Cost}
+        body: `Your ride details 
+        Ride Id:${data.RideID}, 
+        Customer Name :${data.Customer_FirstName} ${data.Customer_LastName}, 
+        PhoneNo: ${data.Phone_Number},
+        PickUpTime:${data.Scheduled_Pickup_Time},
+        ArrivalTime:${data.Estimated_Arrival_Time},
+        Pick Up Address :${data.Pickup_Address},Drop Off Address:${data.Dropoff_Address},Instructions:${data.Dropoff_Directions},Distance :${data.Estimated_Distance},Cost:${data.Cost}
             `,
         to: `+1${driverNumber}`,
         from: utils.fromNumber,
@@ -247,6 +253,7 @@ export default class AdminService {
     try {
       const message = await client.messages.create({
         body: `Your ride details
+        Ride Id :${data.rideId}
         Customer Name:${data.firstName} ${data.lastName},
         Phone No:${data.phoneNumber},
         Pick Up Time :${data.pickUpTime},
@@ -483,10 +490,10 @@ export default class AdminService {
     }
   }
 
-  async assignDriverToUserRide(rideId: string, driverId: string) {
+  async assignDriverToUserRide(rideID: string, driverId: string) {
     try {
       const done = await this.adminService.assignUserRideToDriver(
-        rideId,
+        rideID,
         driverId
       );
       const driver = await this.adminService.getDriver(driverId);
@@ -499,6 +506,7 @@ export default class AdminService {
         phoneNumber,
         pickUpTime,
         instructions,
+        rideId,
       } = done;
       const data: UserRideTypeSMS = {
         firstName,
@@ -509,6 +517,7 @@ export default class AdminService {
         phoneNumber,
         pickUpTime,
         instructions,
+        rideId,
       };
       const messageData = await this.sendSmsUserRide(
         data,

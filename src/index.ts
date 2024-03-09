@@ -2,7 +2,6 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import path from "path";
 
-import { utils } from "./utils/utilities";
 import apiRoutes from "./routes/index";
 import { errorHandler } from "./middlewares";
 

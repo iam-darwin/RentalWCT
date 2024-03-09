@@ -44,6 +44,7 @@ export interface Rides {
 }
 
 export interface UserRideTypeSMS {
+  rideId: number;
   firstName: string;
   lastName: string;
   rideDate: string;
