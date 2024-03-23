@@ -212,15 +212,24 @@ export default class AdminService {
   private async sendSms(data: Rides, driverNumber: string) {
     const client = new TwilioSDK.Twilio(utils.accountSid, utils.authToken);
 
+    const [pickUpDate, pickUpTime, pickUperiod] =
+      data.Scheduled_Pickup_Time.split(" ");
+    const [arrivalDate, arrivalTime, arrivalPeriod] =
+      data.Estimated_Arrival_Time.split(" ");
+
     try {
       const message = await client.messages.create({
         body: `Your ride details 
         Ride Id:${data.RideID}, 
         Customer Name :${data.Customer_FirstName} ${data.Customer_LastName}, 
         PhoneNo: ${data.Phone_Number},
-        PickUpTime:${data.Scheduled_Pickup_Time},
-        ArrivalTime:${data.Estimated_Arrival_Time},
-        Pick Up Address :${data.Pickup_Address},Drop Off Address:${data.Dropoff_Address},Instructions:${data.Dropoff_Directions},Distance :${data.Estimated_Distance},Cost:${data.Cost}
+        PickUpDate&Time:${pickUpDate} - ${pickUpTime} ${pickUperiod},
+        ArrivalDate&Time:${arrivalDate} - ${arrivalTime} ${arrivalPeriod},
+        Pick Up Address :${data.Pickup_Address},Drop Off Address:${
+          data.Dropoff_Address
+        },Instructions:${
+          data.Dropoff_Directions === "" ? "NONE" : `${data.Dropoff_Directions}`
+        },Distance :${data.Estimated_Distance},Cost:${data.Cost}
             `,
         to: `+1${driverNumber}`,
         from: utils.fromNumber,
@@ -292,6 +301,14 @@ export default class AdminService {
     try {
       const details = await this.adminService.updateRideAsCompleted(rideId);
       return details;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async updateRideAsCancelled(rideId: string) {
+    try {
+      const status = await this.adminService.updateRideAsCancelled(rideId);
+      return status;
     } catch (error) {
       throw error;
     }
@@ -579,6 +596,24 @@ export default class AdminService {
   async getCancelledUserRides() {
     try {
       const data = await this.adminService.getCancelledUserRides();
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async completedRideUndo(rideId: string) {
+    try {
+      const data = await this.adminService.completedRideUndo(rideId);
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async cancelledRideUndo(rideId: string) {
+    try {
+      const data = await this.adminService.cancelledRideUndo(rideId);
       return data;
     } catch (error) {
       throw error;

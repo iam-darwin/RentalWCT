@@ -8,7 +8,7 @@ import { errorHandler } from "./middlewares";
 export const app = express();
 
 const specificFilePath = "/home/user/RentalWCT/public/index.html";
-
+// const specificFilePath = "/home/ubuntu/backend/public/index.html";
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));

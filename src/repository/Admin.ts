@@ -219,80 +219,82 @@ export default class AdminRepository {
               },
             });
           } else {
-            await prisma.rides_Kaizen.update({
-              where: {
-                RideID: ride["Ride ID"],
-              },
-              data: {
-                RideID: ride["Ride ID"],
-                Ride_Status: ride["Status"],
-                Ride_Date: ride["Ride Date"],
-                Customer_FirstName: ride["First Name"],
-                Customer_LastName: ride["Last Name"],
-                Phone_Number: ride["Phone"],
-                Transportation_Type: ride["Transportation Type"],
-                Cancel_Reason: ride["Cancel Reason"],
-                Cost: ride["Cost"],
-                Pick_Up_Time: ride["Pick Up Time"],
-                Arrival_Time: ride["Arrival Time"],
-                Estimated_Arrival_Time: ride["Estimated Arrival Time"],
-                Scheduled_Pickup_Time: ride["Scheduled Pickup Time"],
-                Estimated_Distance: ride["Estimated Distance"],
-                Pickup_Address: ride["Pickup Address"],
-                Pickup_Lat: ride["Pickup Lat"],
-                Pickup_Lng: ride["Pickup Lng"],
-                Pickup_Directions: ride["Pickup Directions"],
-                Dropoff_Address: ride["Dropoff Address"],
-                Dropoff_Lat: ride["Dropoff Lat"],
-                Dropoff_Lng: ride["Dropoff Lng"],
-                Dropoff_Directions: ride["Dropoff Directions"],
-                Driver_FirstName: ride["Driver First Name"],
-                Driver_Photo_Url: ride["Driver Photo Url"],
-                Driver_Phone: ride["Driver Phone"],
-                Vehicle_Color: ride["Vehicle Color"],
-                Vehicle_Make: ride["Vehicle Make"],
-                Vehicle_Model: ride["Vehicle Model"],
-                Vehicle_License: ride["Vehicle License"],
-                Vehicle_Photo_Url: ride["Vehicle Photo Url"],
-                Provider_Name: ride["Provider Name"],
-                Provider_Trip_Id: ride["Provider Trip Id"],
-                Rider_Patient_ID: ride["Rider/Patient ID"],
-                Member_ID: ride["Member ID"],
-              },
-            });
+            if (ride["Status"] === "CANCELLED") {
+              await prisma.rides_Kaizen.update({
+                where: {
+                  RideID: ride["Ride ID"],
+                },
+                data: {
+                  RideID: ride["Ride ID"],
+                  Ride_Status: ride["Status"],
+                  Ride_Date: ride["Ride Date"],
+                  Customer_FirstName: ride["First Name"],
+                  Customer_LastName: ride["Last Name"],
+                  Phone_Number: ride["Phone"],
+                  Transportation_Type: ride["Transportation Type"],
+                  Cancel_Reason: ride["Cancel Reason"],
+                  Cost: ride["Cost"],
+                  Pick_Up_Time: ride["Pick Up Time"],
+                  Arrival_Time: ride["Arrival Time"],
+                  Estimated_Arrival_Time: ride["Estimated Arrival Time"],
+                  Scheduled_Pickup_Time: ride["Scheduled Pickup Time"],
+                  Estimated_Distance: ride["Estimated Distance"],
+                  Pickup_Address: ride["Pickup Address"],
+                  Pickup_Lat: ride["Pickup Lat"],
+                  Pickup_Lng: ride["Pickup Lng"],
+                  Pickup_Directions: ride["Pickup Directions"],
+                  Dropoff_Address: ride["Dropoff Address"],
+                  Dropoff_Lat: ride["Dropoff Lat"],
+                  Dropoff_Lng: ride["Dropoff Lng"],
+                  Dropoff_Directions: ride["Dropoff Directions"],
+                  Driver_FirstName: ride["Driver First Name"],
+                  Driver_Photo_Url: ride["Driver Photo Url"],
+                  Driver_Phone: ride["Driver Phone"],
+                  Vehicle_Color: ride["Vehicle Color"],
+                  Vehicle_Make: ride["Vehicle Make"],
+                  Vehicle_Model: ride["Vehicle Model"],
+                  Vehicle_License: ride["Vehicle License"],
+                  Vehicle_Photo_Url: ride["Vehicle Photo Url"],
+                  Provider_Name: ride["Provider Name"],
+                  Provider_Trip_Id: ride["Provider Trip Id"],
+                  Rider_Patient_ID: ride["Rider/Patient ID"],
+                  Member_ID: ride["Member ID"],
+                },
+              });
 
-            await prisma.rides.update({
-              where: {
-                RideID: ride["Ride ID"],
-              },
-              data: {
-                RideID: ride["Ride ID"],
-                Ride_Status: ride["Status"],
-                Ride_Date: ride["Ride Date"],
-                Customer_FirstName: ride["First Name"],
-                Customer_LastName: ride["Last Name"],
-                Phone_Number: ride["Phone"],
-                Transportation_Type: ride["Transportation Type"],
-                Cancel_Reason: ride["Cancel Reason"],
-                Cost: ride["Cost"],
-                Pick_Up_Time: ride["Pick Up Time"],
-                Arrival_Time: ride["Arrival Time"],
-                Estimated_Arrival_Time: ride["Estimated Arrival Time"],
-                Scheduled_Pickup_Time: ride["Scheduled Pickup Time"],
-                Estimated_Distance: ride["Estimated Distance"],
-                Pickup_Address: ride["Pickup Address"],
-                Pickup_Lat: ride["Pickup Lat"],
-                Pickup_Lng: ride["Pickup Lng"],
-                Pickup_Directions: ride["Pickup Directions"],
-                Dropoff_Address: ride["Dropoff Address"],
-                Dropoff_Lat: ride["Dropoff Lat"],
-                Dropoff_Lng: ride["Dropoff Lng"],
-                Dropoff_Directions: ride["Dropoff Directions"],
-                Provider_Trip_Id: ride["Provider Trip Id"],
-                Rider_Patient_ID: ride["Rider/Patient ID"],
-                Driver_ID: "NULL",
-              },
-            });
+              await prisma.rides.update({
+                where: {
+                  RideID: ride["Ride ID"],
+                },
+                data: {
+                  RideID: ride["Ride ID"],
+                  Ride_Status: ride["Status"],
+                  Ride_Date: ride["Ride Date"],
+                  Customer_FirstName: ride["First Name"],
+                  Customer_LastName: ride["Last Name"],
+                  Phone_Number: ride["Phone"],
+                  Transportation_Type: ride["Transportation Type"],
+                  Cancel_Reason: ride["Cancel Reason"],
+                  Cost: ride["Cost"],
+                  Pick_Up_Time: ride["Pick Up Time"],
+                  Arrival_Time: ride["Arrival Time"],
+                  Estimated_Arrival_Time: ride["Estimated Arrival Time"],
+                  Scheduled_Pickup_Time: ride["Scheduled Pickup Time"],
+                  Estimated_Distance: ride["Estimated Distance"],
+                  Pickup_Address: ride["Pickup Address"],
+                  Pickup_Lat: ride["Pickup Lat"],
+                  Pickup_Lng: ride["Pickup Lng"],
+                  Pickup_Directions: ride["Pickup Directions"],
+                  Dropoff_Address: ride["Dropoff Address"],
+                  Dropoff_Lat: ride["Dropoff Lat"],
+                  Dropoff_Lng: ride["Dropoff Lng"],
+                  Dropoff_Directions: ride["Dropoff Directions"],
+                  Provider_Trip_Id: ride["Provider Trip Id"],
+                  Rider_Patient_ID: ride["Rider/Patient ID"],
+                  Driver_ID: "NULL",
+                },
+              });
+            }
           }
         })
         .on("end", async () => {
@@ -524,6 +526,38 @@ export default class AdminRepository {
       });
 
       return completedRides;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateRideAsCancelled(rideId: string) {
+    try {
+      console.log(rideId);
+      const findRideId = await prisma.rides.findUnique({
+        where: {
+          RideID: rideId,
+        },
+      });
+      console.log(findRideId);
+      if (!findRideId) {
+        throw new AppError(
+          "rideId not found to cancel",
+          "Ride not found in Database",
+          httpStatus.CONFLICT
+        );
+      }
+
+      const updateAsCancelled = await prisma.rides.update({
+        where: {
+          RideID: rideId,
+        },
+        data: {
+          Ride_Status: "CANCELLED",
+        },
+      });
+
+      return updateAsCancelled ? updateAsCancelled : null;
     } catch (error) {
       throw error;
     }
@@ -1065,6 +1099,76 @@ export default class AdminRepository {
         },
       });
       return rides;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async completedRideUndo(rideId: string) {
+    try {
+      const transaction = await prisma.$transaction(async (prismaClient) => {
+        // Move the ride from completed rides to assigned rides and delete from the completed rides list
+        const findRideIdInCompleted =
+          await prismaClient.completedRides.findUnique({
+            where: {
+              RideID: rideId,
+            },
+          });
+
+        if (!findRideIdInCompleted) {
+          throw new AppError(
+            "RideId not found",
+            "This rideId is not present in the database",
+            httpStatus.CONFLICT
+          );
+        }
+
+        await prismaClient.completedRides.delete({
+          where: {
+            RideID: rideId,
+          },
+        });
+
+        const updatedRide = await prismaClient.rides.update({
+          where: {
+            RideID: rideId,
+          },
+          data: {
+            Ride_Status: "ASSIGNED",
+          },
+        });
+
+        return updatedRide;
+      });
+
+      return transaction;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async cancelledRideUndo(rideId: string) {
+    try {
+      const findRideId = await prisma.rides.findUnique({
+        where: {
+          RideID: rideId,
+        },
+      });
+
+      if (!findRideId) {
+        throw new AppError("RideId not found", "", httpStatus.CONFLICT);
+      }
+
+      const updated = await prisma.rides.update({
+        where: {
+          RideID: rideId,
+        },
+        data: {
+          Ride_Status: "ASSIGNED",
+        },
+      });
+
+      return updated;
     } catch (error) {
       throw error;
     }

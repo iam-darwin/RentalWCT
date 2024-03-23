@@ -43,6 +43,11 @@ router.post(
   authAdmin,
   adminControllers.updateRideAsCompleted
 );
+router.post(
+  "/updateRideAsCancelled",
+  authAdmin,
+  adminControllers.updateRideAsCancelled
+);
 router.get("/completedRides", authAdmin, adminControllers.getCompletedRides);
 router.get("/cancelledRides", authAdmin, adminControllers.getCancelledRides);
 
@@ -168,6 +173,18 @@ router.get(
   "/getCancelledUserRides",
   authAdmin,
   adminControllers.getCancelledUserRides
+);
+
+router.post(
+  "/completedRideUndo",
+  authAdmin,
+  adminControllers.completedRideUndo
+);
+
+router.post(
+  "/cancelledRideUndo",
+  authAdmin,
+  adminControllers.cancelledRideUndo
 );
 
 export default router;

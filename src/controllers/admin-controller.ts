@@ -267,6 +267,31 @@ export const updateRideAsCompleted = async (
   }
 };
 
+export const updateRideAsCancelled = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { rideId } = req.body;
+    if (!rideId) {
+      throw new AppError(
+        "RideId undefined",
+        "RideId not provided",
+        status.NOT_ACCEPTABLE
+      );
+    }
+    const data = await admin.updateRideAsCancelled(rideId);
+    return res.status(status.OK).json({
+      message: "Ride Successfully Cancelled",
+      details: data,
+      err: {},
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const updateAssignedRides = async (
   req: Request,
   res: Response,
@@ -761,6 +786,56 @@ export const getCancelledUserRides = async (
     return res.status(status.OK).json({
       message: "Successfully fetched",
       data: updateData,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const completedRideUndo = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { rideId } = req.body;
+    if (!rideId) {
+      throw new AppError(
+        "RideID Undefined",
+        "RideId is not sent",
+        status.BAD_REQUEST
+      );
+    }
+    const data = await admin.completedRideUndo(rideId);
+    return res.status(status.OK).json({
+      message: "updated ride as assigned",
+      details: data,
+      err: {},
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const cancelledRideUndo = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { rideId } = req.body;
+    if (!rideId) {
+      throw new AppError(
+        "RideID Undefined",
+        "RideId is not sent",
+        status.BAD_REQUEST
+      );
+    }
+    const data = await admin.cancelledRideUndo(rideId);
+    return res.status(status.OK).json({
+      message: "updated ride as assigned",
+      details: data,
+      err: {},
     });
   } catch (error) {
     next(error);

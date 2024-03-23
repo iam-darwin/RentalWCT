@@ -34,10 +34,10 @@ Below are the details for the Admin end points
 
 ```
 {
-  name:"asdasd",
-  email:"asdasd@dsa.com",
-  password:"sdaasd"
-  role:"SUPER_ADMIN" //if you're testing application make sure you're a SUPER_ADMIN (By default it will be admin)
+  "name":"asdasd",
+  "email":"asdasd@dsa.com",
+  "password":"sdaasd"
+  "role":"SUPER_ADMIN" //if you're testing application make sure you're a SUPER_ADMIN (By default it will be admin)
 }
 ```
 
@@ -174,6 +174,22 @@ Before proceeding to this route, make sure to sign in first. Once signed in, the
 
 **METHOD** : `POST`
 **URL** : `http://localhost:PORT/api/v1/admin/updateRideAsCompleted`
+
+**Request Body**
+
+```
+{
+  rideId:"asdasd"
+}
+
+```
+
+### Update Ride As Cancelled
+
+Before proceeding to this route, make sure to sign in first. Once signed in, the server will generate a JWT token that should be kept in the headers
+
+**METHOD** : `POST`
+**URL** : `http://localhost:PORT/api/v1/admin/updateRideAsCancelled`
 
 **Request Body**
 
@@ -552,3 +568,40 @@ Before proceeding to this route, make sure to sign in first as SUPER_ADMIN. Once
 
 **METHOD** : `GET`
 **URL** : `http://localhost:8000/api/v1/admin/getCancelledUserRides`
+
+### Get completed KiazenRides
+
+make sure to send token
+
+**METHOD** : `GET`
+**URL** : `http://localhost:8000/api/v1/admin/completedRides`
+
+### Get canceleld KiazenRides
+
+make sure to send token for auth
+**METHOD** : `GET`
+**URL** : `http://localhost:8000/api/v1/admin/cancelledRides`
+
+### Undo Completed ride
+
+make sure to send token for auth
+**METHOD** : `POST`
+**URL** : `http://localhost:8000/api/v1/admin/completedRideUndo`
+
+```
+{
+  "rideId":"123123123",
+}
+```
+
+### Undo cancelled ride
+
+make sure to send token for auth
+**METHOD** : `POST`
+**URL** : `http://localhost:8000/api/v1/admin/cancelledRideUndo`
+
+```
+{
+  "rideId":"123123123",
+}
+```
