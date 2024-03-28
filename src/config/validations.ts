@@ -103,22 +103,24 @@ export const assignRideValidation = z
     }
   );
 
-export const paymentRequestValidation = z
-  .object({
-    driverId: z.string(),
-    amount: z.string(),
-    remarks: z.string().optional(),
-    date: z.string().optional(),
-  })
-  .refine((data) => data.driverId !== "" && data.amount !== undefined, {
-    message: "driverId and amount are required fields.",
-  });
+export const paymentRequestValidation = z.object({
+  driverId: z.string().refine((val) => val !== "", {
+    message: "driverId is required",
+  }),
+  totalAmount: z.string().refine((val) => val !== "", {
+    message: "totalAmount is required",
+  }),
+  rideIds: z.array(z.string()).refine((val) => val.length > 0, {
+    message: "rideIds is required and must not be empty",
+  }),
+  feedBack: z.string().optional(),
+});
 
 export const updatePaymentSchema = z
   .object({
     date: z.string().optional(),
     remarks: z.string().optional(),
-    amount: z.string().min(1).optional(), // Updated amount to be a non-empty string
+    amount: z.string().min(1).optional(),
   })
   .refine(
     ({ date, remarks, amount }) => {
@@ -175,12 +177,36 @@ export const UserRideSchema = z.object({
 });
 
 export const RideUpdateDataSchema = z.object({
-  driverId: z.string().refine((value) => value.length > 0, {
-    message: "Driver ID must not be empty",
-  }),
+  driverId: z
+    .string()
+    .refine((value) => value.length > 0, {
+      message: "Driver ID must not be empty",
+    })
+    .optional(),
   rideId: z.string().refine((value) => value.length > 0, {
     message: "Ride ID must not be empty",
   }),
+  deadHead: z
+    .string()
+    .refine((value) => value.length > 0, {
+      message: "Dead Head must not be empty",
+    })
+    .optional(),
+  load: z
+    .string()
+    .refine((value) => value.length > 0, {
+      message: "Load must not be empty",
+    })
+    .optional(),
+  type: z.enum(["updateAssignRides", "updateDeadHeadAndLoad"]).refine(
+    (value) => {
+      return value === "updateAssignRides" || value === "updateDeadHeadAndLoad";
+    },
+    {
+      message:
+        "Invalid type. Must be 'updateAssignRides' or 'updateDeadHeadAndLoad'.",
+    }
+  ),
 });
 
 export const DriverUpdateInputSchema = z

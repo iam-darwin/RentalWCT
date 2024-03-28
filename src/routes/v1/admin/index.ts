@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import * as adminControllers from "../../../controllers/admin-controller";
 import {
   superAdminAuth,
@@ -7,6 +7,7 @@ import {
   resetPwdAuthPOST,
 } from "../../../middlewares";
 import { upload } from "../../../utils/helper";
+import { prisma } from "../../../config/Connectdb";
 
 const router = express.Router();
 
@@ -80,6 +81,12 @@ router.post(
   adminControllers.deleteAdmin
 );
 
+router.post(
+  "/driverTotalAmountCalculate",
+  authAdmin,
+  superAdminAuth,
+  adminControllers.driverTotalAmountCalculate
+);
 router.post(
   "/createPayment",
   authAdmin,
@@ -186,5 +193,24 @@ router.post(
   authAdmin,
   adminControllers.cancelledRideUndo
 );
+router.post("/dates", async (req, res) => {
+  const { startDate, endDate } = req.body; // Retrieve start and end dates from query parameters
+  console.log(startDate, endDate);
+  // Use startDate and endDate in your database query
+  try {
+    // Retrieve rides between the start and end dates
+    const rides = await prisma.rides.findMany({
+      where: {
+        Ride_Date: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
+    });
+    return res.status(200).json({ len: rides.length });
+  } catch (error) {
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 export default router;

@@ -7,12 +7,14 @@ import * as TwilioSDK from "twilio";
 import {
   AdminInput,
   AdminUpdateInput,
+  AmountTotalPaid,
   DriverUpdateInput,
   LoginInput,
-  RideUpdateData,
+  PaymentData,
   Rides,
-  RidesAssignedUpdate,
+  UpdateData,
   UserRideTypeSMS,
+  updateDeadHeadAndLoad,
 } from "../interfaces";
 import { utils } from "../utils/utilities";
 import { AdminRepository } from "../repository/index";
@@ -314,12 +316,55 @@ export default class AdminService {
     }
   }
 
-  async updateAssignRides(data: RideUpdateData) {
+  async updateAssignRides(data: UpdateData) {
     try {
-      const updated = await this.adminService.updateAssignedRides(data);
-      const driver = await this.adminService.getDriver(data.driverId);
-      const sendSms = await this.sendSms(updated, driver.driverPhoneNumber1);
-      return sendSms;
+      let response;
+      if (
+        data.type !== "updateAssignRides" &&
+        data.type !== "updateDeadHeadAndLoad"
+      ) {
+        throw new AppError(
+          "Invalid data type",
+          "Either update DriverId or update DeadHead and load as batch wise",
+          httpStatus.BAD_REQUEST
+        );
+      }
+      if (data.type === "updateAssignRides") {
+        if (
+          data.driverId === "" ||
+          data.driverId === null ||
+          data.driverId === undefined
+        ) {
+          throw new AppError(
+            "DriverId is required",
+            "DriverId is req while updating the ride",
+            httpStatus.BAD_REQUEST
+          );
+        }
+        const updated = await this.adminService.updateAssignedRides(data);
+        const driver = await this.adminService.getDriver(data.driverId);
+        response = await this.sendSms(updated, driver.driverPhoneNumber1);
+      }
+      if (data.type === "updateDeadHeadAndLoad") {
+        console.log("inside");
+        if (
+          data.deadHead === "" ||
+          data.deadHead === null ||
+          data.deadHead === undefined ||
+          data.load === "" ||
+          data.load === null ||
+          data.load === undefined
+        ) {
+          throw new AppError(
+            "deadHead and Load not sent",
+            "send both DeadHead and Load while updating the ride",
+            httpStatus.BAD_REQUEST
+          );
+        }
+        response = await this.adminService.updateAssignedRides(data);
+      }
+      console.log(response);
+      return response;
     } catch (error) {
       throw error;
     }
@@ -417,20 +462,19 @@ export default class AdminService {
     }
   }
 
-  async createPayment(
-    driverId: string,
-    paid: number,
-    date?: string,
-    feedBack?: string
-  ) {
+  async createPayment(data: PaymentData) {
     try {
-      const payment = await this.adminService.createPayment(
-        driverId,
-        paid,
-        date,
-        feedBack
-      );
+      const payment = await this.adminService.createPayment(data);
       return payment;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async driverTotalAmountCalculate(data: AmountTotalPaid) {
+    try {
+      const resp = await this.adminService.driverTotalAmountCalculate(data);
+      return resp;
     } catch (error) {
       throw error;
     }

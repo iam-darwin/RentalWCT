@@ -60,8 +60,23 @@ export interface RidesAssignedUpdate {
   Driver_ID: string;
 }
 
-export interface RideUpdateData {
+export interface UpdateAssignRides {
+  type: "updateAssignRides";
   driverId: string;
+  rideId: string;
+}
+
+export interface UpdateDeadHeadAndLoad {
+  type: "updateDeadHeadAndLoad";
+  rideId: string;
+  deadHead: string;
+  load: string;
+}
+export type UpdateData = UpdateAssignRides | UpdateDeadHeadAndLoad;
+
+export interface updateDeadHeadAndLoad {
+  deadHead: string;
+  load: string;
   rideId: string;
 }
 
@@ -86,4 +101,17 @@ export interface AdminUpdateInput {
   email?: string;
   role?: string;
   password?: string;
+}
+
+export interface AmountTotalPaid {
+  startDate?: string;
+  endDate?: string;
+  driverId: string;
+}
+
+export interface PaymentData {
+  driverId: string;
+  totalAmount: string;
+  rideIds: string[];
+  feedBack?: string;
 }

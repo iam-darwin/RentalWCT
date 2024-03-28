@@ -184,6 +184,7 @@ export const assignRideToDriver = async (
   next: NextFunction
 ) => {
   try {
+    console.log(req.body);
     const assignBody = assignRideValidation.parse(req.body);
     const success = await admin.assignRideToDriver(
       assignBody.rideId,
@@ -298,8 +299,8 @@ export const updateAssignedRides = async (
   next: NextFunction
 ) => {
   try {
-    //@ts-ignore
     const updateBody = RideUpdateDataSchema.parse(req.body);
+    //@ts-ignore
     const updateData = await admin.updateAssignRides(updateBody);
     return res.status(status.OK).json({
       message: "Successfully updated",
@@ -481,16 +482,28 @@ export const createPayment = async (
   next: NextFunction
 ) => {
   try {
+    //@ts-ignore
+    console.log(typeof req.body.rideIds);
     const paymentBody = paymentRequestValidation.parse(req.body);
-    const response = await admin.createPayment(
-      paymentBody.driverId,
-      Number(paymentBody.amount),
-      paymentBody.date,
-      paymentBody.remarks
-    );
-
+    const response = await admin.createPayment(paymentBody);
     return res.status(status.OK).json({
       message: "Successfully Created",
+      data: response,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const driverTotalAmountCalculate = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const response = await admin.driverTotalAmountCalculate(req.body);
+    return res.status(status.OK).json({
+      message: "Successfully Calculated",
       data: response,
     });
   } catch (error) {

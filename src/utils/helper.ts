@@ -42,6 +42,18 @@ export function calculateCost(amountString: string): string {
   }
 }
 
+export function calculateTotalCost(
+  cost: string,
+  deadHead: string,
+  load: string
+): string {
+  const costValue = parseFloat(cost);
+  const deadHeadValue = parseFloat(deadHead);
+  const loadValue = parseFloat(load);
+  const totalCost = costValue + deadHeadValue + loadValue;
+  return totalCost.toFixed(2).toString();
+}
+
 export function htmlTemplate(
   userName: string,
   token: string,

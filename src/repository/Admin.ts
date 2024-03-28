@@ -6,11 +6,17 @@ import { prisma } from "../config/Connectdb";
 import {
   AdminInput,
   AdminUpdateInput,
+  AmountTotalPaid,
   DriverUpdateInput,
-  RideUpdateData,
+  PaymentData,
+  UpdateData,
 } from "../interfaces/index";
 import { AppError, ServiceError } from "../utils/Errors/index";
-import { calculateCost, excludeFields } from "../utils/helper";
+import {
+  calculateCost,
+  calculateTotalCost,
+  excludeFields,
+} from "../utils/helper";
 import httpStatus from "http-status";
 import {
   UserRideType,
@@ -347,7 +353,6 @@ export default class AdminRepository {
   async assignRideToDriver(rideID: string, driverId: string) {
     try {
       //update as ASSIGNED in the database
-
       const updated = await prisma.rides.findUnique({
         where: {
           RideID: rideID,
@@ -361,7 +366,14 @@ export default class AdminRepository {
           status.NOT_FOUND
         );
       }
-
+      console.log(updated);
+      if (updated.Ride_Status === "COMPLETED") {
+        throw new ServiceError(
+          "Ride already Completed",
+          "Ride is already marked as completed",
+          status.NOT_FOUND
+        );
+      }
       const driver = await prisma.driver.findUnique({
         where: {
           driverID: driverId,
@@ -501,7 +513,30 @@ export default class AdminRepository {
           httpStatus.CONFLICT
         );
       }
-
+      const findRideTotalAmount: any = await prisma.rides.findUnique({
+        where: {
+          RideID: rideId,
+        },
+        select: {
+          Cost: true,
+          deadHead: true,
+          load: true,
+          totalAmount: true,
+        },
+      });
+      console.log(findRideTotalAmount);
+      if (
+        findRideTotalAmount.Cost === "NULL" ||
+        findRideTotalAmount.deadHead === "NULL" ||
+        findRideTotalAmount.load === "NULL" ||
+        findRideTotalAmount.totalAmount === "NULL"
+      ) {
+        throw new AppError(
+          "Invalid Ride Data",
+          "Cost, deadHead, totalAmount, and load are all null update there data to complete this ride",
+          httpStatus.BAD_REQUEST
+        );
+      }
       const completedRides = await prisma.$transaction(async (prismaClient) => {
         const updateRide = await prismaClient.rides.update({
           where: {
@@ -563,15 +598,15 @@ export default class AdminRepository {
     }
   }
 
-  async updateAssignedRides(rideData: RideUpdateData) {
+  async updateAssignedRides(rideData: UpdateData) {
     try {
-      const updated = await prisma.rides.findUnique({
+      const findRide = await prisma.rides.findUnique({
         where: {
           RideID: rideData.rideId,
         },
       });
 
-      if (!updated) {
+      if (!findRide) {
         throw new ServiceError(
           "Ride Not Available",
           "Not able to assign unavailable ride,rideId not present in the DB",
@@ -579,27 +614,59 @@ export default class AdminRepository {
         );
       }
 
-      const driver = await prisma.driver.findUnique({
-        where: {
-          driverID: rideData.driverId,
-        },
-      });
-      if (!driver) {
-        throw new ServiceError(
-          "Driver Not Available",
-          "Not able to assign ride to someone who's not present in db",
-          status.NOT_FOUND
-        );
-      }
+      let rideUpdate;
 
-      const rideUpdate = await prisma.rides.update({
-        where: {
-          RideID: rideData.rideId,
-        },
-        data: {
-          Driver_ID: rideData.driverId,
-        },
-      });
+      switch (rideData.type) {
+        case "updateAssignRides":
+          const driver = await prisma.driver.findUnique({
+            where: {
+              driverID: rideData.driverId,
+            },
+          });
+          if (!driver) {
+            throw new ServiceError(
+              "Driver Not Available",
+              "Not able to assign ride to someone who's not present in db",
+              status.NOT_FOUND
+            );
+          }
+          rideUpdate = await prisma.rides.update({
+            where: {
+              RideID: rideData.rideId,
+            },
+            data: {
+              Driver_ID: rideData.driverId,
+            },
+          });
+          break;
+
+        case "updateDeadHeadAndLoad":
+          const totalCost = calculateTotalCost(
+            findRide.Cost,
+            rideData.deadHead,
+            rideData.load
+          );
+          rideUpdate = await prisma.rides.update({
+            where: {
+              RideID: rideData.rideId,
+            },
+            data: {
+              deadHead: rideData.deadHead,
+              load: rideData.load,
+              totalAmount: totalCost,
+            },
+          });
+
+          break;
+
+        default:
+          throw new ServiceError(
+            "Unsupported Update Type",
+            //@ts-ignore
+            `Unsupported ride update type: ${rideData.type}`,
+            status.BAD_REQUEST
+          );
+      }
 
       if (!rideUpdate) {
         throw new ServiceError(
@@ -749,58 +816,146 @@ export default class AdminRepository {
     }
   }
 
-  async createPayment(
-    driverId: string,
-    paid: number,
-    date?: string,
-    feedBack?: string
-  ) {
+  async createPayment({
+    driverId,
+    totalAmount,
+    rideIds,
+    feedBack,
+  }: PaymentData) {
     try {
-      const payment = await prisma.$transaction(async (prismaClient) => {
-        const findDriver = await prismaClient.driver.findUnique({
-          where: {
-            driverID: driverId,
-          },
-        });
-
-        if (!findDriver) {
-          throw new Error(`Driver with ID ${driverId} not found`);
-        }
-
-        let payment;
-        if (date) {
-          payment = await prismaClient.payment.create({
-            data: {
-              driverID: driverId,
-              amount: paid,
-              paymentDate: new Date(date).toISOString(),
-              remarks: feedBack ? feedBack : "null",
-            },
-          });
-        } else {
-          payment = await prismaClient.payment.create({
-            data: {
-              driverID: driverId,
-              amount: paid,
-              paymentDate: new Date().toISOString(),
-              remarks: feedBack ? feedBack : "null",
-            },
-          });
-        }
-
-        await prismaClient.driver.update({
-          where: {
-            driverID: driverId,
-          },
-          data: {
-            lastPaymentDate: new Date(payment.paymentDate).toString(),
-          },
-        });
-
-        return payment;
+      const findDriver = await prisma.driver.findUnique({
+        where: {
+          driverID: driverId,
+        },
       });
 
-      return payment;
+      if (!findDriver) {
+        throw new AppError(
+          "DriverId not found",
+          "DriverId not found in the database",
+          httpStatus.CONFLICT
+        );
+      }
+
+      const transaction = await prisma.$transaction(async (prismaClient) => {
+        try {
+          const unpaidRides = await prismaClient.rides.findMany({
+            where: {
+              RideID: {
+                in: rideIds,
+              },
+              Driver_ID: driverId,
+              isPaid: false,
+            },
+          });
+
+          const alreadyPaidRides = rideIds.filter(
+            (rideId) => !unpaidRides.some((ride) => ride.RideID === rideId)
+          );
+
+          if (alreadyPaidRides.length > 0) {
+            throw new Error(
+              `Rides with IDs ${alreadyPaidRides.join(",")} are already paid.`
+            );
+          }
+
+          const paymentReceipt = await prismaClient.payment.create({
+            data: {
+              driverID: driverId,
+              amount: parseFloat(totalAmount),
+              paymentDate: new Date().toLocaleString(),
+              remarks: feedBack,
+              rideIds,
+            },
+          });
+
+          await prismaClient.rides.updateMany({
+            where: {
+              RideID: {
+                in: rideIds,
+              },
+            },
+            data: {
+              isPaid: true,
+            },
+          });
+
+          await prismaClient.completedRides.updateMany({
+            where: {
+              RideID: {
+                in: rideIds,
+              },
+              Driver_ID: driverId,
+            },
+            data: {
+              isPaid: true,
+            },
+          });
+
+          await prismaClient.driver.update({
+            where: {
+              driverID: driverId,
+            },
+            data: {
+              lastPaymentDate: new Date().toLocaleString(),
+            },
+          });
+
+          return paymentReceipt;
+        } catch (error) {
+          throw error;
+        }
+      });
+
+      return transaction;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async driverTotalAmountCalculate(data: AmountTotalPaid) {
+    try {
+      const findDriverId = await prisma.driver.findUnique({
+        where: {
+          driverID: data.driverId,
+        },
+      });
+      if (!findDriverId) {
+        throw new AppError(
+          "DriverId not found",
+          "DriverId not found in the database",
+          httpStatus.CONFLICT
+        );
+      }
+      let rides;
+      if (data.startDate && data.endDate) {
+        console.log("inside 1");
+        rides = await prisma.completedRides.findMany({
+          where: {
+            AND: [
+              { Driver_ID: data.driverId },
+              { Ride_Date: { gte: data.startDate, lte: data.endDate } },
+              { isPaid: false },
+            ],
+          },
+        });
+      } else {
+        console.log("inside 2");
+        rides = await prisma.completedRides.findMany({
+          where: {
+            AND: [{ Driver_ID: data.driverId }, { isPaid: false }],
+          },
+        });
+      }
+
+      let fullAmount = 0;
+      const rideIds: string[] = [];
+      for (const ride of rides) {
+        fullAmount += parseFloat(ride.totalAmount);
+        rideIds.push(ride.RideID);
+      }
+
+      return { totalAmount: fullAmount.toFixed(2), rideIds };
     } catch (error) {
       throw error;
     }
@@ -1119,6 +1274,14 @@ export default class AdminRepository {
           throw new AppError(
             "RideId not found",
             "This rideId is not present in the database",
+            httpStatus.CONFLICT
+          );
+        }
+
+        if (findRideIdInCompleted.isPaid === true) {
+          throw new AppError(
+            "Marked as paid",
+            "Once the ride marked as completed you cant undo it",
             httpStatus.CONFLICT
           );
         }

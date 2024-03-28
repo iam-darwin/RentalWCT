@@ -52,6 +52,7 @@ model Payment {
   amount      Float
   driverID    String
   paymentDate String
+  rideIds     String[]
   remarks     String   @default("NULL")
   driver      Driver   @relation(fields: [driverID], references: [driverID])
   createdAt   DateTime @default(now())
@@ -132,6 +133,10 @@ model Rides {
   Driver_ID              String
   Provider_Trip_Id       String
   Rider_Patient_ID       String
+  deadHead               String     @default("NULL")
+  load                   String     @default("NULL")
+  isPaid                 Boolean    @default(false)
+  totalAmount            String     @default("NULL")
   createdAt              DateTime   @default(now())
   updatedAt              DateTime   @updatedAt
 }
@@ -162,6 +167,10 @@ model CompletedRides {
   Driver_ID              String
   Provider_Trip_Id       String
   Rider_Patient_ID       String
+  deadHead               String   @default("NULL")
+  load                   String   @default("NULL")
+  isPaid                 Boolean  @default(false)
+  totalAmount            String   @default("NULL")
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
 }

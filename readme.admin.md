@@ -206,17 +206,31 @@ Before proceeding to this route, make sure to sign in first. Once signed in, the
 
 **METHOD** : `POST`
 **URL** : `http://localhost:PORT/api/v1/admin/updateAssignRides`
-
 **Request Body**
+In this there are two types of updation one is updateAssignRides and updateDeadHeadAndLoad
+
+The below one is example of updateAssignRides suppose if you want to assign ride to another driver then this will the body sent from client
 
 ```
 {
-  //Send fields you want to update either Ride_status or Driver Reassign. you'll be sending only one of them
+  type:"updateAssignRides"
   rideId:"asdasdasd",
   Driver_ID:"asdasasd",
-  Ride_Status:"CANCELLED"
 }
 ```
+
+The below one is example of updateDeadHeadAndLoad, suppose the ride is completed and admin has to update the deadHead and load then the below body example will be sent from the client
+
+```
+{
+  type:"updateDeadHeadAndLoad",
+  rideId:"asdasdasd",
+  deadHead:"20",
+  load:"15"
+}
+```
+
+Suppose if the client tries to update the ride as completed without giving the deadhead and load then ride wont be marked as completed
 
 ### Get Completed Rides
 
@@ -316,6 +330,34 @@ Before proceeding to this route, make sure to sign in first. Once signed in, the
 **METHOD** :`GET`
 **URL** :`http://localhost:PORT/api/v1/admin/admins`
 
+### Get total amount based you want to pay
+
+**METHOD** :`POST`
+**URL** :`http://localhost:8000/api/v1/admin/driverTotalAmountCalculate`
+
+**Request Body**
+
+```
+{
+  "driverId":"9876",
+  "startDate":"2024-04-04", //strictly this format
+  "endDate":"2024-04-06"
+}
+
+```
+
+response wil be like this (or might differ please try yourself)
+
+```
+{
+  "message": "Successfully Calculated",
+  "data": {
+    "totalAmount": "0.00",
+    "rideIds": []
+  }
+}
+```
+
 ### Add Payment Info
 
 Before proceeding to this route, make sure to sign in first SUPER_ADMIN. Once signed in, the server will generate a JWT token that should be kept in the headers
@@ -325,12 +367,17 @@ Before proceeding to this route, make sure to sign in first SUPER_ADMIN. Once si
 
 **Request Body**
 
+```
 {
-driverId:"asdasdasd",
-amount:"1320",
-remarks:"Enjoy with this"
-date?: "2024-01-10T12:53:38.729Z" //format
+  "driverId": "19921",
+  "totalAmount": "557.46",
+  "rideIds": [
+      "2650413","2571603","2571604","2609794","2609795","2609797","2609798"
+    ],
+  "feedBack"?: "all good pad for 5 rides"
 }
+
+```
 
 ### Get All Payments
 
