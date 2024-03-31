@@ -118,15 +118,14 @@ export const paymentRequestValidation = z.object({
 
 export const updatePaymentSchema = z
   .object({
-    date: z.string().optional(),
     remarks: z.string().optional(),
     amount: z.string().min(1).optional(),
   })
   .refine(
-    ({ date, remarks, amount }) => {
+    ({ remarks, amount }) => {
       return (
-        (date !== undefined || remarks !== undefined || amount !== undefined) &&
-        !(date === undefined && remarks === undefined && amount === undefined)
+        (remarks !== undefined || amount !== undefined) &&
+        !(remarks === undefined && amount === undefined)
       );
     },
     {

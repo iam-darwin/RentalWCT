@@ -580,6 +580,30 @@ export const updatePayments = async (
   }
 };
 
+export const deletePayment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { paymentId } = req.params;
+    if (!paymentId) {
+      throw new AppError(
+        "PaymentID Undefined",
+        "PaymentId field should not be empty",
+        status.BAD_REQUEST
+      );
+    }
+    const response = await admin.deletePayment(paymentId);
+    return res.status(status.OK).json({
+      message: "Deleted successfully",
+      data: response,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getAllFormDataOfUnchecked = async (
   req: Request,
   res: Response,

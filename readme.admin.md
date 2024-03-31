@@ -420,6 +420,18 @@ Before proceeding to this route, make sure to sign in first as SUPER_ADMIN. Once
 }
 ```
 
+### Delete Payment
+
+Before proceeding to this route, make sure to sign in first as SUPER_ADMIN. Once signed in, the server will generate a JWT token that should be kept in the headers
+
+**METHOD** :`POST`
+**URL** :`http://localhost:8000/api/v1/admin/deletePayment/:paymentId`
+
+**Request Params**
+`{
+      paymentId:"asdasdasd" 
+}`
+
 ### Admin Forgot Pwd
 
 This Endpoint is responsible for changing the pwd

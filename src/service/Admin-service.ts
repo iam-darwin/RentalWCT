@@ -507,6 +507,15 @@ export default class AdminService {
     }
   }
 
+  async deletePayment(paymentId: string) {
+    try {
+      const deleted = await this.adminService.deletePayment(paymentId);
+      return deleted;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getFormDataUnchecked() {
     try {
       const alldetails = await this.adminService.getFormDataUnchecked();

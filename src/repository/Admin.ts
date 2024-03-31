@@ -426,6 +426,10 @@ export default class AdminRepository {
           Estimated_Distance: true,
           Driver_ID: true,
           Cost: true,
+          isPaid: true,
+          deadHead: true,
+          load: true,
+          totalAmount: true,
         },
       });
       return details;
@@ -837,6 +841,26 @@ export default class AdminRepository {
         );
       }
 
+      // Check if all rideIds belong to the same driver
+      const ridesWithDifferentDriver = await prisma.rides.findMany({
+        where: {
+          RideID: {
+            in: rideIds,
+          },
+          NOT: {
+            Driver_ID: driverId,
+          },
+        },
+      });
+
+      if (ridesWithDifferentDriver.length > 0) {
+        throw new Error(
+          `Rides with IDs ${ridesWithDifferentDriver
+            .map((ride) => ride.RideID)
+            .join(",")} do not belong to the driver ${driverId}.`
+        );
+      }
+
       const transaction = await prisma.$transaction(async (prismaClient) => {
         try {
           const unpaidRides = await prismaClient.rides.findMany({
@@ -874,6 +898,7 @@ export default class AdminRepository {
               RideID: {
                 in: rideIds,
               },
+              Driver_ID: driverId,
             },
             data: {
               isPaid: true,
@@ -901,6 +926,7 @@ export default class AdminRepository {
             },
           });
 
+          console.log(paymentReceipt);
           return paymentReceipt;
         } catch (error) {
           throw error;
@@ -998,30 +1024,75 @@ export default class AdminRepository {
           httpStatus.CONFLICT
         );
       }
-      const data: { paymentDate?: string; remarks?: string; amount?: number } =
-        {};
+      const { amount, remarks } = values;
 
-      if (values.date !== undefined) {
-        data.paymentDate = new Date(values.date).toISOString();
-      }
-
-      if (values.remarks !== undefined) {
-        data.remarks = values.remarks;
-      }
-      if (values.amount !== undefined) {
-        data.amount = Number(values.amount);
-      }
       const updatedPayment = await prisma.payment.update({
         where: {
           paymentID: paymentId,
         },
-        data: data,
+        data: {
+          //@ts-ignore
+          amount: parseFloat(amount),
+          remarks: remarks,
+        },
       });
 
       return updatedPayment;
     } catch (error) {
       throw error;
     }
+  }
+  async deletePayment(paymentId: string) {
+    try {
+      const findPaymentID = await prisma.payment.findUnique({
+        where: {
+          paymentID: paymentId,
+        },
+      });
+
+      if (!findPaymentID) {
+        throw new AppError(
+          "Payment Id not found",
+          "You cant update the following PaymentId it's not available in db",
+          httpStatus.BAD_REQUEST
+        );
+      }
+      //update rideIds as isPaid:false in both completedRides and rides
+      const transaction = await prisma.$transaction(async (prismaClient) => {
+        const updateRides = await prismaClient.rides.updateMany({
+          where: {
+            RideID: {
+              in: findPaymentID.rideIds,
+            },
+          },
+          data: {
+            isPaid: false,
+          },
+        });
+
+        const updateInCompletedRides =
+          await prismaClient.completedRides.updateMany({
+            where: {
+              RideID: {
+                in: findPaymentID.rideIds,
+              },
+            },
+            data: {
+              isPaid: false,
+            },
+          });
+
+        const deleted = await prismaClient.payment.delete({
+          where: {
+            paymentID: paymentId,
+          },
+        });
+
+        return deleted;
+      });
+
+      return transaction;
+    } catch (error) {}
   }
 
   async getFormDataUnchecked() {

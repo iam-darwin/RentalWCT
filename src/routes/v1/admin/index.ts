@@ -111,6 +111,12 @@ router.post(
   superAdminAuth,
   adminControllers.updatePayments
 );
+router.post(
+  "/deletePayment/:paymentId",
+  authAdmin,
+  superAdminAuth,
+  adminControllers.deletePayment
+);
 
 //to Check form details
 router.get(
